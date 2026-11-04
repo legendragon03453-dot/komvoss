@@ -1,0 +1,162 @@
+/* ===================================================================
+   Efeito "shiny CTA" nos botões do site, sem mudar o desenho deles:
+   tudo em prata: um brilho que percorre a borda, pontinhos que acompanham o brilho
+   e, no hover, o brilho se abre e um reflexo atravessa o botão.
+   =================================================================== */
+@property --shine-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@property --shine-offset {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@property --shine-pct {
+  syntax: '<percentage>';
+  initial-value: 5%;
+  inherits: false;
+}
+
+@property --shine-color {
+  syntax: '<color>';
+  initial-value: #fff;
+  inherits: false;
+}
+
+:is(.v2-btn, .pg-btn, .form-submit, .pg-btn-ghost) {
+  --shine-bw: 1.662px;
+  --shine-hl: #b8bec4;
+  --silver: linear-gradient(135deg, #eceef0 0%, #c4c8cc 26%, #f5f6f7 48%, #aeb3b8 74%, #dcdfe2 100%);
+  --shine-duration: 3s;
+  position: relative;
+  isolation: isolate;
+  background-image: linear-gradient(110deg, transparent 35%, rgba(232, 236, 240, 0.14) 50%, transparent 65%);
+  background-size: 260% 100%;
+  background-position: 130% 0;
+  background-repeat: no-repeat;
+}
+
+:is(.v2-btn-sm, .pg-btn-ghost) {
+  --shine-bw: 1px;
+}
+
+/* brilho que percorre a borda */
+:is(.v2-btn, .pg-btn, .form-submit, .pg-btn-ghost)::before {
+  content: '';
+  position: absolute;
+  inset: calc(var(--shine-bw) * -1);
+  z-index: 1;
+  padding: max(var(--shine-bw), 1.5px);
+  border-radius: inherit;
+  background: conic-gradient(
+    from calc(var(--shine-angle) - var(--shine-offset)),
+    transparent,
+    var(--shine-hl) var(--shine-pct),
+    var(--shine-color) calc(var(--shine-pct) * 2),
+    var(--shine-hl) calc(var(--shine-pct) * 3),
+    transparent calc(var(--shine-pct) * 4)
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#000 0 0) content-box exclude,
+    linear-gradient(#000 0 0);
+  pointer-events: none;
+  animation: shine-angle var(--shine-duration) linear infinite;
+  transition:
+    --shine-offset 0.8s cubic-bezier(0.25, 1, 0.5, 1),
+    --shine-pct 0.8s cubic-bezier(0.25, 1, 0.5, 1),
+    --shine-color 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* pontinhos que acompanham o brilho */
+:is(.v2-btn, .pg-btn, .form-submit, .pg-btn-ghost)::after {
+  content: '';
+  position: absolute;
+  inset: 3px;
+  z-index: -1;
+  border-radius: inherit;
+  background: radial-gradient(circle at 2px 2px, #fff 0.5px, transparent 0) padding-box;
+  background-size: 4px 4px;
+  background-repeat: space;
+  -webkit-mask-image: conic-gradient(from calc(var(--shine-angle) + 45deg), #000, transparent 10% 90%, #000);
+  mask-image: conic-gradient(from calc(var(--shine-angle) + 45deg), #000, transparent 10% 90%, #000);
+  opacity: 0.35;
+  pointer-events: none;
+  animation: shine-angle var(--shine-duration) linear infinite;
+  transition: opacity 0.4s;
+}
+
+/* hover: o brilho se abre, ganha um brilho interno e um reflexo atravessa o botão */
+:is(.v2-btn, .pg-btn, .form-submit, .pg-btn-ghost):is(:hover, :focus-visible) {
+  background-image: linear-gradient(110deg, transparent 35%, rgba(232, 236, 240, 0.14) 50%, transparent 65%);
+  background-size: 260% 100%;
+  background-repeat: no-repeat;
+  border-color: #d9dde1;
+  box-shadow: inset 0 -1ex 1.6rem rgba(220, 224, 228, 0.16);
+  animation: shine-sweep 2.2s linear infinite;
+}
+
+:is(.v2-btn, .pg-btn, .form-submit, .pg-btn-ghost):is(:hover, :focus-visible)::before {
+  --shine-pct: 20%;
+  --shine-offset: 95deg;
+  --shine-color: #fff;
+}
+
+:is(.v2-btn, .pg-btn, .form-submit, .pg-btn-ghost):is(:hover, :focus-visible)::after {
+  opacity: 0.55;
+}
+
+:is(.v2-btn, .pg-btn, .form-submit, .pg-btn-ghost):active {
+  translate: 0 1px;
+}
+
+/* caixa da seta em prata (no lugar do gradiente azul) */
+:is(.v2-btn, .pg-btn, .form-submit) :is(.v2-btn-box, .pg-btn-box, .form-submit-box) {
+  background: var(--silver);
+  background-size: 200% 200%;
+  background-position: 0% 50%;
+  transition:
+    transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1),
+    box-shadow 0.3s,
+    background-position 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+:is(.v2-btn, .pg-btn, .form-submit) :is(.v2-btn-box, .pg-btn-box, .form-submit-box) img {
+  filter: brightness(0);
+  opacity: 0.85;
+}
+
+:is(.v2-btn, .pg-btn, .form-submit):is(:hover, :focus-visible) :is(.v2-btn-box, .pg-btn-box, .form-submit-box) {
+  background-position: 100% 50%;
+  box-shadow: 0 0 22px rgba(220, 224, 228, 0.35);
+}
+
+@keyframes shine-angle {
+  to {
+    --shine-angle: 360deg;
+  }
+}
+
+@keyframes shine-sweep {
+  from {
+    background-position: 130% 0;
+  }
+  to {
+    background-position: -30% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :is(.v2-btn, .pg-btn, .form-submit, .pg-btn-ghost),
+  :is(.v2-btn, .pg-btn, .form-submit, .pg-btn-ghost)::before,
+  :is(.v2-btn, .pg-btn, .form-submit, .pg-btn-ghost)::after {
+    animation: none !important;
+  }
+}

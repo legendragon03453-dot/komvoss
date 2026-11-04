@@ -1,0 +1,329 @@
+/* ===================================================================
+   Linguagem inspirada na referência do CEO (shapeofintelligence.com),
+   aplicada à identidade do Grupo Komvos (Montserrat, verde-água, escuro).
+   =================================================================== */
+
+/* Tipografia editorial: títulos grandes, peso médio e espaçamento negativo */
+.pg-h1 {
+  font-size: clamp(40.56px, 5.93vw, 121.68px);
+  font-weight: 500;
+  line-height: 0.98;
+  letter-spacing: -0.045em;
+}
+
+.pg-h2,
+.page .sec-title {
+  font-weight: 500;
+  line-height: 1.02;
+  letter-spacing: -0.035em;
+}
+
+.pg-eyebrow {
+  letter-spacing: 0.01em;
+}
+
+/* ---------- Barra de capítulos (fixa, inferior) ---------- */
+.chapter-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 40;
+  height: calc(52px + env(safe-area-inset-bottom, 0px));
+  padding: 0 40px env(safe-area-inset-bottom, 0px);
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  background: rgba(17, 21, 22, 0.86);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-top: 1px solid rgba(147, 149, 152, 0.22);
+  font-size: 14px;
+  color: var(--light);
+  transition: transform 0.5s cubic-bezier(0.7, 0, 0.3, 1);
+}
+
+.chapter-bar.is-hidden {
+  transform: translateY(100%);
+}
+
+.chapter-ticks {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  height: 100%;
+}
+
+.chapter-tick {
+  width: 9px;
+  height: 22px;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  position: relative;
+}
+
+.chapter-tick::before {
+  content: '';
+  position: absolute;
+  left: 4px;
+  top: 50%;
+  width: 1px;
+  height: 12px;
+  margin-top: -6px;
+  background: rgba(244, 247, 251, 0.45);
+  transition: height 0.3s, margin-top 0.3s, background 0.3s;
+}
+
+.chapter-tick.is-past::before {
+  background: rgba(147, 149, 152, 0.7);
+}
+
+.chapter-tick.is-active::before {
+  height: 22px;
+  margin-top: -11px;
+  width: 2px;
+  background: var(--grad);
+}
+
+.chapter-tick:hover::before {
+  background: var(--surface);
+}
+
+.chapter-label {
+  font-weight: 600;
+}
+
+.chapter-count {
+  color: rgba(244, 247, 251, 0.6);
+  font-variant-numeric: tabular-nums;
+}
+
+.chapter-count span {
+  margin: 0 2px;
+}
+
+.chapter-name {
+  color: var(--accent);
+  animation: chapter-in 0.45s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+@keyframes chapter-in {
+  from { opacity: 0; transform: translateY(6px); }
+}
+
+.chapter-cta {
+  margin-left: auto;
+  font-weight: 600;
+  color: var(--light);
+  transition: color 0.2s;
+}
+
+.chapter-cta:hover {
+  color: var(--accent);
+}
+
+/* Espaço para a barra não cobrir o fim do footer */
+.site > .footer,
+.mobile .footer {
+  padding-bottom: calc(40px + 41.6px + env(safe-area-inset-bottom, 0px));
+}
+
+/* ---------- Hero editorial ---------- */
+.pg-hero-meta {
+  margin: -6.4px 0 51.2px;
+  display: flex;
+  justify-content: space-between;
+  gap: 32px;
+  font-size: 15px;
+  line-height: 1.4;
+  color: rgba(244, 247, 251, 0.75);
+}
+
+.pg-hero-meta p {
+  max-width: 300px;
+}
+
+.pg-hero-meta p:last-child {
+  text-align: right;
+}
+
+.pg-hero-bottom {
+  margin-top: 57.6px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 32px;
+}
+
+/* Hero com elemento interativo (rede de nós) */
+.pg-hero-visual {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 58%;
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 35%);
+  mask-image: linear-gradient(to right, transparent, #000 35%);
+}
+
+.pg-hero.has-visual .pg-hero-inner {
+  pointer-events: none;
+}
+
+.pg-hero.has-visual .pg-hero-inner a,
+.pg-hero.has-visual .pg-hero-inner button,
+.pg-hero.has-visual .pg-hero-inner input {
+  pointer-events: auto;
+}
+
+/* ---------- Seletor "Escolha uma frente" ---------- */
+.front-slider {
+  max-width: 600px;
+}
+
+.front-slider-head {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  color: rgba(244, 247, 251, 0.75);
+}
+
+.front-slider-stops {
+  margin-top: 14.4px;
+  display: grid;
+  grid-template-columns: repeat(4, auto);
+  justify-content: space-between;
+}
+
+.front-slider-stops button {
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-size: 15px;
+  color: rgba(244, 247, 251, 0.7);
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.front-slider-stops button span {
+  font-size: 11px;
+  margin-right: 4px;
+}
+
+.front-slider-stops button.is-active,
+.front-slider-stops button:hover {
+  color: var(--accent);
+}
+
+.front-slider-track {
+  margin-top: 11.2px;
+}
+
+.front-slider-track input {
+  width: 100%;
+  height: 24px;
+  margin: 0;
+  background: transparent;
+  -webkit-appearance: none;
+  appearance: none;
+  cursor: pointer;
+}
+
+.front-slider-track input::-webkit-slider-runnable-track {
+  height: 2px;
+  background: linear-gradient(to right, var(--accent) var(--pct), rgba(244, 247, 251, 0.25) var(--pct));
+}
+
+.front-slider-track input::-moz-range-track {
+  height: 2px;
+  background: linear-gradient(to right, var(--accent) var(--pct), rgba(244, 247, 251, 0.25) var(--pct));
+}
+
+.front-slider-track input::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  margin-top: -6.4px;
+  border-radius: 50%;
+  background: var(--grad);
+  box-shadow: 0 0 0 6px rgba(0, 175, 239, 0.2);
+  transition: box-shadow 0.2s;
+}
+
+.front-slider-track input::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--grad);
+  box-shadow: 0 0 0 6px rgba(0, 175, 239, 0.2);
+}
+
+.front-slider-track input:focus-visible::-webkit-slider-thumb {
+  box-shadow: 0 0 0 8px rgba(0, 175, 239, 0.45);
+}
+
+.front-slider-text {
+  margin-top: 11.2px;
+  min-height: 2.8em;
+  font-size: 14.72px;
+  color: rgba(244, 247, 251, 0.75);
+  animation: chapter-in 0.45s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.front-slider-text a {
+  color: var(--accent);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* ---------- Mobile ---------- */
+.mobile .chapter-bar {
+  padding: 0 16px env(safe-area-inset-bottom, 0px);
+  gap: 12px;
+  font-size: 13px;
+}
+
+.mobile .chapter-label,
+.mobile .chapter-cta {
+  display: none;
+}
+
+.mobile .chapter-tick {
+  width: 7px;
+}
+
+.mobile .chapter-name {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mobile .pg-hero-meta {
+  margin-bottom: 28.8px;
+  font-size: 13px;
+}
+
+.mobile .pg-hero-bottom {
+  margin-top: 35.2px;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.mobile .pg-hero-visual {
+  width: 100%;
+  opacity: 0.55;
+  -webkit-mask-image: linear-gradient(to bottom, #000 40%, transparent);
+  mask-image: linear-gradient(to bottom, #000 40%, transparent);
+}
+
+.mobile .front-slider-stops button {
+  font-size: 12px;
+}
+
+.mobile .front-slider-stops button span {
+  display: none;
+}

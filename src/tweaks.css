@@ -1,0 +1,329 @@
+/* ===================================================================
+   Ajustes pedidos pelo cliente (logos, rodapé, cabeçalho, filtros, valores)
+   =================================================================== */
+
+/* ---------- cabeçalho: ícones sociais maiores, ícone do menu menor ---------- */
+.v2-social img {
+  width: 82px;
+  height: auto;
+}
+
+.v2-menu-icon img {
+  width: 30px;
+  height: auto;
+}
+
+.v2-menu-btn {
+  gap: 12px;
+  font-size: 16px;
+}
+
+.v2-menu-x::before,
+.v2-menu-x::after {
+  width: 22px;
+  margin-left: -9px;
+}
+
+/* ---------- rodapé compacto (~25% da tela) ---------- */
+.footer {
+  padding-top: 44px;
+  padding-bottom: 24px;
+}
+
+.footer-top {
+  gap: 32px;
+}
+
+.footer-brand img {
+  width: auto;
+  height: 40px;
+}
+
+.footer-brand p {
+  margin-top: 14px;
+  max-width: 420px;
+  font-size: 13.5px;
+  line-height: 1.55;
+}
+
+.footer-col {
+  gap: 7px;
+}
+
+.footer-col h4 {
+  margin-bottom: 2px;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.footer-col a {
+  font-size: 13.5px;
+}
+
+.footer-bottom {
+  margin-top: 32px;
+  padding-top: 16px;
+  font-size: 12.5px;
+}
+
+.mobile .footer {
+  padding-top: 36px;
+}
+
+.mobile .footer-brand img {
+  width: auto;
+  height: 32px;
+}
+
+.mobile .footer-brand p,
+.mobile .footer-col a {
+  font-size: 13px;
+}
+
+.mobile .footer-col h4 {
+  font-size: 11.5px;
+}
+
+.mobile .footer-bottom {
+  margin-top: 26px;
+  font-size: 12px;
+}
+
+/* ---------- logos das empresas ---------- */
+
+/* Home: cards brancos, logo nas cores oficiais sem selo */
+.v2-eco-card:is(.is-senior, .is-trusth, .is-statum) img {
+  width: 150px;
+  height: 40px;
+  padding: 0;
+  background: none;
+  box-shadow: none;
+}
+
+/* páginas Ecossistema e Trabalhe conosco: logo inteiro em preto, sem selo */
+.eco-card-logo .pg-company-logo {
+  width: auto;
+  max-width: 150px;
+  height: 34px;
+  max-height: none;
+  object-fit: contain;
+  filter: brightness(0);
+}
+
+/* "Um ponto de contato. Três especialistas.": só o símbolo, em preto sobre branco */
+.eco-hub {
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  box-shadow: none;
+}
+
+.eco-hub-logo {
+  position: relative;
+  display: block;
+  width: 108px;
+  height: 108px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow:
+    0 0 0 6px rgba(255, 255, 255, 0.08),
+    0 0 60px rgba(205, 210, 214, 0.25);
+}
+
+.eco-hub-logo img {
+  left: -9%;
+  top: -9%;
+  width: 118%;
+  height: 118%;
+}
+
+/* empresas à direita: versão branca, sem caixa e sem texto */
+.eco-company {
+  width: auto;
+  padding: 6px 0;
+  border: 0;
+  background: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.eco-company:hover {
+  transform: translateX(-4px);
+}
+
+.eco-company .pg-company-logo {
+  width: auto;
+  max-width: 170px;
+  height: 38px;
+  max-height: none;
+  object-fit: contain;
+  filter: brightness(0) invert(1);
+}
+
+.mobile .eco-company .pg-company-logo {
+  height: 26px;
+  max-width: 110px;
+}
+
+.mobile .eco-hub-logo {
+  width: 84px;
+  height: 84px;
+}
+
+/* ---------- depoimentos: cards escuros com borda; destaques em branco ---------- */
+.cms-quotes .dc .cms-quote {
+  background: #151a1b;
+  border-color: rgba(255, 255, 255, 0.1);
+  color: #f4f7fb;
+  box-shadow: none;
+}
+
+.cms-quotes .dc .cms-quote blockquote {
+  color: rgba(244, 247, 251, 0.85);
+}
+
+.cms-quotes .dc .cms-quote strong {
+  color: #f4f7fb;
+}
+
+.cms-quotes .dc .cms-quote small {
+  color: rgba(244, 247, 251, 0.5);
+}
+
+.cms-quotes .dc .cms-quote.is-highlight {
+  background: #f4f6f8;
+  border-color: transparent;
+  box-shadow: 0 30px 70px -40px rgba(0, 0, 0, 0.75);
+}
+
+.cms-quotes .dc .cms-quote.is-highlight blockquote {
+  color: rgba(17, 21, 22, 0.8);
+}
+
+.cms-quotes .dc .cms-quote.is-highlight strong {
+  color: #111516;
+}
+
+.cms-quotes .dc .cms-quote.is-highlight small {
+  color: rgba(17, 21, 22, 0.55);
+}
+
+/* ---------- filtro de categorias (Insights): barra branca, item ativo escuro ---------- */
+.ins-tabs {
+  border-color: transparent;
+  background: #f4f6f8;
+  box-shadow: 0 20px 50px -30px rgba(0, 0, 0, 0.7);
+}
+
+.ins-tabs button {
+  color: rgba(17, 21, 22, 0.7);
+}
+
+.ins-tabs button:hover {
+  color: #111516;
+}
+
+.ins-tabs button.is-active {
+  color: #fff;
+}
+
+.ins-pill {
+  background: #111516;
+}
+
+/* ---------- "O que nos move": 1, 3 e 5 escuros, intercalados ---------- */
+.about-values .about-value:nth-child(odd) {
+  background: #151a1b;
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.about-values .about-value:nth-child(odd) h3 {
+  color: #f4f7fb;
+}
+
+.about-values .about-value:nth-child(odd) p {
+  color: rgba(244, 247, 251, 0.72);
+}
+
+/* rodapé: colunas mais baixas (a coluna "Komvos" vira duas) e menos respiro */
+.footer-top {
+  grid-template-columns: 1.25fr 1fr 1.7fr 1fr;
+  align-items: start;
+}
+
+.footer-col {
+  gap: 5px;
+}
+
+.footer-col:nth-of-type(2) {
+  display: grid;
+  grid-template-columns: repeat(2, max-content);
+  column-gap: 28px;
+  row-gap: 5px;
+  align-content: start;
+}
+
+.footer-col:nth-of-type(2) h4 {
+  grid-column: 1 / -1;
+}
+
+.footer-bottom {
+  margin-top: 22px;
+  padding-top: 12px;
+}
+
+.site > .footer,
+.mobile .footer {
+  padding-top: 32px;
+  padding-bottom: calc(14px + 41.6px + env(safe-area-inset-bottom, 0px));
+}
+
+.mobile .footer-top {
+  gap: 22px 16px;
+}
+
+.mobile .footer-col:nth-of-type(2) {
+  grid-template-columns: 1fr;
+}
+
+/* contatos no rodapé, no menu e na página de contato */
+.footer-brand .footer-contact {
+  margin-top: 12px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  font-size: 13px;
+}
+
+.footer-contact a,
+.contact-info dd a,
+.mn-foot a {
+  color: inherit;
+  transition: color 0.2s;
+}
+
+.footer-contact a {
+  color: rgba(244, 247, 251, 0.85);
+}
+
+.footer-contact a:hover,
+.mn-foot a:hover {
+  color: var(--green);
+}
+
+.contact-info dd a:hover {
+  color: var(--green);
+}
+
+.mn-foot > div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.contact-social {
+  display: flex;
+  gap: 16px;
+}

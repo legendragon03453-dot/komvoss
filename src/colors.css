@@ -1,0 +1,315 @@
+/* ===================================================================
+   Cores do Grupo Komvos (revisão do cliente):
+   quando o assunto é o Grupo, usamos as três cores juntas (Senior, Trusth, Statum)
+   ou apenas cinza/preto/branco — o verde da Senior sozinho fica só onde o assunto é a Senior.
+   =================================================================== */
+:root {
+  /* gradiente do Grupo: as três empresas */
+  --brand-grad: linear-gradient(90deg, var(--senior), var(--trusth) 50%, var(--statum));
+}
+
+/* órbita do Komvos Mind: os pontos alternam as três cores */
+.orb-chip .orb-dot {
+  box-shadow: none !important;
+}
+
+.orb-ring.is-inner .orb-item:nth-child(3n + 1) .orb-dot,
+.orb-ring.is-outer .orb-item:nth-child(3n + 2) .orb-dot {
+  background: var(--senior);
+}
+
+.orb-ring.is-inner .orb-item:nth-child(3n + 2) .orb-dot,
+.orb-ring.is-outer .orb-item:nth-child(3n + 3) .orb-dot {
+  background: var(--trusth);
+}
+
+.orb-ring.is-inner .orb-item:nth-child(3n + 3) .orb-dot,
+.orb-ring.is-outer .orb-item:nth-child(3n + 1) .orb-dot {
+  background: var(--statum);
+}
+
+/* menu: página atual marcada em branco */
+.mn-link.active .mn-num {
+  color: #f4f7fb;
+}
+
+.mn-link.active .mn-label::after {
+  background: var(--brand-grad);
+  box-shadow: none;
+}
+
+/* "Sobre", missão: rótulo neutro */
+.about-card:first-child .pg-eyebrow {
+  color: rgba(17, 21, 22, 0.55);
+}
+
+/* Home, "Simplificar / Conectar": sem a moldura preta ao clicar nos ícones (fica só para teclado) */
+.komvos-features :is(.ib-tool, .ib-av, [tabindex]):focus,
+.komvos-features :is(.ib-tool, .ib-av, [tabindex]):focus-visible {
+  outline: none !important;
+}
+
+.komvos-features :is(.ib-tool, .ib-av):focus-visible .ib-node {
+  stroke: var(--statum);
+}
+
+/* Home, vídeos: botão de play redondo, ícone e etiqueta em preto sobre o prata */
+.car-play-ico {
+  width: 60px;
+  height: 60px;
+  color: #111516;
+}
+
+.mobile .car-play-ico {
+  width: 50px;
+  height: 50px;
+}
+
+.car-cap em {
+  color: #111516;
+}
+
+/* Sobre, letreiro dos valores: preenchimento suave no lugar do contorno
+   (o contorno mostrava as sobreposições internas das letras) */
+.about-band-word {
+  color: rgba(205, 210, 214, 0.14);
+  -webkit-text-stroke: 0;
+}
+
+.about-band-sep {
+  color: rgba(205, 210, 214, 0.35);
+}
+
+/* menu fixo: logo do lado esquerdo */
+@media (min-width: 1280px) {
+  .site:not(.mobile) .v2-header-logo {
+    order: -1;
+    margin-left: 0;
+    margin-right: 12px;
+  }
+
+  .site:not(.mobile) .hd-nav {
+    margin-right: auto;
+  }
+}
+
+/* submenu: fecha ao escolher uma página (ver closeDrop em Header.tsx) */
+.hd-drop.is-closed .hd-drop-panel {
+  opacity: 0 !important;
+  visibility: hidden !important;
+}
+
+/* logos das três empresas com o mesmo peso visual: Statum e Trusth são mais largos,
+   então o Senior (mais alto) ganha ~17% de altura para ocupar a mesma área */
+.eco-company .pg-company-logo,
+.eco-card-logo .pg-company-logo,
+.sp-exec-logo .pg-company-logo {
+  width: auto;
+  max-width: none;
+  height: 27px;
+  max-height: none;
+  object-fit: contain;
+}
+
+.eco-company .pg-company-logo {
+  height: 30px;
+}
+
+.pg-company-logo[src*='logo-senior'] {
+  height: 32px !important;
+}
+
+.eco-company .pg-company-logo[src*='logo-senior'] {
+  height: 35px !important;
+}
+
+.mobile .eco-company .pg-company-logo {
+  height: 20px;
+}
+
+.mobile .eco-company .pg-company-logo[src*='logo-senior'] {
+  height: 24px !important;
+}
+
+/* submenus: só um aberto por vez; clique com o mouse não deixa o submenu preso pelo foco
+   (o foco mantém aberto apenas quem navega pelo teclado) */
+.hd-drop:focus-within:not(:has(:focus-visible)):not(:hover) .hd-drop-panel,
+.hd-nav:hover .hd-drop:not(:hover) .hd-drop-panel {
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(6px);
+  transition:
+    opacity 0.15s,
+    visibility 0s 0.15s;
+}
+
+/* ===================================================================
+   Arquitetura (ERP, Komvos OS, Komvos Mind): hero sobre a tela prateada da camada,
+   que encolhe ao rolar até a página voltar ao fundo escuro (ver LayerHero)
+   =================================================================== */
+.lh {
+  --silver: linear-gradient(135deg, #eceef0 0%, #c4c8cc 26%, #f5f6f7 48%, #aeb3b8 74%, #dcdfe2 100%);
+  --l0: radial-gradient(70% 60% at 50% 40%, rgba(255, 255, 255, 0.35), transparent 70%),
+    linear-gradient(135deg, #c3c8cc 0%, #959ca2 30%, #c9cdd1 55%, #8f969c 80%, #b4babf 100%);
+  --l1: radial-gradient(70% 60% at 50% 40%, rgba(255, 255, 255, 0.45), transparent 70%),
+    linear-gradient(135deg, #dadde0 0%, #b0b6bb 28%, #e4e7e9 52%, #a9afb4 76%, #cfd3d6 100%);
+  --l2: radial-gradient(70% 60% at 50% 40%, rgba(255, 255, 255, 0.55), transparent 70%), var(--silver);
+}
+
+.lh .pg-hero {
+  min-height: 100svh;
+  display: grid;
+  align-content: center;
+}
+
+.lh .pg-hero-background::after {
+  display: none;
+}
+
+.lh .lh-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  clip-path: inset(84px 14px 14px 14px round 28px);
+  will-change: clip-path, opacity;
+}
+
+/* clareia o lado do texto para o efeito não disputar com a leitura */
+.lh .lh-bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(236, 238, 240, 0.7) 0%, rgba(236, 238, 240, 0.35) 45%, transparent 75%);
+  pointer-events: none;
+}
+
+.lh .lh-fx,
+.atp-bg .lh-fx,
+.lh .flow-lines {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* texto escuro sobre o prata */
+.lh :is(.pg-h1, .pg-eyebrow, .pg-crumbs, .pg-crumbs a, .pg-crumbs span) {
+  color: #111516;
+}
+
+.lh .pg-h1 .teal {
+  background: none;
+  -webkit-text-fill-color: currentColor;
+  color: rgba(17, 21, 22, 0.55);
+}
+
+.lh .pg-lead {
+  color: rgba(17, 21, 22, 0.75);
+}
+
+.mobile .lh .lh-bg {
+  clip-path: inset(68px 8px 8px 8px round 20px);
+}
+
+.mobile .lh .lh-bg::after {
+  background: rgba(236, 238, 240, 0.45);
+}
+
+/* botões do hero sobre o prata: principal escuro, secundário com contorno escuro */
+.lh .pg-btn {
+  background-color: #111516;
+  border-color: #111516;
+  color: #fff;
+}
+
+.lh .pg-btn-ghost {
+  background-color: rgba(255, 255, 255, 0.35);
+  border-color: rgba(17, 21, 22, 0.35);
+  color: #111516;
+}
+
+.lh .pg-btn-ghost::after {
+  display: none;
+}
+
+/* ---------- conteúdo vindo do painel ---------- */
+/* capa de artigo enviada como foto */
+.ins-cover.is-photo {
+  padding: 0;
+  overflow: hidden;
+}
+
+.ins-cover.is-photo img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* erro no envio de formulário */
+.form-error {
+  margin: 0;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: rgba(175, 0, 95, 0.08);
+  color: #8a0049;
+  font-size: 14px;
+}
+
+.form-submit[disabled] {
+  opacity: 0.7;
+  cursor: progress;
+}
+
+/* ===================================================================
+   Desempenho
+   =================================================================== */
+/* menu em tela cheia fechado: as ilustrações dele não animam escondidas (eram ~40 animações rodando
+   o tempo todo, em todas as páginas) */
+.mn:not(.is-open) *,
+.mn:not(.is-open) *::before,
+.mn:not(.is-open) *::after {
+  animation-play-state: paused !important;
+}
+
+/* brilho dos botões: parado (com o reflexo visível na borda) e girando só com o mouse em cima.
+   Girar sempre obrigava o navegador a repintar cada botão em todos os quadros. */
+:is(.v2-btn, .pg-btn, .form-submit, .pg-btn-ghost)::before,
+:is(.v2-btn, .pg-btn, .form-submit, .pg-btn-ghost)::after {
+  animation-play-state: paused;
+}
+
+:is(.v2-btn, .pg-btn, .form-submit, .pg-btn-ghost):is(:hover, :focus-visible)::before,
+:is(.v2-btn, .pg-btn, .form-submit, .pg-btn-ghost):is(:hover, :focus-visible)::after {
+  animation-play-state: running;
+}
+
+/* artigo do editor visual: os blocos ocupam a coluna do texto */
+.ins-article .kb-doc {
+  gap: 20px;
+}
+
+.ins-byline {
+  margin-bottom: 20px;
+}
+
+/* pré-visualização do painel: destaca o trecho que está sendo editado */
+.kv-hl {
+  outline: 3px solid #00afef !important;
+  outline-offset: 6px;
+  border-radius: 6px;
+  animation: kv-hl 2.6s ease-out;
+}
+
+@keyframes kv-hl {
+  0%,
+  60% {
+    outline-color: #00afef;
+    box-shadow: 0 0 0 12px rgba(0, 175, 239, 0.18);
+  }
+  100% {
+    outline-color: rgba(0, 175, 239, 0);
+    box-shadow: 0 0 0 0 rgba(0, 175, 239, 0);
+  }
+}

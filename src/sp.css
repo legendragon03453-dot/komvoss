@@ -1,0 +1,571 @@
+/* ===================================================================
+   Tema prateado (todo o site)
+   Troca o azul dos destaques por prata, mantendo a base cinza da marca.
+   (O azul continua só como cor de marca da Statum.)
+   =================================================================== */
+/* depois do index.css: estes tokens substituem os azuis originais */
+:root,
+.theme-silver {
+  --accent: #cdd2d6;
+  --accent-strong: #8e949a;
+  --grad: linear-gradient(90deg, #8e949a, #e6e9ec);
+  --silver: linear-gradient(135deg, #eceef0 0%, #c4c8cc 26%, #f5f6f7 48%, #aeb3b8 74%, #dcdfe2 100%);
+  --silver-line: rgba(214, 218, 222, 0.28);
+  --grad-hero: linear-gradient(90deg, #8e949a, #e6e9ec 55%, #ffffff);
+}
+
+/* Home: pontos em que o azul estava escrito direto no CSS */
+html .v2-service-link {
+  border-bottom-color: var(--silver-line);
+}
+
+/* anel, linhas do ecossistema e brilho da arquitetura vêm do Figma em azul: viram prata por filtro */
+html :is(.v2-eco-ring, .v2-eco-branch img, .v2-eco-stem img, .v2-arch-highlight img) {
+  filter: grayscale(1) brightness(1.35) contrast(0.95);
+}
+
+/* número do passo ativo escuro sobre o quadrado prateado */
+html .v2-arch-square.is-active {
+  color: #111516;
+}
+
+html .v2-eco-signal {
+  box-shadow: 0 0 16px 4px rgba(220, 224, 228, 0.7);
+}
+
+html .mobile .v2-arch-text.is-active {
+  background: linear-gradient(135deg, rgba(205, 210, 214, 0.26), rgba(205, 210, 214, 0.08));
+  box-shadow: 0 0 50px rgba(205, 210, 214, 0.14);
+}
+
+html .komvos-features .ib-root[data-theme='dark'] {
+  --ib-soft: #cfd3d6;
+  --ib-muted: #8f959a;
+  --ib-faint: #5b6164;
+  --ib-inv: #dfe3e6;
+}
+
+.theme-silver .front-slider-knob {
+  box-shadow: 0 0 0 6px rgba(214, 218, 222, 0.16);
+}
+
+.theme-silver .front-slider-track:focus-within .front-slider-knob {
+  box-shadow: 0 0 0 8px rgba(214, 218, 222, 0.35);
+}
+
+.theme-silver .sb-card:hover {
+  border-color: var(--silver-line);
+}
+
+/* ===================================================================
+   Página de cada solução
+   =================================================================== */
+
+/* ---------- hero ---------- */
+/* acima do fundo animado */
+.sp-hero > .pg-wrap {
+  position: relative;
+  z-index: 1;
+}
+
+.sp-hero-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(32px, 5vw, 80px);
+}
+
+.sp-hero-copy .pg-crumbs {
+  margin-bottom: 40px;
+}
+
+.sp-hero-copy .pg-lead {
+  max-width: 34rem;
+}
+
+.sp-art-card {
+  position: relative;
+  aspect-ratio: 5 / 4;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: clamp(24px, 3vw, 44px);
+  overflow: hidden;
+  border-radius: 32px 10px 32px 10px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background:
+    radial-gradient(60% 70% at 50% 35%, rgba(205, 210, 214, 0.12), transparent 70%),
+    linear-gradient(rgba(147, 149, 152, 0.07) 1px, transparent 1px) 0 0 / 32px 32px,
+    linear-gradient(90deg, rgba(147, 149, 152, 0.07) 1px, transparent 1px) 0 0 / 32px 32px,
+    rgba(21, 26, 27, 0.6);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: inset 0 -30px 90px -30px rgba(205, 210, 214, 0.14);
+}
+
+.sp-art-card .sb-art {
+  width: 100%;
+  height: auto;
+  max-width: none;
+}
+
+.sp-art-num {
+  position: absolute;
+  top: 14px;
+  right: 22px;
+  font-size: clamp(56px, 6vw, 96px);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  background: var(--silver);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  opacity: 0.22;
+}
+
+.sp-art-caption {
+  margin-top: 18px;
+  font-size: 14px;
+  font-weight: 300;
+  color: rgba(244, 247, 251, 0.62);
+}
+
+.sp-front {
+  margin-top: clamp(48px, 6vw, 88px);
+}
+
+/* links das frentes com a mesma cara dos botões do seletor */
+.sp-front .front-slider-stops a {
+  font-size: 15px;
+  color: rgba(244, 247, 251, 0.7);
+  transition: color 0.2s;
+}
+
+.sp-front .front-slider-stops a span {
+  font-size: 11px;
+  margin-right: 4px;
+}
+
+.sp-front .front-slider-stops a.is-active,
+.sp-front .front-slider-stops a:hover {
+  color: var(--accent);
+}
+
+.mobile .sp-front .front-slider-stops a {
+  font-size: 12px;
+}
+
+/* ---------- antes → depois ---------- */
+.sp-ba-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.sp-ba-row {
+  display: grid;
+  grid-template-columns: 64px minmax(0, 1fr) 56px minmax(0, 1fr);
+  align-items: center;
+  gap: 16px;
+  padding: clamp(28px, 3.4vw, 48px) 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.sp-ba-num {
+  align-self: start;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: rgba(244, 247, 251, 0.45);
+}
+
+.sp-ba-tag {
+  display: block;
+  margin-bottom: 10px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(244, 247, 251, 0.45);
+}
+
+.sp-ba-before p,
+.sp-ba-after p {
+  margin: 0;
+  font-size: clamp(18px, 1.55vw, 26px);
+  line-height: 1.4;
+  letter-spacing: -0.01em;
+}
+
+.sp-ba-before p {
+  font-weight: 300;
+  color: rgba(244, 247, 251, 0.78);
+}
+
+/* risco que se desenha sobre a dor conforme o scroll (atravessa todas as linhas do texto) */
+.sp-ba-strike {
+  --strike: 0%;
+  background: linear-gradient(rgba(214, 218, 222, 0.8), rgba(214, 218, 222, 0.8)) 0 58% / var(--strike) 1.5px no-repeat;
+}
+
+.sp-ba-arrow {
+  justify-self: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--silver-line);
+  font-size: 18px;
+  color: #e6e9ec;
+}
+
+.sp-ba-after .sp-ba-tag {
+  background: var(--silver);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.sp-ba-after p {
+  font-weight: 500;
+  color: #f4f7fb;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sp-ba-strike {
+    --strike: 100%;
+  }
+
+  .sp-ba-before {
+    opacity: 0.55;
+  }
+}
+
+/* ---------- bento das entregas ---------- */
+.sp-bento {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.sp-card {
+  --mx: 50%;
+  --my: 0%;
+  position: relative;
+  grid-column: span var(--span, 2);
+  min-height: 15rem;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: clamp(24px, 2.4vw, 36px);
+  overflow: hidden;
+  border-radius: 10px;
+  background: #151a1b;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: inset 0 -20px 80px -20px rgba(147, 149, 152, 0.12);
+  transition: border-color 0.35s, transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.sp-card:first-child {
+  border-top-left-radius: 32px;
+}
+
+.sp-card:last-child {
+  border-bottom-right-radius: 32px;
+}
+
+/* brilho prateado que segue o ponteiro */
+.sp-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: radial-gradient(420px circle at var(--mx) var(--my), rgba(220, 224, 228, 0.12), transparent 60%);
+  opacity: 0;
+  transition: opacity 0.4s;
+  pointer-events: none;
+}
+
+.sp-card:hover {
+  border-color: var(--silver-line);
+  transform: translateY(-4px);
+}
+
+.sp-card:hover::before {
+  opacity: 1;
+}
+
+.sp-card > * {
+  position: relative;
+  z-index: 1;
+}
+
+.sp-card-num {
+  font-size: clamp(40px, 3.6vw, 60px);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  background: var(--silver);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.sp-card h3 {
+  margin: auto 0 0;
+  padding-top: 24px;
+  font-size: clamp(19px, 1.5vw, 24px);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+.sp-card p {
+  max-width: 44ch;
+  font-size: 14px;
+  line-height: 1.6;
+  font-weight: 300;
+  color: rgba(244, 247, 251, 0.62);
+}
+
+.sp-card.is-wide h3 {
+  font-size: clamp(22px, 1.9vw, 30px);
+}
+
+.sp-card.is-wide p {
+  font-size: 15px;
+}
+
+/* linha prateada que cresce no hover */
+.sp-card-line {
+  position: absolute !important;
+  left: 0;
+  bottom: 0;
+  height: 2px;
+  width: 100%;
+  background: var(--silver);
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.sp-card:hover .sp-card-line {
+  transform: scaleX(1);
+}
+
+/* ---------- Komvos Mind ---------- */
+.sp-mind {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: clamp(28px, 3.4vw, 48px) clamp(24px, 3.4vw, 56px);
+  border-radius: 32px 10px 32px 10px;
+  background: var(--silver);
+  color: #111516;
+  transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.35s;
+}
+
+.sp-mind:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 60px -20px rgba(214, 218, 222, 0.35);
+}
+
+.sp-mind-kicker {
+  margin-bottom: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(17, 21, 22, 0.6);
+}
+
+.sp-mind strong {
+  display: block;
+  max-width: 34ch;
+  font-size: clamp(20px, 1.8vw, 30px);
+  font-weight: 500;
+  letter-spacing: -0.015em;
+}
+
+.sp-mind-cta {
+  flex: none;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+/* ---------- quem executa ---------- */
+.sp-exec-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: clamp(28px, 3vw, 44px);
+  overflow: hidden;
+  border-radius: 32px 10px 32px 10px;
+  background: #151a1b;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: inset 0 -20px 80px -20px rgba(147, 149, 152, 0.14);
+  transition: border-color 0.35s, transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* faixa prateada no topo do card */
+.sp-exec-card::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 3px;
+  background: var(--silver);
+}
+
+.sp-exec-card:hover {
+  border-color: var(--silver-line);
+  transform: translateY(-4px);
+}
+
+.sp-exec-logo {
+  margin-bottom: 12px;
+}
+
+.sp-exec-logo .pg-company-logo {
+  max-height: 40px;
+  width: auto;
+}
+
+.sp-exec-area {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(244, 247, 251, 0.5);
+}
+
+.sp-exec-card strong {
+  font-size: clamp(24px, 2vw, 32px);
+  font-weight: 500;
+}
+
+.sp-exec-card p {
+  font-size: 15px;
+  font-weight: 300;
+  line-height: 1.6;
+  color: rgba(244, 247, 251, 0.7);
+}
+
+.sp-more {
+  margin-top: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #e6e9ec;
+}
+
+/* ---------- outras soluções ---------- */
+.sp-others-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.sp-other {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow: hidden;
+  padding-bottom: 28px;
+  border-radius: 10px;
+  background: #151a1b;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transition: border-color 0.35s, transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.sp-other:hover {
+  border-color: var(--silver-line);
+  transform: translateY(-4px);
+}
+
+.sp-other > :not(.sp-other-art) {
+  padding: 0 clamp(20px, 2vw, 28px);
+}
+
+.sp-other-art {
+  height: 12rem;
+  margin-bottom: 12px;
+  padding: 18px;
+  display: flex;
+  justify-content: center;
+  background:
+    radial-gradient(60% 70% at 50% 35%, rgba(205, 210, 214, 0.1), transparent 70%),
+    linear-gradient(rgba(147, 149, 152, 0.06) 1px, transparent 1px) 0 0 / 28px 28px,
+    linear-gradient(90deg, rgba(147, 149, 152, 0.06) 1px, transparent 1px) 0 0 / 28px 28px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.sp-other-art .sb-art {
+  height: 100%;
+  transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.sp-other:hover .sb-art {
+  transform: scale(1.05);
+}
+
+.sp-other-num {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: rgba(244, 247, 251, 0.5);
+}
+
+.sp-other strong {
+  font-size: clamp(19px, 1.5vw, 23px);
+  font-weight: 500;
+}
+
+.sp-other p {
+  font-size: 14px;
+  font-weight: 300;
+  line-height: 1.55;
+  color: rgba(244, 247, 251, 0.62);
+}
+
+/* ---------- celular ---------- */
+.mobile .sp-hero-grid {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 36px;
+}
+
+.mobile .sp-art-card {
+  aspect-ratio: auto;
+  padding: 22px;
+}
+
+.mobile .sp-ba-row {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 12px;
+}
+
+.mobile .sp-ba-arrow {
+  justify-self: start;
+  width: 36px;
+  height: 36px;
+  rotate: 90deg;
+}
+
+.mobile .sp-bento,
+.mobile .sp-others-grid {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.mobile .sp-card {
+  grid-column: auto;
+  min-height: 0;
+}
+
+.mobile .sp-mind {
+  flex-direction: column;
+  align-items: flex-start;
+}

@@ -1,0 +1,452 @@
+/* ===================================================================
+   Reels: carrossel vertical + modal com o player do Instagram
+   =================================================================== */
+.reels {
+  padding-top: 32px;
+  padding-bottom: 16px;
+  overflow: hidden;
+}
+
+.servico--reels {
+  display: grid;
+  grid-template-columns: 520px minmax(0, 1fr);
+  gap: 64px;
+  align-items: center;
+}
+
+.servico-txt {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.servico-num {
+  font-size: 93.6px;
+  font-weight: 600;
+  line-height: 1;
+  color: var(--light);
+  margin-bottom: 32px;
+  font-variant-numeric: tabular-nums;
+}
+
+.servico-num small {
+  font-size: 27.2px;
+  font-weight: 500;
+  color: var(--accent);
+}
+
+.servico--reels .sec-title {
+  font-size: 54.21px;
+}
+
+.servico-desc {
+  margin-top: 22.4px;
+  font-size: 21.25px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.servico-link {
+  margin-top: 22.4px;
+  font-size: 20.24px;
+  font-weight: 600;
+  color: var(--accent);
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.2s;
+}
+
+.servico-link:hover {
+  border-color: var(--accent);
+}
+
+.car-navs {
+  margin-top: 44.8px;
+  display: flex;
+  gap: 11.2px;
+}
+
+.car-nav {
+  width: 68px;
+  height: 57.8px;
+  border-radius: 10px;
+  border: 1px solid var(--accent);
+  background: transparent;
+  color: var(--light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, opacity 0.2s;
+}
+
+.car-nav svg {
+  width: 28px;
+  height: 28px;
+}
+
+.car-nav:hover:not(:disabled) {
+  background: var(--grad);
+  color: #fff;
+}
+
+.car-nav:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+/* Trilho: sangra até a borda direita da página */
+.carrossel {
+  position: relative;
+  min-width: 0;
+  margin-right: -32px;
+}
+
+.car-trilho {
+  display: flex;
+  column-gap: 19.2px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  padding: 8px 32px 8px 0;
+  cursor: grab;
+  user-select: none;
+}
+
+.car-trilho::-webkit-scrollbar {
+  display: none;
+}
+
+.car-trilho.is-dragging {
+  cursor: grabbing;
+  scroll-snap-type: none;
+}
+
+.car-item {
+  position: relative;
+  flex: 0 0 280px;
+  aspect-ratio: 9 / 16;
+  border-radius: 16.32px;
+  overflow: hidden;
+  scroll-snap-align: start;
+  background: #191e1f;
+  border: 1px solid rgba(147, 149, 152, 0.17);
+  transition: border-color 0.3s;
+}
+
+.car-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.7s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.car-item::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(17, 21, 22, 0.35) 0%, transparent 25%, transparent 50%, rgba(17, 21, 22, 0.92) 100%);
+  pointer-events: none;
+}
+
+.car-item:hover {
+  border-color: var(--accent);
+}
+
+.car-item:hover img {
+  transform: scale(1.06);
+}
+
+.car-idx {
+  position: absolute;
+  z-index: 2;
+  left: 20px;
+  top: 18px;
+  font-size: 18.4px;
+  font-weight: 600;
+  color: var(--light);
+}
+
+.car-play {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  padding: 17.6px;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  display: flex;
+  align-items: flex-end;
+  cursor: pointer;
+}
+
+.car-play:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: -3px;
+  border-radius: 16.32px;
+}
+
+.car-play-ico {
+  position: absolute;
+  right: 20px;
+  bottom: 20px;
+  width: 64px;
+  height: 54.4px;
+  border-radius: 50%;
+  background: var(--grad);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.car-play-ico::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 2px solid var(--accent);
+  animation: pulse 2.6s ease-out infinite;
+}
+
+.car-play-ico svg {
+  width: 28px;
+  height: 28px;
+  margin-left: 4px;
+}
+
+.car-play:hover .car-play-ico {
+  transform: scale(1.12);
+}
+
+.car-cap {
+  padding-right: 60.8px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.car-cap em {
+  font-style: normal;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--light);
+  background: var(--grad);
+  padding: 6px 9.6px;
+  border-radius: 7.461px;
+}
+
+.car-cap b {
+  font-size: 20.4px;
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--light);
+}
+
+.car-progress {
+  margin: 24px 32px 0 0;
+  height: 2px;
+  background: rgba(147, 149, 152, 0.25);
+}
+
+.car-progress span {
+  display: block;
+  height: 100%;
+  background: var(--grad);
+  transition: width 0.3s;
+}
+
+/* Modal do vídeo */
+.reel-modal {
+  --w: min(400px, calc(100vw - 64px), calc((100dvh - 380px) / 1.25));
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(17, 21, 22, 0.88);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  animation: modal-fade 0.3s ease-out;
+}
+
+.reel-modal-box {
+  width: calc(var(--w) + 32px);
+  padding: 12.8px;
+  border-radius: 20px;
+  background: #191e1f;
+  border: 1px solid rgba(147, 149, 152, 0.25);
+  display: flex;
+  flex-direction: column;
+  gap: 11.2px;
+  animation: modal-pop 0.45s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.reel-modal-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 9.6px;
+}
+
+.reel-modal-head div {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6.4px;
+}
+
+.reel-modal-tag {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--light);
+  background: var(--grad);
+  padding: 4px 8px;
+  border-radius: 6px;
+}
+
+.reel-modal-head strong {
+  font-size: 16.56px;
+  font-weight: 600;
+  color: var(--light);
+}
+
+.reel-modal-close {
+  flex: none;
+  width: 40px;
+  height: 34px;
+  border-radius: 8px;
+  border: 1px solid rgba(147, 149, 152, 0.3);
+  background: transparent;
+  color: var(--light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.reel-modal-close:hover {
+  background: var(--grad);
+  color: #fff;
+}
+
+.reel-modal-close svg {
+  width: 20px;
+  height: 20px;
+}
+
+.reel-modal-frame {
+  display: block;
+  width: var(--w);
+  height: calc(var(--w) * 1.25 + 208px);
+  border: 0;
+  border-radius: 12px;
+  background: var(--surface);
+}
+
+.reel-modal-link {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--accent);
+  text-align: center;
+}
+
+@keyframes modal-fade {
+  from { opacity: 0; }
+}
+
+@keyframes modal-pop {
+  from { opacity: 0; transform: translateY(30px) scale(0.96); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .car-play-ico::before { animation: none; opacity: 0; }
+  .reel-modal,
+  .reel-modal-box { animation: none; }
+}
+
+/* Mobile */
+.mobile .reels {
+  padding-top: 0;
+}
+
+.mobile .servico--reels {
+  grid-template-columns: 1fr;
+  gap: 28.8px;
+}
+
+.mobile .servico-num {
+  font-size: 43.68px;
+  margin-bottom: 16px;
+}
+
+.mobile .servico-num small {
+  font-size: 16.56px;
+}
+
+.mobile .servico--reels .sec-title {
+  font-size: clamp(23.4px, 6.63vw, 40.56px);
+}
+
+.mobile .servico-desc {
+  margin-top: 12.8px;
+  font-size: 14.72px;
+}
+
+.mobile .servico-link {
+  margin-top: 12.8px;
+  font-size: 14.72px;
+}
+
+.mobile .car-navs {
+  margin-top: 19.2px;
+}
+
+.mobile .car-nav {
+  width: 48px;
+  height: 40.8px;
+}
+
+.mobile .car-nav svg {
+  width: 22px;
+  height: 22px;
+}
+
+.mobile .carrossel {
+  margin: 0 -16px;
+}
+
+.mobile .car-trilho {
+  column-gap: 11.2px;
+  padding: 6px 16px;
+  scroll-padding-left: 20px;
+}
+
+.mobile .car-item {
+  flex-basis: min(72vw, 300px);
+}
+
+.mobile .car-play-ico {
+  right: 16px;
+  bottom: 16px;
+  width: 52px;
+  height: 44.2px;
+}
+
+.mobile .car-cap {
+  padding-right: 48px;
+}
+
+.mobile .car-cap b {
+  font-size: 17.48px;
+}
+
+.mobile .car-progress {
+  margin: 16px 16px 0;
+}

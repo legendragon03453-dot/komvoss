@@ -1,0 +1,68 @@
+/* ===================================================================
+   Animações: camadas, selos, conectores, barra de progresso e intro
+   =================================================================== */
+html.is-loading,
+html.menu-open {
+  overflow: hidden;
+}
+
+.badge {
+  position: absolute;
+}
+
+.badge > img {
+  position: relative;
+  display: block;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); opacity: 0.7; }
+  100% { transform: scale(1.55); opacity: 0; }
+}
+
+/* Intro */
+.intro {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background:
+    linear-gradient(rgba(147, 149, 152, 0.1) 1px, transparent 1px) 0 0 / 5.26vw 4.27vw,
+    linear-gradient(90deg, rgba(147, 149, 152, 0.1) 1px, transparent 1px) 0 0 / 5.26vw 4.27vw,
+    var(--dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Logo oficial: largura fixa e altura automática, para nunca distorcer a proporção. */
+.intro-logo {
+  display: block;
+  width: clamp(200px, 22vw, 360px);
+  height: auto;
+}
+
+.intro-bar {
+  position: absolute;
+  left: 5vw;
+  right: 5vw;
+  bottom: 6vh;
+  height: 1px;
+  background: rgba(147, 149, 152, 0.25);
+}
+
+.intro-bar span {
+  display: block;
+  height: 100%;
+  background: var(--grad);
+  transform-origin: 0 50%;
+}
+
+.intro-count {
+  position: absolute;
+  right: 5vw;
+  bottom: calc(6vh + 14px);
+  font-size: clamp(14px, 1.1vw, 20px);
+  font-weight: 600;
+  color: var(--light);
+  font-variant-numeric: tabular-nums;
+}

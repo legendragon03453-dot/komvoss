@@ -1,0 +1,464 @@
+/* ===================================================================
+   Identidade: o site é cinza/prata, com verde (#00aa9e) e roxo (#af005f)
+   da marca em detalhes, e painéis brancos em alguns blocos.
+   =================================================================== */
+
+/* texto com o gradiente verde → roxo */
+.brand-text {
+  background: linear-gradient(90deg, var(--senior), var(--trusth) 35%, var(--statum) 70%, var(--senior));
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: grad-flow 7s ease-in-out infinite alternate;
+}
+
+/* ---------- detalhes em cor ---------- */
+
+/* ilustrações das soluções (bento, heros, capas de artigo, menu): o destaque segue a empresa
+   responsável pela frente: verde Senior, rosa Trusth, azul Statum */
+.sb-art.is-senior {
+  --accent: var(--senior);
+}
+
+.sb-art.is-trusth {
+  --accent: var(--trusth);
+}
+
+.sb-art.is-statum {
+  --accent: var(--statum);
+}
+
+.sb-art.is-statum .sb-agent circle {
+  stroke: var(--statum);
+}
+
+.sb-art.is-statum .sb-agent path {
+  fill: var(--statum);
+}
+
+/* "Conectar / Acelerar" (Home): linha do gráfico verde, pacotes roxos, etiqueta verde */
+.komvos-features .ib-root[data-theme='dark'] {
+  --ib-inv: var(--green);
+  --ib-inv-ink: #fff;
+}
+
+.komvos-features .ib-line-draw {
+  stroke: var(--green);
+  opacity: 1;
+}
+
+.komvos-features .ib-pkt {
+  fill: var(--purple);
+}
+
+/* "Conectar": o pacote e o caminho que ele percorre em azul */
+.komvos-features .ib-integrations .ib-pkt {
+  fill: var(--statum);
+}
+
+.komvos-features .ib-integrations .ib-flow-on {
+  stroke: var(--statum);
+}
+
+.komvos-features .ib-glow {
+  stroke: rgba(175, 0, 95, 0.55);
+}
+
+.komvos-features .ib-tag {
+  border-color: rgba(154, 161, 167, 0.5);
+  color: #dfe3e6;
+}
+
+/* seletor das frentes */
+.front-slider-fill {
+  background: var(--brand-grad);
+}
+
+.front-slider-tick.is-on {
+  background: var(--green);
+}
+
+.front-slider-knob {
+  background: #fff;
+  box-shadow: 0 0 0 5px rgba(154, 161, 167, 0.3);
+}
+
+/* passo ativo de "Como trabalhamos" (fundo prateado) */
+.atp-node.is-active .atp-node-dot {
+  background: var(--green);
+  border-color: var(--green);
+  box-shadow: 0 0 0 6px rgba(154, 161, 167, 0.2);
+}
+
+.atp-rail-fill {
+  background: linear-gradient(90deg, var(--ink, #111516) 60%, var(--green));
+}
+
+/* órbitas do Komvos Mind */
+.orb-ring.is-inner .orb-dot {
+  background: var(--green);
+  box-shadow: 0 0 10px rgba(154, 161, 167, 0.8);
+}
+
+.orb-ring.is-outer .orb-dot {
+  background: var(--purple);
+  box-shadow: 0 0 10px rgba(175, 0, 95, 0.8);
+}
+
+.mind-step.is-active .mind-step-num {
+  background: var(--brand-grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+/* feixes do ecossistema: entrada verde, saídas roxas */
+.ab g:first-of-type .ab-pulse {
+  stroke: #f4f6f8;
+  filter: drop-shadow(0 0 6px rgba(154, 161, 167, 0.9));
+}
+
+.ab g:not(:first-of-type) .ab-pulse {
+  stroke: #f05aa8;
+  filter: drop-shadow(0 0 6px rgba(175, 0, 95, 0.9));
+}
+
+/* linha do tempo */
+.stl-fill {
+  background: linear-gradient(to bottom, transparent, var(--green) 15%, var(--purple) 90%);
+  box-shadow: 0 0 12px rgba(154, 161, 167, 0.45);
+}
+
+.stl-dot::after {
+  background: var(--brand-grad);
+}
+
+/* barra de leitura dos artigos */
+.ins-progress {
+  background: var(--brand-grad);
+  box-shadow: 0 0 12px rgba(154, 161, 167, 0.5);
+}
+
+/* etapas do contato: linha com brilho verde */
+.flow::before {
+  background:
+    linear-gradient(90deg, transparent, var(--green), var(--purple), transparent) 0 0 / 30% 100% no-repeat,
+    rgba(255, 255, 255, 0.12);
+}
+
+/* ---------- painéis brancos ---------- */
+.is-white,
+.social-panel,
+.cms-stat,
+.contact-info,
+.about-card:first-child {
+  --panel-ink: #111516;
+  background: #f4f6f8;
+  border-color: transparent;
+  color: var(--panel-ink);
+  box-shadow: 0 30px 80px -40px rgba(0, 0, 0, 0.6);
+}
+
+/* Prova social da Home */
+.social-panel .eyebrow,
+.social-panel .logos-label {
+  color: rgba(17, 21, 22, 0.55);
+}
+
+.social-panel .sec-title {
+  color: #111516;
+}
+
+.social-panel .teal,
+.social-panel .numero strong,
+.cms-stat strong {
+  background: var(--brand-grad);
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.social-panel .numeros {
+  border-top-color: rgba(17, 21, 22, 0.12);
+}
+
+.social-panel .numero span {
+  color: rgba(17, 21, 22, 0.75);
+}
+
+.cms-stat span {
+  color: rgba(17, 21, 22, 0.7);
+}
+
+.cms-stat::before,
+.contact-info::before,
+.about-card:first-child::before {
+  background: radial-gradient(420px circle at var(--mx) var(--my), rgba(154, 161, 167, 0.1), transparent 60%);
+}
+
+.contact-info h2,
+.contact-info dt {
+  color: rgba(17, 21, 22, 0.55);
+}
+
+.contact-info address {
+  color: rgba(17, 21, 22, 0.75);
+}
+
+.contact-info address strong {
+  color: #111516;
+}
+
+.about-card:first-child .pg-eyebrow {
+  color: var(--green);
+}
+
+/* janela do agente em branco, como um app */
+.ap {
+  border-color: transparent;
+  background: #f4f6f8;
+  color: #111516;
+}
+
+.ap-note,
+.ap-foot,
+.ap-sub {
+  color: rgba(17, 21, 22, 0.5);
+}
+
+.ap-sub.is-run,
+.ap-label {
+  color: #111516;
+}
+
+.ap-task.is-todo .ap-label {
+  color: rgba(17, 21, 22, 0.4);
+}
+
+.ap-task.is-done .ap-label {
+  color: rgba(17, 21, 22, 0.65);
+}
+
+.ap-task {
+  border-bottom-color: rgba(17, 21, 22, 0.08);
+}
+
+.ap-bar {
+  background: rgba(17, 21, 22, 0.08);
+}
+
+.ap-bar span {
+  background: var(--brand-grad);
+}
+
+.ap-live {
+  background: var(--green);
+  box-shadow: 0 0 0 0 rgba(154, 161, 167, 0.6);
+}
+
+.ap-live.is-done {
+  background: rgba(154, 161, 167, 0.5);
+}
+
+@keyframes ap-live {
+  to {
+    box-shadow: 0 0 0 8px rgba(154, 161, 167, 0);
+  }
+}
+
+.ap-badge {
+  border-color: rgba(17, 21, 22, 0.15);
+  color: rgba(17, 21, 22, 0.5);
+}
+
+.ap-task.is-run .ap-badge {
+  background: var(--purple);
+  color: #fff;
+}
+
+.ap-ic {
+  border-color: rgba(17, 21, 22, 0.25);
+}
+
+.ap-ic.is-done {
+  background: var(--green);
+}
+
+.ap-ic svg {
+  stroke: #fff;
+}
+
+.ap-ic.is-run {
+  border-color: rgba(175, 0, 95, 0.2);
+  border-top-color: var(--purple);
+}
+
+/* ---------- logos de clientes (selos brancos) ---------- */
+.client-logos {
+  display: grid;
+  gap: 14px;
+  margin-top: 20px;
+}
+
+.client-logo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 170px;
+  height: 92px;
+  padding: 14px 18px;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow:
+    0 0 0 1px rgba(17, 21, 22, 0.06),
+    0 10px 24px -14px rgba(17, 21, 22, 0.35);
+}
+
+.client-logo img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+/* ---------- parceiros oficiais (Home) ---------- */
+.partners {
+  padding: clamp(48px, 6vw, 96px) var(--gutter) 0;
+}
+
+.partners-inner {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+  align-items: center;
+  gap: clamp(28px, 4vw, 64px);
+  padding: clamp(28px, 3.4vw, 52px);
+  overflow: hidden;
+  border-radius: 32px 10px 32px 10px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background:
+    radial-gradient(60% 120% at 0% 0%, rgba(154, 161, 167, 0.1), transparent 60%),
+    radial-gradient(60% 120% at 100% 100%, rgba(175, 0, 95, 0.1), transparent 60%),
+    #151a1b;
+}
+
+/* fio verde → roxo no topo */
+.partners-inner::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 2px;
+  background: var(--brand-grad);
+}
+
+.partners-eyebrow {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(244, 247, 251, 0.55);
+}
+
+.partners-copy h2 {
+  margin: 10px 0 12px;
+  font-size: clamp(24px, 2.4vw, 40px);
+  font-weight: 400;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+.partners-copy p:last-child {
+  max-width: 34rem;
+  font-size: 15px;
+  font-weight: 300;
+  color: rgba(244, 247, 251, 0.65);
+}
+
+.partners-logos {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.partners-logos li {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  height: clamp(120px, 11vw, 160px);
+  padding: 20px;
+  border-radius: 18px;
+  background: #fff;
+  transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.35s;
+}
+
+.partners-logos li:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 50px -20px rgba(154, 161, 167, 0.45);
+}
+
+.partners-logos img {
+  width: auto;
+  max-width: 78%;
+  height: clamp(26px, 2.6vw, 40px);
+  object-fit: contain;
+}
+
+.partners-logos span {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--green);
+}
+
+.mobile .partners {
+  padding: 40px 16px 0;
+}
+
+.mobile .partners-inner {
+  grid-template-columns: minmax(0, 1fr);
+  padding: 24px;
+}
+
+.mobile .partners-logos li {
+  height: 104px;
+}
+
+.mobile .client-logo {
+  width: 132px;
+  height: 72px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .brand-text {
+    animation: none;
+  }
+}
+
+/* hero da Home: destaque "Mais rápida." no verde → roxo */
+.v2-grad.v2-grad-hero {
+  background-image: linear-gradient(90deg, var(--senior), var(--trusth), var(--statum), var(--trusth), var(--senior));
+  background-size: 300% 100%;
+}
+
+.mobile .partners-logos {
+  gap: 8px;
+}
+
+.mobile .partners-logos li {
+  height: 92px;
+  padding: 12px 8px;
+  gap: 10px;
+}
+
+.mobile .partners-logos span {
+  font-size: 9px;
+  text-align: center;
+}

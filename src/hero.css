@@ -1,0 +1,296 @@
+/* ===================================================================
+   Hero da Home: logo completo + rede de conexões do ecossistema
+   =================================================================== */
+
+/* logo completo no cabeçalho */
+.v2-header-wordmark {
+  display: block;
+  width: auto;
+  height: 38px;
+}
+
+.mobile .v2-header-wordmark {
+  height: 26px;
+}
+
+.hx-particles {
+  z-index: 0;
+  opacity: 0.9;
+}
+
+/* o hero passa a ter texto à esquerda e a rede à direita */
+.v2-hero-content.hx {
+  max-width: none;
+  padding: 104px clamp(20px, 6vw, 120px) 48px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  align-items: center;
+  justify-items: stretch;
+  gap: clamp(24px, 4vw, 72px);
+  text-align: left;
+}
+
+.hx-copy {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.hx-logo {
+  width: clamp(240px, 26vw, 440px);
+  height: auto;
+  margin-bottom: clamp(22px, 2.6vw, 40px);
+  filter: drop-shadow(0 10px 40px rgba(205, 210, 214, 0.18));
+}
+
+.hx .v2-hero-title {
+  font-size: clamp(30px, 3.2vw, 58px);
+}
+
+.hx .v2-hero-lead {
+  margin: clamp(14px, 1.2vw, 22px) 0 clamp(24px, 2.2vw, 38px);
+}
+
+.hx-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+.hx-actions .pg-btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  height: var(--h, 58px);
+  padding: 0 22px;
+}
+
+.hx-visual {
+  display: flex;
+  justify-content: center;
+}
+
+/* ---------- rede ---------- */
+.hn {
+  container-type: inline-size;
+  position: relative;
+  width: min(100%, 62vh, 600px);
+  aspect-ratio: 1;
+}
+
+.hn-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.hn-ring {
+  fill: none;
+  stroke: rgba(205, 210, 214, 0.16);
+  stroke-dasharray: 3 6;
+}
+
+.hn-ring.is-outer {
+  stroke: rgba(205, 210, 214, 0.09);
+}
+
+.hn-link {
+  stroke: rgba(205, 210, 214, 0.22);
+  stroke-width: 1.2;
+}
+
+.hn-link.is-faint {
+  stroke: rgba(205, 210, 214, 0.1);
+  stroke-dasharray: 2 5;
+}
+
+.hn-pulse {
+  fill: none;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-dasharray: 0.14 1;
+  stroke-dashoffset: 1.14;
+  filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.55));
+  animation: hn-pulse 2.6s cubic-bezier(0.6, 0, 0.4, 1) infinite;
+}
+
+.hn-pulse.is-slow {
+  stroke-width: 1.6;
+  animation-duration: 3.8s;
+  opacity: 0.8;
+}
+
+@keyframes hn-pulse {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.hn-dot {
+  filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.35));
+}
+
+/* núcleo */
+.hn-core {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 22%;
+  translate: -50% -50%;
+}
+
+/* tecnologias girando */
+.hn-orbit {
+  position: absolute;
+  inset: 0;
+  animation: orb-spin 60s linear infinite;
+}
+
+.hn-tech {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: rotate(var(--a)) translateX(calc(118 / 600 * 100cqw)) rotate(calc(var(--a) * -1));
+}
+
+.hn-tech > span {
+  display: inline-block;
+  translate: -50% -50%;
+  padding: 4px 9px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(21, 26, 27, 0.85);
+  font-family: ui-monospace, 'SFMono-Regular', Menlo, monospace;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: #dfe3e6;
+  animation: orb-spin 60s linear infinite reverse;
+}
+
+/* frentes */
+.hn-sol {
+  position: absolute;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  translate: -50% -50%;
+  padding: 8px 14px;
+  white-space: nowrap;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(21, 26, 27, 0.9);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  font-size: 13px;
+  font-weight: 500;
+  color: #f4f7fb;
+  transition: border-color 0.3s, transform 0.3s;
+}
+
+.hn-sol:hover,
+.hn-sol:focus-visible {
+  border-color: var(--c);
+  transform: scale(1.05);
+}
+
+.hn-sol-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--c);
+  box-shadow: 0 0 10px var(--c);
+}
+
+/* empresas: selos brancos do mesmo tamanho */
+
+@media (prefers-reduced-motion: reduce) {
+  .hn-pulse,
+  .hn-orbit,
+  .hn-tech > span {
+    animation: none;
+  }
+}
+
+/* ---------- celular ---------- */
+.mobile .v2-hero-content.hx {
+  grid-template-columns: minmax(0, 1fr);
+  padding: 92px 16px 48px;
+  gap: 36px;
+}
+
+.mobile .hx-logo {
+  width: 220px;
+}
+
+.mobile .hn {
+  width: min(100%, 360px);
+}
+
+.mobile .hn-sol {
+  padding: 5px 9px;
+  font-size: 10.5px;
+  gap: 5px;
+}
+
+.mobile .hn-sol-dot {
+  width: 7px;
+  height: 7px;
+}
+
+.mobile .hn-tech > span {
+  font-size: 9px;
+  padding: 3px 6px;
+}
+
+/* a vinheta acompanha o texto, agora à esquerda */
+.v2-hero-vignette {
+  background:
+    radial-gradient(ellipse 45% 55% at 25% 50%, rgba(17, 21, 22, 0.75), rgba(17, 21, 22, 0.2) 75%, transparent),
+    linear-gradient(to bottom, rgba(17, 21, 22, 0.85), rgba(17, 21, 22, 0) 28%, rgba(17, 21, 22, 0) 72%, rgba(17, 21, 22, 0.6));
+}
+
+/* ajustes de proporção */
+.v2-hero-content.hx {
+  grid-template-columns: minmax(0, 1.12fr) minmax(0, 0.88fr);
+}
+
+.hx .v2-hero-title {
+  font-size: clamp(28px, 2.85vw, 54px);
+}
+
+.hn {
+  width: min(100%, 66vh, 620px);
+}
+
+.hn-link {
+  stroke: rgba(205, 210, 214, 0.38);
+}
+
+.hn-link.is-faint {
+  stroke: rgba(205, 210, 214, 0.2);
+}
+
+.hn-ring {
+  stroke: rgba(205, 210, 214, 0.24);
+}
+
+.hx-actions .pg-btn-ghost {
+  height: clamp(46.4px, 3.48vw, 66.8px);
+  font-size: clamp(12.88px, 1.04vw, 18px);
+}
+
+.mobile .v2-hero-content.hx {
+  height: auto;
+}
+
+.mobile .hn {
+  width: 300px;
+}
+
+.mobile .hx-actions .pg-btn-ghost {
+  height: 46px;
+  font-size: 12.5px;
+}

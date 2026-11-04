@@ -1,0 +1,663 @@
+/* ===================================================================
+   Páginas internas
+   =================================================================== */
+.page {
+  overflow-x: clip;
+}
+
+.pg-wrap {
+  width: min(100% - 80px, 1840px);
+  margin-inline: auto;
+}
+
+.pg-eyebrow {
+  font-size: clamp(13.8px, 1.15vw, 20.24px);
+  color: var(--accent);
+  margin-bottom: 11.2px;
+}
+
+.pg-eyebrow.is-dark {
+  color: #fff;
+}
+
+.pg-h1 {
+  margin: 0;
+  max-width: 1300px;
+  font-size: clamp(34.32px, 4.84vw, 87.36px);
+  font-weight: 600;
+  line-height: 1.05;
+  color: #fff;
+}
+
+.pg-h2 {
+  margin: 0;
+  font-size: clamp(26.52px, 3.28vw, 56.16px);
+  font-weight: 600;
+  line-height: 1.1;
+  color: #fff;
+}
+
+.pg-lead {
+  margin-top: 25.6px;
+  max-width: 900px;
+  font-size: clamp(15.3px, 1.36vw, 22.1px);
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.pg-sublead {
+  margin-top: 17.6px;
+  max-width: 860px;
+  font-size: clamp(14.45px, 1.15vw, 20.4px);
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.pg-center {
+  margin-top: 32px;
+  display: flex;
+  justify-content: center;
+}
+
+/* Botões */
+.pg-actions {
+  margin-top: 35.2px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 11.2px;
+}
+
+.pg-btn {
+  height: 57.8px;
+  padding: 0 6.4px 0 22.4px;
+  display: inline-flex;
+  align-items: center;
+  gap: 22.4px;
+  border-radius: 10px;
+  background: var(--grad);
+  font-size: 18.3px;
+  color: #fff;
+  transition: filter 0.2s;
+}
+
+.pg-btn:hover {
+  filter: brightness(1.08);
+}
+
+.pg-btn-box {
+  width: 52px;
+  height: 44.2px;
+  border-radius: 10px;
+  background: var(--dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s;
+}
+
+.pg-btn:hover .pg-btn-box {
+  transform: translateX(3px);
+}
+
+.pg-btn-ghost {
+  height: 57.8px;
+  padding: 0 22.4px;
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--accent);
+  border-radius: 10px;
+  font-size: 17.48px;
+  color: var(--light);
+  transition: background 0.2s, color 0.2s;
+}
+
+.pg-btn-ghost:hover {
+  background: var(--grad);
+  color: #fff;
+}
+
+/* Hero */
+.pg-hero {
+  position: relative;
+  padding: 152px 0 clamp(64px, 7.2vw, 120px);
+  overflow: hidden;
+}
+
+.pg-hero-grid {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(rgba(147, 149, 152, 0.17) 1px, transparent 1px) 0 0 / 101px 82px,
+    linear-gradient(90deg, rgba(147, 149, 152, 0.17) 1px, transparent 1px) 0 0 / 101px 82px;
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 30%, #000 60%, transparent);
+  mask-image: linear-gradient(to bottom, transparent, #000 30%, #000 60%, transparent);
+  pointer-events: none;
+}
+
+.pg-hero-word {
+  position: absolute;
+  right: -1vw;
+  bottom: -3.5vw;
+  font-size: clamp(93.6px, 16.38vw, 327.6px);
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(147, 149, 152, 0.4);
+  pointer-events: none;
+  user-select: none;
+}
+
+.pg-hero-inner {
+  position: relative;
+}
+
+.pg-crumbs {
+  margin-bottom: 32px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  font-size: 15px;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.pg-crumbs > span {
+  display: inline-flex;
+  gap: 8px;
+}
+
+.pg-crumbs a:hover {
+  color: var(--accent);
+}
+
+.pg-crumbs [aria-current] {
+  color: var(--light);
+}
+
+/* Seções */
+.pg-sec {
+  padding: clamp(57.6px, 6.4vw, 112px) 0;
+}
+
+.pg-sec-tight {
+  padding: clamp(25.6px, 3.2vw, 48px) 0;
+}
+
+.pg-sec-light {
+  background: var(--surface);
+  border-radius: 20px;
+  color: #fff;
+}
+
+.pg-head {
+  margin-bottom: clamp(32px, 4vw, 64px);
+  max-width: 1150px;
+}
+
+.pg-head.is-center {
+  margin-inline: auto;
+  text-align: center;
+}
+
+.pg-head.is-center .pg-sublead {
+  margin-inline: auto;
+}
+
+.pg-head.is-dark .pg-h2 {
+  color: #fff;
+}
+
+.pg-head.is-dark .pg-sublead {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.pg-split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(32px, 4.8vw, 96px);
+  align-items: start;
+}
+
+.pg-split > .pg-head {
+  margin-bottom: 0;
+}
+
+/* Arquitetura ERP ➔ OS ➔ Mind */
+.pg-arch {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 22.4px;
+}
+
+.pg-arch-item {
+  position: relative;
+  padding: 28.8px 25.6px;
+  border-radius: 16.32px;
+  background: var(--surface);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.pg-arch-item.is-mind {
+  background: var(--grad);
+}
+
+.pg-arch-role {
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.pg-arch-item strong {
+  display: block;
+  margin: 9.6px 0 8px;
+  font-size: clamp(20.28px, 1.72vw, 31.2px);
+  font-weight: 600;
+  color: #fff;
+}
+
+.pg-arch-item p {
+  font-size: 16.56px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.pg-arch-arrow {
+  position: absolute;
+  right: -28px;
+  top: 50%;
+  z-index: 2;
+  width: 44px;
+  height: 37.4px;
+  margin-top: -17.6px;
+  border-radius: 50%;
+  background: var(--dark);
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16.56px;
+}
+
+/* Passos */
+.pg-steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 22.4px;
+}
+
+.pg-step {
+  padding-top: 22.4px;
+  border-top: 2px solid var(--accent);
+}
+
+.pg-step-num {
+  font-size: 16.56px;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.pg-step h3 {
+  margin: 11.2px 0 9.6px;
+  font-size: clamp(20.4px, 1.62vw, 27.2px);
+  font-weight: 600;
+  color: var(--light);
+}
+
+.pg-step p {
+  font-size: 16.56px;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+/* Solução: dores e entregas */
+
+.pg-company-logo {
+  height: 36.55px;
+  width: auto;
+}
+
+/* Wordmark provisório (sem logo da Statum no Figma) */
+.pg-wordmark {
+  font-size: 23.8px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  color: var(--light);
+}
+
+.pg-wordmark.is-dark {
+  color: #fff;
+}
+
+/* Komvos Mind */
+
+/* Ecossistema */
+
+.pg-company {
+  scroll-margin-top: 120px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 14.4px;
+  padding: 28.8px;
+  border-radius: 20px;
+  background: var(--surface);
+  color: #fff;
+}
+
+.pg-company.is-teal {
+  background: var(--grad);
+}
+
+.pg-company h2 {
+  margin: 8px 0 0;
+  font-size: clamp(22.1px, 1.87vw, 32.3px);
+  font-weight: 600;
+}
+
+.pg-company p {
+  font-size: 16.56px;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.pg-company ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+  font-size: 15.64px;
+  font-weight: 500;
+}
+
+.pg-company li::before {
+  content: '— ';
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.pg-company.is-teal li::before {
+  color: var(--light);
+}
+
+/* Clientes */
+
+/* Insights */
+
+.pg-empty {
+  font-size: 18.4px;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+/* Sobre */
+
+.pg-timeline {
+  position: relative;
+  padding-left: 44.8px;
+}
+
+.pg-timeline-line {
+  position: absolute;
+  left: 9px;
+  top: 12px;
+  bottom: 40px;
+  width: 2px;
+  background: var(--grad);
+}
+
+.pg-timeline ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.pg-timeline li {
+  position: relative;
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 32px;
+  padding-bottom: 44.8px;
+}
+
+.pg-timeline li::before {
+  content: '';
+  position: absolute;
+  left: -54px;
+  top: 10px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--grad);
+  box-shadow: 0 0 0 6px var(--dark);
+}
+
+.pg-timeline h3 {
+  margin: 0 0 8px;
+  font-size: clamp(18.7px, 1.53vw, 25.5px);
+  font-weight: 600;
+  color: var(--light);
+}
+
+.pg-timeline p {
+  font-size: 16.56px;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+/* Contato */
+.pg-contact {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 25.6px;
+  align-items: start;
+}
+
+/* Seções reaproveitadas da Home (CTA final, cards de artigo) em páginas sem escala */
+/* Seções reaproveitadas: respiro lateral pelo padding (a largura do .frame é automática). */
+.page .sec {
+  padding: clamp(48px, 5.6vw, 96px) var(--gutter, 32px);
+}
+
+.page .frame {
+  width: auto;
+  background: transparent;
+  overflow: visible;
+}
+
+.page .cta-panel {
+  grid-template-columns: 1fr minmax(0, 640px);
+  gap: clamp(25.6px, 4vw, 64px);
+  padding: clamp(32px, 4.8vw, 80px) clamp(19.2px, 4vw, 64px);
+}
+
+.page .sec-title {
+  font-size: clamp(26.52px, 3.28vw, 56.16px);
+}
+
+.page .eyebrow {
+  font-size: clamp(13.8px, 1.15vw, 20.24px);
+}
+
+.page .cta-text {
+  font-size: clamp(14.45px, 1.27vw, 22.1px);
+}
+
+/* ===================================================================
+   Tablet (901–1200px)
+   =================================================================== */
+@media (max-width: 1200px) {
+
+  .page .cta-panel,
+  .pg-contact {
+    grid-template-columns: 1fr;
+  }
+
+  .page .artigos {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* ===================================================================
+   Mobile (≤ 900px)
+   =================================================================== */
+.mobile .pg-wrap {
+  width: min(100% - 40px, 1840px);
+}
+
+.mobile .pg-hero {
+  padding: 96px 0 57.6px;
+}
+
+.mobile .pg-hero-grid {
+  background-size: 10vw 10vw;
+}
+
+.mobile .pg-hero-word {
+  font-size: 34vw;
+  bottom: -6vw;
+}
+
+.mobile .pg-crumbs {
+  margin-bottom: 19.2px;
+  font-size: 13px;
+}
+
+.mobile .pg-actions {
+  margin-top: 25.6px;
+}
+
+.mobile .pg-btn,
+.mobile .pg-btn-ghost {
+  height: 51px;
+  font-size: 15.64px;
+}
+
+.mobile .pg-btn {
+  padding: 0 6px 0 17.6px;
+  gap: 17.6px;
+}
+
+.mobile .pg-btn-box {
+  width: 48px;
+  height: 40.8px;
+}
+
+.mobile .pg-sec-light {
+  border-radius: 20px;
+}
+
+.mobile .pg-split,
+.mobile .pg-arch,
+.mobile .pg-contact,
+.mobile .page .artigos {
+  grid-template-columns: 1fr;
+}
+
+.mobile .pg-split {
+  gap: 25.6px;
+}
+
+.mobile .pg-step p,
+.mobile .pg-company p,
+.mobile .pg-timeline p,
+.mobile .pg-arch-item p {
+  font-size: 14.72px;
+}
+
+.mobile .pg-arch {
+  gap: 16px;
+}
+
+.mobile .pg-arch-arrow {
+  right: auto;
+  left: 50%;
+  top: auto;
+  bottom: -32px;
+  margin: 0 0 0 -17.6px;
+  transform: rotate(90deg);
+}
+
+.mobile .pg-steps {
+  grid-template-columns: 1fr 1fr;
+  gap: 22.4px 12.8px;
+}
+
+.mobile .pg-company {
+  padding: 19.2px;
+}
+
+.mobile .pg-empty {
+  font-size: 14.72px;
+}
+
+.mobile .pg-timeline {
+  padding-left: 28.8px;
+}
+
+.mobile .pg-timeline-line {
+  left: 7px;
+}
+
+.mobile .pg-timeline li {
+  grid-template-columns: 1fr;
+  gap: 8px;
+  padding-bottom: 32px;
+}
+
+.mobile .pg-timeline li::before {
+  left: -36px;
+  top: 6px;
+}
+
+.mobile .page .cta-panel {
+  margin: 0;
+}
+
+.mobile .page .sec {
+  padding: 44.8px 16px;
+}
+
+/* Footer fora do canvas da Home: largura fluida */
+.site > .footer {
+  width: auto;
+}
+
+.pg-logo-chip {
+  display: inline-flex;
+  padding: 8px 11.2px;
+  border-radius: 10px;
+  background: var(--grad);
+}
+
+/* ===================================================================
+   Cores das empresas: verde Senior, azul Statum, magenta Trusth
+   =================================================================== */
+.brand-senior { --brand: var(--senior); }
+.brand-statum { --brand: var(--statum); }
+.brand-trusth { --brand: var(--trusth); }
+
+.pg-company[class*='brand-'] {
+  background: var(--brand);
+  border-color: transparent;
+  color: #fff;
+}
+
+.pg-company[class*='brand-'] h2 {
+  color: #fff;
+}
+
+.pg-company[class*='brand-'] p {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.pg-company[class*='brand-'] li::before {
+  color: #fff;
+}
+
+.pg-logo-chip {
+  background: #fff;
+}
+
+.pg-wordmark {
+  color: #fff;
+}

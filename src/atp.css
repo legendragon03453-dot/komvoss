@@ -1,0 +1,369 @@
+/* ===================================================================
+   "Tudo conectado em uma arquitetura" → "Como trabalhamos" (seção fixa guiada pelo scroll)
+   =================================================================== */
+.atp {
+  position: relative;
+  --silver: linear-gradient(135deg, #eceef0 0%, #c4c8cc 26%, #f5f6f7 48%, #aeb3b8 74%, #dcdfe2 100%);
+  --ink: #111516;
+}
+
+.atp-stage {
+  position: relative;
+  height: 100svh;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+/* fundo prateado que nasce do card Komvos Mind (mesmo acabamento do card) */
+.atp-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background:
+    radial-gradient(70% 60% at 50% 40%, rgba(255, 255, 255, 0.55), transparent 70%),
+    var(--silver);
+  will-change: clip-path;
+}
+
+.atp-particles {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  /* as partículas somem no centro, onde fica o texto */
+  -webkit-mask-image: radial-gradient(ellipse 38% 34% at 50% 52%, transparent 30%, #000 100%);
+  mask-image: radial-gradient(ellipse 38% 34% at 50% 52%, transparent 30%, #000 100%);
+}
+
+.atp-dim {
+  position: absolute;
+  inset: 0;
+  background: var(--dark);
+  opacity: 0;
+}
+
+/* ---------- estado inicial: a arquitetura ---------- */
+.atp-arch {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  padding: 120px var(--gutter) 80px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: clamp(32px, 4vw, 56px);
+}
+
+.atp-head {
+  max-width: 900px;
+}
+
+.atp-head .pg-sublead {
+  margin-top: 16px;
+}
+
+.atp-cards {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 22px;
+}
+
+.atp-card {
+  position: relative;
+  padding: 28px 26px;
+  border-radius: 16px;
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.015));
+  border: 1px solid var(--surface-line);
+}
+
+.atp-card-mind {
+  background: var(--silver);
+  border-color: transparent;
+  color: var(--ink);
+}
+
+.atp-card-mind .atp-role {
+  color: rgba(17, 21, 22, 0.6);
+}
+
+.atp-card-mind p {
+  color: rgba(17, 21, 22, 0.75);
+}
+
+.atp-card-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.atp-role {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(244, 247, 251, 0.6);
+}
+
+.atp-card strong {
+  font-size: clamp(22px, 1.8vw, 32px);
+  font-weight: 500;
+}
+
+.atp-card p {
+  font-size: 15px;
+  font-weight: 300;
+  color: rgba(244, 247, 251, 0.75);
+}
+
+.atp-arrow {
+  position: absolute;
+  right: -22px;
+  top: 50%;
+  z-index: 2;
+  width: 34px;
+  height: 34px;
+  margin-top: -17px;
+  border-radius: 50%;
+  background: var(--dark);
+  border: 1px solid var(--surface-line);
+  display: grid;
+  place-items: center;
+  font-size: 14px;
+  color: var(--accent);
+}
+
+/* ---------- Komvos Mind no centro ---------- */
+.atp-mind {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 2;
+  width: min(820px, 86vw);
+  margin-left: max(-410px, -43vw);
+  translate: 0 -50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  text-align: center;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.atp-mind .atp-role {
+  font-size: 14px;
+  color: rgba(17, 21, 22, 0.6);
+}
+
+.atp-mind strong {
+  font-size: clamp(48px, 7vw, 120px);
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  color: var(--ink);
+}
+
+.atp-mind p {
+  max-width: 34ch;
+  font-size: clamp(18px, 1.6vw, 26px);
+  font-weight: 300;
+  color: rgba(17, 21, 22, 0.75);
+}
+
+/* ---------- Como trabalhamos ---------- */
+.atp-process {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  padding: 120px var(--gutter) 96px;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  justify-items: center;
+  pointer-events: none;
+}
+
+.atp-process-head {
+  text-align: center;
+  opacity: 0;
+}
+
+.atp-kicker {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(17, 21, 22, 0.6);
+}
+
+.atp-process-head h2 {
+  margin: 10px 0 0;
+  font-size: clamp(28px, 3vw, 48px);
+  font-weight: 400;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+}
+
+.atp-steps {
+  position: relative;
+  width: min(760px, 100%);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.atp-step {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  text-align: center;
+  opacity: 0;
+}
+
+.atp-step-num {
+  font-size: clamp(72px, 10vw, 160px);
+  font-weight: 600;
+  line-height: 0.9;
+  letter-spacing: -0.04em;
+  color: var(--ink);
+}
+
+.atp-step h3 {
+  margin: 0;
+  font-size: clamp(26px, 2.6vw, 44px);
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.atp-step p {
+  max-width: 40ch;
+  font-size: clamp(16px, 1.3vw, 21px);
+  font-weight: 300;
+  color: rgba(17, 21, 22, 0.75);
+}
+
+/* trilho de progresso com os quatro passos */
+.atp-rail {
+  position: relative;
+  width: min(880px, 100%);
+  height: 56px;
+  opacity: 0;
+  pointer-events: auto;
+}
+
+.atp-rail-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 8px;
+  height: 2px;
+  background: rgba(17, 21, 22, 0.18);
+}
+
+.atp-rail-fill {
+  position: absolute;
+  inset: 0;
+  background: var(--ink);
+  transform-origin: 0 50%;
+}
+
+.atp-node {
+  position: absolute;
+  top: 0;
+  translate: -50% 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: rgba(17, 21, 22, 0.55);
+  cursor: pointer;
+}
+
+.atp-node-dot {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid rgba(17, 21, 22, 0.45);
+  background: #e6e8ea;
+  transition: background 0.3s, border-color 0.3s, transform 0.3s;
+}
+
+.atp-node.is-done .atp-node-dot {
+  background: var(--ink);
+  border-color: var(--ink);
+}
+
+.atp-node.is-active .atp-node-dot {
+  transform: scale(1.3);
+  box-shadow: 0 0 0 6px rgba(17, 21, 22, 0.12);
+}
+
+.atp-node-label {
+  font-size: 13px;
+  white-space: nowrap;
+  transition: color 0.3s;
+}
+
+.atp-node.is-active .atp-node-label {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.atp-node:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 4px;
+  border-radius: 6px;
+}
+
+/* ---------- celular ---------- */
+.mobile .atp-arch {
+  padding: 84px 20px 40px;
+  gap: 20px;
+}
+
+.mobile .atp-head .pg-sublead {
+  display: none;
+}
+
+.mobile .atp-cards {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 12px;
+}
+
+.mobile .atp-card {
+  padding: 16px 18px;
+}
+
+.mobile .atp-card p {
+  font-size: 13px;
+}
+
+.mobile .atp-arrow {
+  right: auto;
+  left: 50%;
+  top: auto;
+  bottom: -20px;
+  margin: 0 0 0 -15px;
+  width: 30px;
+  height: 30px;
+  rotate: 90deg;
+}
+
+.mobile .atp-process {
+  padding: 96px 20px 72px;
+}
+
+.mobile .atp-node-label {
+  display: none;
+}
+
+.mobile .atp-rail {
+  height: 28px;
+}

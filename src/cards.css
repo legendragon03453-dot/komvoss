@@ -1,0 +1,202 @@
+/* ===================================================================
+   Cards brancos (pedido do cliente: "todos os cards que estão cinza, brancos")
+   Corpo do card em branco com texto escuro; as ilustrações ficam num painel
+   escuro dentro do card, como uma tela. Números passam ao gradiente verde → roxo.
+   =================================================================== */
+
+:is(
+    .spot,
+    .sb-card,
+    .sp-card,
+    .sp-other,
+    .sp-exec-card,
+    .v2-eco-card,
+    .artigo,
+    .atp-card:not(.atp-card-mind),
+    .cms-quote,
+    .cases-panel,
+    .cases-tabs button:not(.is-active),
+    .ls-label,
+    .stack-card:not(:last-child),
+    .mn-sol
+  ) {
+  background: #f4f6f8;
+  border-color: rgba(17, 21, 22, 0.06);
+  color: #111516;
+  box-shadow: 0 30px 70px -40px rgba(0, 0, 0, 0.75);
+}
+
+/* textos dentro dos cards brancos */
+:is(.spot, .sb-card, .sp-card, .sp-other, .sp-exec-card, .v2-eco-card, .artigo, .atp-card, .cms-quote, .cases-panel, .ls-label, .stack-card, .mn-sol)
+  :is(h2, h3, strong, b) {
+  color: #111516;
+}
+
+:is(.spot, .sb-card, .sp-card, .sp-other, .sp-exec-card, .v2-eco-card, .artigo, .atp-card:not(.atp-card-mind), .cms-quote, .ls-label, .stack-card:not(:last-child))
+  p,
+.cms-quote blockquote,
+.eco-points li {
+  color: rgba(17, 21, 22, 0.7);
+}
+
+:is(.spot, .sb-card, .sp-card, .sp-other, .sp-exec-card, .ls-label, .cases-panel) .cms-tag,
+.ins-meta .cms-tag:not(.is-solid) {
+  border-color: rgba(17, 21, 22, 0.14);
+  background: rgba(17, 21, 22, 0.04);
+  color: rgba(17, 21, 22, 0.72);
+}
+
+:is(.sp-more, .sb-more, .eco-sols a, .artigo-more, .v2-eco-more) {
+  color: #111516;
+}
+
+.eco-sols {
+  border-top-color: rgba(17, 21, 22, 0.1);
+}
+
+/* metadados e rótulos */
+:is(.ins-meta, .artigo-date, .sb-kicker, .sp-other-num, .ls-role, .sp-exec-area, .stack-num, .mn-sol-num, .atp-card .atp-role, .cms-quote small, .cases-step-k) {
+  color: rgba(17, 21, 22, 0.55);
+}
+
+.cases-tabs button:not(.is-active) small {
+  color: rgba(17, 21, 22, 0.6);
+}
+
+/* números: verde → roxo (prata some no branco) */
+:is(.sp-card-num, .eco-card-num, .about-value-num, .cms-card-num, .cases-num) {
+  background: var(--brand-grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* brilho que segue o ponteiro e hover em verde */
+:is(.spot, .sp-card)::before {
+  background: radial-gradient(420px circle at var(--mx) var(--my), rgba(154, 161, 167, 0.1), transparent 60%);
+}
+
+:is(.spot, .sb-card, .sp-card, .sp-other, .sp-exec-card, .v2-eco-card, .artigo, .mn-sol):hover {
+  border-color: rgba(154, 161, 167, 0.45);
+}
+
+.sp-card-line {
+  background: var(--brand-grad);
+}
+
+/* painéis das ilustrações continuam escuros (a "tela" do card) */
+:is(.sb-visual, .ins-cover, .sp-other-art, .mn-sol-art, .artigo-thumb) {
+  background-color: #151a1b;
+}
+
+.sb-visual {
+  background:
+    radial-gradient(60% 70% at 50% 35%, rgba(147, 149, 152, 0.12), transparent 70%),
+    linear-gradient(rgba(147, 149, 152, 0.07) 1px, transparent 1px) 0 0 / 32px 32px,
+    linear-gradient(90deg, rgba(147, 149, 152, 0.07) 1px, transparent 1px) 0 0 / 32px 32px,
+    #151a1b;
+}
+
+/* bento das soluções: o texto sai do vidro escuro e fica no branco */
+.sb-copy {
+  margin-top: 0;
+  background: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.sb-pain {
+  color: rgba(17, 21, 22, 0.66);
+}
+
+/* cases */
+.cases-panel .cases-step {
+  background: rgba(17, 21, 22, 0.04);
+}
+
+.cases-panel .cases-step p {
+  color: #111516;
+}
+
+.cases-step::before {
+  border-color: rgba(17, 21, 22, 0.45);
+}
+
+.cases-tabs button.is-active {
+  background: #111516;
+  color: #fff;
+  box-shadow: inset 0 0 0 1px var(--green);
+}
+
+.cases-tabs button.is-active strong {
+  color: #fff;
+}
+
+/* camadas da arquitetura (Komvos Mind) */
+.ls-label.is-top {
+  border-color: rgba(154, 161, 167, 0.5);
+  box-shadow: inset 0 0 0 1px rgba(154, 161, 167, 0.35);
+}
+
+/* "Tudo conectado em uma arquitetura": setas sobre os cards brancos */
+.atp-card .atp-arrow {
+  background: #111516;
+}
+
+/* empresas: os selos brancos ganham um contorno sobre o card branco */
+.v2-eco-card img,
+.spot .pg-logo-chip {
+  box-shadow: 0 0 0 1px rgba(17, 21, 22, 0.1);
+}
+
+.v2-eco-card p {
+  color: rgba(17, 21, 22, 0.75);
+}
+
+/* cards de artigo da Home */
+.artigo-body h3 {
+  color: #111516;
+}
+
+/* "Simplificar. Acelerar. Conectar." (Home): cards claros, título da seção continua no escuro */
+.komvos-features .ib-card {
+  --ib-card: #f4f6f8;
+  --ib-paper: #ffffff;
+  --ib-raise: #ffffff;
+  --ib-ink: #151a1b;
+  --ib-soft: #3d4448;
+  --ib-muted: #6e767c;
+  --ib-faint: #a3aaaf;
+  --ib-line: #e1e4e7;
+  --ib-line-strong: #c4c9cd;
+  --ib-bracket: #c9ced3;
+  --ib-hatch: rgba(17, 21, 22, 0.04);
+  background: #f4f6f8;
+  color: #151a1b;
+}
+
+/* menu: cards das soluções */
+.mn-sol strong {
+  color: #111516;
+}
+
+/* leitura nos cards brancos: peso 300 fica fraco em fundo claro */
+:is(.spot, .sb-card, .sp-card, .sp-other, .sp-exec-card, .v2-eco-card, .artigo, .atp-card:not(.atp-card-mind), .cms-quote, .ls-label, .stack-card:not(:last-child), .cases-panel)
+  :is(p, blockquote, li) {
+  font-weight: 400;
+  color: rgba(17, 21, 22, 0.78);
+}
+
+/* bento das soluções: texto abaixo da ilustração, sem sobrepor (desktop e celular) */
+.sb-visual {
+  padding-bottom: 24px;
+}
+
+.mobile .sb-visual {
+  height: 13rem;
+  padding: 16px;
+}
+
+.mobile .sb-copy {
+  margin-top: 0;
+}

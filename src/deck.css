@@ -1,0 +1,1190 @@
+/* ===================================================================
+   Ajustes da apresentação de revisão do cliente
+   =================================================================== */
+
+/* ---------- formulários em box branco (todas as páginas) ---------- */
+.lead-form,
+.lead-form.cms-form {
+  background: #f4f6f8;
+  border: 0;
+  color: #111516;
+  box-shadow: 0 30px 80px -40px rgba(0, 0, 0, 0.8);
+}
+
+.lead-form label {
+  color: #111516;
+}
+
+.lead-form :is(input, textarea, select) {
+  background-color: #fff;
+  border-color: rgba(17, 21, 22, 0.14);
+  color: #111516;
+}
+
+.lead-form :is(input, textarea, select):focus {
+  border-color: var(--green);
+  background-color: #fff;
+  box-shadow: 0 0 0 3px rgba(154, 161, 167, 0.15);
+}
+
+.lead-form select {
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23111516' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E") right 14px center / 16px no-repeat,
+    #fff;
+}
+
+.lead-form .cms-file::file-selector-button {
+  background: #111516;
+  color: #fff;
+}
+
+/* botão de envio escuro sobre o box branco */
+.lead-form .form-submit {
+  background-color: #111516;
+  border-color: #111516;
+  color: #fff;
+}
+
+.lead-form .form-submit:hover,
+.lead-form .form-submit:focus-visible {
+  border-color: var(--green);
+}
+
+.form-done h3 {
+  background: var(--brand-grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.form-done p {
+  color: rgba(17, 21, 22, 0.75);
+}
+
+/* ---------- Ecossistema e Trabalhe conosco: logos originais nos boxes brancos ---------- */
+.eco-card-logo .pg-company-logo {
+  filter: none;
+}
+
+/* ---------- Komvos Mind: camadas da arquitetura em box branco ---------- */
+.ls .ls-label {
+  background: #f4f6f8;
+  border-color: transparent;
+}
+
+.ls .ls-label.is-top {
+  box-shadow:
+    inset 0 0 0 1.5px var(--green),
+    0 20px 50px -25px rgba(154, 161, 167, 0.5);
+}
+
+/* ---------- Sobre: feixe da linha do tempo ---------- */
+/* a frente do feixe é prata (Grupo Komvos); o rastro segue as cores das empresas */
+.stl-fill {
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    var(--senior) 18%,
+    var(--trusth) 48%,
+    var(--statum) 76%,
+    #e9ecef 94%,
+    #ffffff
+  );
+  box-shadow: 0 0 14px rgba(233, 236, 239, 0.35);
+}
+
+.stl-dot::after {
+  background: var(--silver);
+}
+
+.stl-dot {
+  box-shadow: 0 0 calc(var(--lit) * 16px) rgba(233, 236, 239, calc(var(--lit) * 0.7));
+}
+
+/* ---------- depoimentos: arrastar para rolar ---------- */
+.dc {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 12%, #000 88%, transparent);
+  mask-image: linear-gradient(to bottom, transparent, #000 12%, #000 88%, transparent);
+  cursor: grab;
+  touch-action: pan-x;
+  user-select: none;
+}
+
+.dc.is-dragging {
+  cursor: grabbing;
+}
+
+.dc-track {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  will-change: transform;
+}
+
+.dc-hint {
+  margin: 14px 0 0;
+  text-align: center;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(244, 247, 251, 0.45);
+}
+
+@media (pointer: coarse) {
+  .dc {
+    touch-action: pan-y;
+    cursor: auto;
+  }
+}
+
+/* ---------- Seja um parceiro: escolha do tipo antes do formulário ---------- */
+.pt-choices {
+  display: grid;
+  gap: 12px;
+}
+
+.pt-choice {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  padding: 20px 22px;
+  border-radius: 16px;
+  border: 1px solid rgba(17, 21, 22, 0.08);
+  background: #f4f6f8;
+  font: inherit;
+  text-align: left;
+  color: #111516;
+  cursor: pointer;
+  transition:
+    transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1),
+    box-shadow 0.3s,
+    border-color 0.3s;
+}
+
+.pt-choice:hover,
+.pt-choice:focus-visible {
+  transform: translateY(-3px);
+  border-color: var(--green);
+  box-shadow: 0 20px 50px -30px rgba(154, 161, 167, 0.6);
+  outline: none;
+}
+
+.pt-num {
+  font-size: 26px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  background: var(--brand-grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.pt-choice strong {
+  display: block;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.pt-choice small {
+  display: block;
+  margin-top: 2px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: rgba(17, 21, 22, 0.65);
+}
+
+.pt-arrow {
+  font-size: 20px;
+}
+
+.pt-selected {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 14px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: 14px;
+}
+
+.pt-selected strong {
+  color: #fff;
+}
+
+.pt-change {
+  padding: 6px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 999px;
+  background: none;
+  font: inherit;
+  font-size: 13px;
+  color: #fff;
+  cursor: pointer;
+}
+
+.pt-change:hover {
+  border-color: var(--green);
+}
+
+.pt-form-enter {
+  animation: chapter-in 0.45s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+
+.mobile .cms-quotes .dc:not(:first-child) {
+  display: none;
+}
+
+.pt-label {
+  margin: 0 0 14px;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(244, 247, 251, 0.7);
+}
+
+/* fotos na linha do tempo */
+.stl-media {
+  display: grid;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.stl-media.is-many {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.stl-media figure {
+  margin: 0;
+  overflow: hidden;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  aspect-ratio: 4 / 3;
+  background: #151a1b;
+}
+
+.stl-media.is-one figure {
+  aspect-ratio: 16 / 9;
+  max-width: 560px;
+}
+
+.stl-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: grayscale(0.25);
+  transition: transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1), filter 0.5s;
+}
+
+.stl-media figure:hover img {
+  transform: scale(1.05);
+  filter: none;
+}
+
+.mobile .stl-media.is-many {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+}
+
+/* foto de fundo no hero (Trabalhe conosco) */
+.hero-photo {
+  position: absolute;
+  inset: 0;
+}
+
+.hero-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 40%;
+}
+
+.hero-photo::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, rgba(17, 21, 22, 0.92) 0%, rgba(17, 21, 22, 0.7) 45%, rgba(17, 21, 22, 0.35) 100%),
+    linear-gradient(to bottom, rgba(17, 21, 22, 0.55), transparent 30%, transparent 70%, #111516);
+}
+
+.mobile .hero-photo::after {
+  background: linear-gradient(to bottom, rgba(17, 21, 22, 0.6), rgba(17, 21, 22, 0.85) 60%, #111516);
+}
+
+/* Home, ecossistema: nome da empresa (no lugar do logo) na cor da marca */
+.v2-eco-name {
+  display: block;
+  font-size: clamp(18px, 1.4vw, 24px);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--brand);
+}
+
+.v2-eco-card :is(h2, h3, strong).v2-eco-name {
+  color: var(--brand);
+}
+
+/* ---------- Soluções: as três camadas "explodem" em prata (ERP → OS → Mind) ---------- */
+.atp,
+.lb {
+  --l0: radial-gradient(70% 60% at 50% 40%, rgba(255, 255, 255, 0.35), transparent 70%),
+    linear-gradient(135deg, #c3c8cc 0%, #959ca2 30%, #c9cdd1 55%, #8f969c 80%, #b4babf 100%);
+  --l1: radial-gradient(70% 60% at 50% 40%, rgba(255, 255, 255, 0.45), transparent 70%),
+    linear-gradient(135deg, #dadde0 0%, #b0b6bb 28%, #e4e7e9 52%, #a9afb4 76%, #cfd3d6 100%);
+  --l2: radial-gradient(70% 60% at 50% 40%, rgba(255, 255, 255, 0.55), transparent 70%), var(--silver);
+}
+
+.atp .atp-cards .atp-card {
+  border-color: transparent;
+  color: var(--ink, #111516);
+  box-shadow: 0 30px 70px -40px rgba(0, 0, 0, 0.75);
+}
+
+.atp .atp-cards .atp-card.is-l0,
+.atp-bg.is-l0 {
+  background: var(--l0);
+}
+
+.atp .atp-cards .atp-card.is-l1,
+.atp-bg.is-l1 {
+  background: var(--l1);
+}
+
+.atp .atp-cards .atp-card.is-l2,
+.atp-bg.is-l2 {
+  background: var(--l2);
+}
+
+.atp .atp-cards .atp-card :is(strong, p, .atp-role) {
+  color: #111516;
+}
+
+.atp .atp-cards .atp-card p {
+  color: rgba(17, 21, 22, 0.75);
+}
+
+.atp .atp-cards .atp-card .atp-role {
+  color: rgba(17, 21, 22, 0.6);
+}
+
+/* logos das três empresas: exatamente a mesma caixa em todo lugar */
+.eco-company .pg-company-logo,
+.eco-card-logo .pg-company-logo {
+  width: 150px;
+  max-width: none;
+  height: 30px;
+  object-fit: contain;
+  object-position: left center;
+}
+
+.eco-company .pg-company-logo {
+  object-position: center;
+}
+
+.mobile .eco-company .pg-company-logo {
+  width: 100px;
+  height: 20px;
+}
+
+/* linha do tempo: foto única sem corte */
+.stl-media.is-one figure {
+  aspect-ratio: auto;
+}
+
+.stl-media.is-one img {
+  height: auto;
+  object-fit: contain;
+}
+
+/* ---------- efeitos de fundo das camadas ERP e Komvos OS ---------- */
+/* ERP: grade de registros com uma faixa de luz varrendo as linhas */
+.atp-fx-grid {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background:
+    linear-gradient(rgba(17, 21, 22, 0.09) 1px, transparent 1px) 0 0 / 100% 44px,
+    linear-gradient(90deg, rgba(17, 21, 22, 0.06) 1px, transparent 1px) 0 0 / 180px 100%;
+  -webkit-mask-image: radial-gradient(ellipse 80% 75% at 50% 50%, #000 40%, transparent 100%);
+  mask-image: radial-gradient(ellipse 80% 75% at 50% 50%, #000 40%, transparent 100%);
+}
+
+.atp-fx-grid::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 132px;
+  background: linear-gradient(to bottom, transparent, rgba(255, 255, 255, 0.65), transparent);
+  animation: fx-scan 5.5s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+}
+
+/* "células" que acendem como registros sendo gravados */
+.atp-fx-grid::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(rgba(17, 21, 22, 0.16), rgba(17, 21, 22, 0.16)) 180px 132px / 179px 43px no-repeat,
+    linear-gradient(rgba(17, 21, 22, 0.12), rgba(17, 21, 22, 0.12)) 900px 308px / 179px 43px no-repeat,
+    linear-gradient(rgba(17, 21, 22, 0.14), rgba(17, 21, 22, 0.14)) 540px 572px / 179px 43px no-repeat,
+    linear-gradient(rgba(17, 21, 22, 0.1), rgba(17, 21, 22, 0.1)) 1260px 704px / 179px 43px no-repeat;
+  animation: fx-cells 4s steps(1) infinite;
+}
+
+@keyframes fx-scan {
+  from {
+    transform: translateY(-140px);
+  }
+  to {
+    transform: translateY(100vh);
+  }
+}
+
+@keyframes fx-cells {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  25% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 0.8;
+  }
+  75% {
+    opacity: 0;
+  }
+}
+
+/* Komvos OS: fluxos cruzando a tela */
+.flow-lines {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.fl-line {
+  fill: none;
+  stroke: rgba(17, 21, 22, 0.14);
+  stroke-width: 1.4;
+}
+
+.fl-pulse {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.95);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-dasharray: 0.08 1;
+  stroke-dashoffset: 1.08;
+  filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.9));
+  animation: fl-run 5s linear infinite;
+}
+
+.fl-pulse.is-2 {
+  stroke: rgba(17, 21, 22, 0.35);
+  filter: none;
+  stroke-width: 2.2;
+}
+
+@keyframes fl-run {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .atp-fx-grid::before,
+  .atp-fx-grid::after,
+  .fl-pulse {
+    animation: none;
+  }
+}
+
+/* ---------- parceiros: Senior maior com o selo Canal Diamante ---------- */
+.partners-inner {
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.4fr);
+}
+
+.partners-logos {
+  grid-template-columns: 1.5fr 1fr 1fr;
+}
+
+.partners-logos img {
+  width: auto;
+  max-width: 100%;
+  height: clamp(30px, 2.6vw, 42px);
+  object-fit: contain;
+}
+
+.partners-logo-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  min-height: 70px;
+}
+
+.partners-logos .partners-badge {
+  height: 84px !important;
+  width: 84px;
+}
+
+.mobile .partners-logos {
+  grid-template-columns: 1fr 1fr;
+}
+
+.mobile .partners-logos li.has-badge {
+  grid-column: 1 / -1;
+}
+
+/* ---------- Trabalhe conosco: a foto sobe para o time aparecer ---------- */
+.hero-photo img {
+  object-position: center 78%;
+}
+
+.hero-photo::after {
+  background:
+    linear-gradient(90deg, rgba(17, 21, 22, 0.88) 0%, rgba(17, 21, 22, 0.55) 40%, rgba(17, 21, 22, 0.1) 75%),
+    linear-gradient(to bottom, rgba(17, 21, 22, 0.55), transparent 22%, transparent 82%, #111516);
+}
+
+/* ---------- barra do topo: item de grupo sem link (Arquitetura) ---------- */
+button.hd-link {
+  border: 0;
+  background: none;
+  font: inherit;
+  font-size: clamp(12.5px, 0.95vw, 14px);
+  cursor: pointer;
+}
+
+/* menu em tela cheia com 11 itens: letras um pouco menores */
+.mn-label {
+  font-size: clamp(22px, min(2.5vw, 3.9vh), 44px);
+}
+
+.mn-link {
+  padding: clamp(3px, 0.6vh, 8px) 0;
+}
+
+/* ---------- efeitos das camadas em fundo escuro (heros do ERP e do Komvos OS) ---------- */
+.atp-fx-grid.is-dark {
+  background:
+    linear-gradient(rgba(205, 210, 214, 0.08) 1px, transparent 1px) 0 0 / 100% 44px,
+    linear-gradient(90deg, rgba(205, 210, 214, 0.06) 1px, transparent 1px) 0 0 / 180px 100%;
+}
+
+.atp-fx-grid.is-dark::before {
+  background: linear-gradient(to bottom, transparent, rgba(154, 161, 167, 0.18), transparent);
+}
+
+.atp-fx-grid.is-dark::after {
+  filter: invert(1);
+  opacity: 0.6;
+}
+
+.flow-lines.is-dark .fl-line {
+  stroke: rgba(205, 210, 214, 0.12);
+}
+
+.flow-lines.is-dark .fl-pulse {
+  stroke: rgba(233, 236, 239, 0.9);
+}
+
+.flow-lines.is-dark .fl-pulse.is-2 {
+  stroke: rgba(0, 175, 239, 0.6);
+}
+
+/* ---------- páginas ERP / Komvos OS ---------- */
+.cms-manifesto-title {
+  margin: 10px 0 0;
+  max-width: 24ch;
+}
+
+.ly-badge {
+  margin: 0 0 0 auto;
+  width: min(100%, 340px);
+  padding: 28px;
+  display: grid;
+  justify-items: center;
+  gap: 14px;
+  text-align: center;
+  border-radius: 24px;
+  background: #f4f6f8;
+  color: #111516;
+  box-shadow: 0 30px 80px -40px rgba(0, 0, 0, 0.8);
+}
+
+.ly-badge img {
+  width: 170px;
+  height: auto;
+}
+
+.ly-badge figcaption {
+  font-size: 15px;
+  color: rgba(17, 21, 22, 0.7);
+}
+
+.ly-badge strong {
+  display: block;
+  font-size: 22px;
+  font-weight: 600;
+  color: #007d67;
+}
+
+.ly-nav {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.ly-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: clamp(22px, 2.4vw, 32px);
+  border-radius: 18px;
+  color: #111516;
+  box-shadow: 0 30px 70px -40px rgba(0, 0, 0, 0.75);
+  transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.ly-card:hover {
+  transform: translateY(-4px);
+}
+
+.ly-card.is-l0 {
+  background: linear-gradient(135deg, #c3c8cc 0%, #959ca2 30%, #c9cdd1 55%, #8f969c 80%, #b4babf 100%);
+}
+
+.ly-card.is-l1 {
+  background: linear-gradient(135deg, #dadde0 0%, #b0b6bb 28%, #e4e7e9 52%, #a9afb4 76%, #cfd3d6 100%);
+}
+
+.ly-card.is-l2 {
+  background: var(--silver);
+}
+
+.ly-card.is-current {
+  outline: 2px solid var(--green);
+  outline-offset: 4px;
+}
+
+.ly-num {
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(17, 21, 22, 0.55);
+}
+
+.ly-role {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(17, 21, 22, 0.6);
+}
+
+.ly-card strong {
+  font-size: clamp(20px, 1.8vw, 26px);
+  font-weight: 600;
+}
+
+.ly-card p {
+  font-size: 14px;
+  color: rgba(17, 21, 22, 0.75);
+}
+
+.ly-verb {
+  margin-top: auto;
+  padding-top: 10px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.mobile .ly-nav {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.mobile .ly-badge {
+  margin: 0 auto;
+}
+
+/* ---------- selo Canal Diamante (PNG transparente) ---------- */
+.partners-logo-row {
+  width: 100%;
+  gap: 14px;
+}
+
+.has-badge .partners-logo-row > img:first-child {
+  flex: 0 1 auto;
+  min-width: 0;
+  max-width: calc(100% - 96px);
+}
+
+.partners-logos .partners-badge {
+  flex: none;
+  height: 84px !important;
+  width: auto;
+  filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.18));
+}
+
+.mobile .partners-logos li.has-badge .partners-logo-row > img:first-child {
+  height: 44px !important;
+}
+
+.mobile .partners-logos .partners-badge {
+  height: 56px !important;
+}
+
+.ly-badge img {
+  filter: drop-shadow(0 10px 18px rgba(0, 0, 0, 0.18));
+}
+
+/* ERP: no fundo escuro do hero, sem as "células" (apareciam como blocos cinza) */
+.atp-fx-grid.is-dark::after {
+  display: none;
+}
+
+/* ---------- Trabalhe conosco: mais pessoas, menos janelas ---------- */
+.hero-photo img {
+  object-position: center 96%;
+}
+
+.hero-photo::after {
+  background:
+    linear-gradient(90deg, rgba(17, 21, 22, 0.86) 0%, rgba(17, 21, 22, 0.5) 40%, rgba(17, 21, 22, 0.08) 75%),
+    linear-gradient(to bottom, rgba(17, 21, 22, 0.5), transparent 18%, transparent 88%, #111516);
+}
+
+.mobile .hero-photo img {
+  object-position: 55% 100%;
+}
+
+.mobile .hero-photo::after {
+  background: linear-gradient(to bottom, rgba(17, 21, 22, 0.85), rgba(17, 21, 22, 0.78) 55%, rgba(17, 21, 22, 0.2) 80%, #111516);
+}
+
+.mobile .partners-logos li:not(.has-badge) img {
+  height: 26px !important;
+}
+
+/* ===================================================================
+   Seções que tinham texto de um lado e vazio do outro: duas colunas
+   =================================================================== */
+.cms-manifesto .pg-wrap.mf-split {
+  max-width: none;
+}
+
+.mf-split {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(0, 0.85fr);
+  align-items: center;
+  gap: clamp(32px, 5vw, 96px);
+}
+
+.mf-split .cms-reveal {
+  font-size: clamp(22px, 2.3vw, 38px);
+}
+
+/* card das camadas (ERP / OS / Mind) */
+.lp {
+  overflow: hidden;
+  border-radius: 24px;
+  background: #f4f6f8;
+  color: #111516;
+  box-shadow: 0 40px 90px -45px rgba(0, 0, 0, 0.85);
+}
+
+.lp-head {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 26px 28px 24px;
+}
+
+.lp.is-l0 .lp-head {
+  background: linear-gradient(135deg, #c3c8cc 0%, #959ca2 30%, #c9cdd1 55%, #8f969c 80%, #b4babf 100%);
+}
+
+.lp.is-l1 .lp-head {
+  background: linear-gradient(135deg, #dadde0 0%, #b0b6bb 28%, #e4e7e9 52%, #a9afb4 76%, #cfd3d6 100%);
+}
+
+.lp.is-l2 .lp-head {
+  background: var(--silver);
+}
+
+.lp-role {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(17, 21, 22, 0.6);
+}
+
+.lp-head strong {
+  font-size: clamp(24px, 2.2vw, 32px);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.lp-list {
+  margin: 0;
+  padding: 8px 28px 22px;
+  list-style: none;
+}
+
+.lp-list li {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  padding: 14px 0;
+  border-bottom: 1px solid rgba(17, 21, 22, 0.08);
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.lp-list li:last-child {
+  border-bottom: 0;
+}
+
+.lp-num {
+  font-size: 13px;
+  font-weight: 600;
+  background: var(--brand-grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Sobre: símbolo ao lado do manifesto */
+.mf-symbol {
+  margin: 0;
+  display: grid;
+  justify-items: center;
+  gap: 22px;
+  text-align: center;
+}
+
+.mf-symbol-mark {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: min(100%, 320px);
+  aspect-ratio: 1;
+}
+
+.mf-symbol-mark img {
+  width: 64%;
+  height: auto;
+  filter: drop-shadow(0 0 40px rgba(205, 210, 214, 0.25));
+}
+
+.mf-symbol-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  padding: 1.5px;
+  background: conic-gradient(from 0deg, transparent 0 70%, var(--senior) 78%, var(--trusth) 86%, var(--statum) 93%, #e9ecef) border-box;
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#000 0 0) content-box exclude,
+    linear-gradient(#000 0 0);
+  animation: orb-spin 10s linear infinite;
+}
+
+.mf-symbol figcaption {
+  max-width: 34ch;
+  font-size: 15px;
+  line-height: 1.6;
+  color: rgba(244, 247, 251, 0.65);
+}
+
+/* artigo: texto + lateral fixa */
+.ins-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 360px);
+  align-items: start;
+  gap: clamp(32px, 6vw, 110px);
+}
+
+.ins-layout .ins-article {
+  max-width: 760px;
+}
+
+.ins-aside {
+  position: sticky;
+  top: 110px;
+}
+
+.ins-aside-card {
+  overflow: hidden;
+  border-radius: 20px;
+  background: #f4f6f8;
+  color: #111516;
+  box-shadow: 0 40px 90px -45px rgba(0, 0, 0, 0.85);
+}
+
+.ins-aside-card .ins-cover {
+  aspect-ratio: 16 / 10;
+}
+
+.ins-aside-meta {
+  margin: 0;
+  padding: 18px 22px 6px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.ins-aside-meta dt {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(17, 21, 22, 0.5);
+}
+
+.ins-aside-meta dd {
+  margin: 2px 0 0;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.ins-aside-cta {
+  display: grid;
+  gap: 14px;
+  padding: 16px 22px 22px;
+  border-top: 1px solid rgba(17, 21, 22, 0.08);
+  margin-top: 12px;
+}
+
+.ins-aside-cta strong {
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.ins-aside-cta .pg-btn {
+  background-color: #111516;
+  border-color: #111516;
+  color: #fff;
+  justify-content: space-between;
+}
+
+/* celular: uma coluna */
+.mobile .mf-split,
+.mobile .ins-layout {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.mobile .ins-aside {
+  position: static;
+}
+
+.mobile .mf-symbol-mark {
+  width: 220px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mf-symbol-ring {
+    animation: none;
+  }
+}
+
+/* ERP: grade uniforme, sem as "células" mais escuras */
+.atp-fx-grid::after {
+  display: none;
+}
+
+/* ---------- playlist de vídeos (Guga Kuerten e Senior) ---------- */
+.vp {
+  display: grid;
+  grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr);
+  gap: 16px;
+  align-items: start;
+}
+
+.vp-stage {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border-radius: 20px;
+  background: #000;
+  box-shadow: 0 40px 90px -45px rgba(0, 0, 0, 0.9);
+}
+
+.vp-stage iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.vp-poster {
+  position: absolute;
+  inset: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+
+.vp-poster img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.7s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.vp-poster::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, transparent 45%, rgba(17, 21, 22, 0.88));
+}
+
+.vp-poster:hover img {
+  transform: scale(1.04);
+}
+
+.vp-play {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 84px;
+  height: 84px;
+  translate: -50% -50%;
+  border-radius: 50%;
+  background: #f4f6f8;
+  color: #111516;
+  box-shadow: 0 0 0 10px rgba(244, 246, 248, 0.18);
+  transition: transform 0.3s;
+}
+
+.vp-play svg {
+  width: 32px;
+  margin-left: 4px;
+}
+
+.vp-poster:hover .vp-play {
+  transform: scale(1.08);
+}
+
+.vp-title {
+  position: absolute;
+  left: 24px;
+  right: 24px;
+  bottom: 20px;
+  z-index: 1;
+  text-align: left;
+  font-size: clamp(16px, 1.5vw, 22px);
+  font-weight: 600;
+  color: #fff;
+}
+
+.vp-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 8px;
+  max-height: min(520px, 46vw);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+}
+
+.vp-item {
+  display: grid;
+  grid-template-columns: 128px minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 8px;
+  border: 1px solid transparent;
+  border-radius: 14px;
+  background: #151a1b;
+  font: inherit;
+  text-align: left;
+  color: rgba(244, 247, 251, 0.82);
+  cursor: pointer;
+  transition: border-color 0.25s, background 0.25s;
+}
+
+.vp-item:hover {
+  border-color: rgba(255, 255, 255, 0.14);
+}
+
+.vp-item.is-active {
+  background: #f4f6f8;
+  color: #111516;
+}
+
+.vp-thumb {
+  overflow: hidden;
+  aspect-ratio: 16 / 9;
+  border-radius: 8px;
+}
+
+.vp-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.vp-item-text {
+  font-size: 13.5px;
+  line-height: 1.4;
+}
+
+.vp-num {
+  display: block;
+  margin-bottom: 2px;
+  font-size: 11px;
+  font-weight: 600;
+  background: var(--brand-grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.mobile .vp {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.mobile .vp-list {
+  max-height: 340px;
+}
+
+.mobile .vp-play {
+  width: 64px;
+  height: 64px;
+}
+
+/* desempenho: seções fora da tela pausam suas animações CSS (ver motion.ts) */
+.is-offscreen,
+.is-offscreen *,
+.is-offscreen *::before,
+.is-offscreen *::after {
+  animation-play-state: paused !important;
+}

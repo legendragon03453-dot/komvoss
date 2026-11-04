@@ -1,0 +1,456 @@
+:root {
+  /* Identidade v2 (Figma 78:239): fundo quase preto, gradiente azul e Montserrat leve */
+  --dark: #111516;
+  --light: #f4f7fb;
+  --line: #939598;
+  --accent: #cdd2d6;
+  --accent-strong: #8e949a;
+  --peach: #fed9a6;
+  --grad: linear-gradient(90deg, #8e949a, #e6e9ec);
+  --grad-hero: linear-gradient(90deg, #8e949a, #e6e9ec 55%, #ffffff);
+  --surface: rgba(255, 255, 255, 0.04);
+  --surface-line: rgba(255, 255, 255, 0.12);
+  /* Destaques da identidade (Figma "CTA & High"): verde e roxo, usados em detalhes */
+  --green: #00aa9e;
+  --purple: #af005f;
+  --brand-grad: linear-gradient(90deg, #00aa9e, #af005f);
+  /* Cores das empresas do ecossistema */
+  --senior: #00aa9e;
+  --statum: #00afef;
+  --trusth: #af005f;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  background: var(--dark);
+  overflow-x: clip;
+}
+
+body {
+  font-family: 'Montserrat', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+p {
+  margin: 0;
+  line-height: normal;
+  word-break: break-word;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+img {
+  display: block;
+  max-width: none;
+}
+
+/* The design is drawn on a 1920px canvas; the page scales it to the viewport width. */
+.canvas {
+  width: 1920px;
+  transform-origin: 0 0;
+}
+
+.frame {
+  position: relative;
+  width: 1920px;
+  overflow: clip;
+  background: var(--dark);
+}
+
+.abs {
+  position: absolute;
+}
+
+.teal { color: var(--accent); }
+.light { color: var(--light); }
+.black { color: #fff; }
+
+/* ---------- Seções complementares (layout em fluxo dentro do canvas de 1920px) ---------- */
+.sec {
+  padding: 112px 32px;
+}
+
+.eyebrow {
+  font-size: 21.25px;
+  font-weight: 400;
+  color: var(--accent);
+  margin-bottom: 9.6px;
+}
+
+.eyebrow.dark {
+  color: #fff;
+}
+
+.sec-title {
+  margin: 0;
+  font-size: 61.93px;
+  font-weight: 600;
+  line-height: normal;
+  color: #fff;
+  max-width: 1300px;
+}
+
+.sec-title.black {
+  color: #fff;
+}
+
+/* Prova social */
+.social-panel {
+  background: var(--surface);
+  border-radius: 20px;
+  padding: 80px 64px;
+}
+
+.numeros {
+  margin-top: 64px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.numero {
+  padding: 32px 24px 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.numero strong {
+  font-size: 65.12px;
+  font-weight: 700;
+  color: var(--accent);
+  line-height: 1;
+}
+
+.numero span {
+  font-size: 20.24px;
+  color: #fff;
+  max-width: 320px;
+}
+
+.logos-label {
+  margin-top: 80px;
+  font-size: 18.4px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.logos {
+  list-style: none;
+  margin: 19.2px 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 16px;
+}
+
+.logos li {
+  height: 102px;
+  border: 1px dashed rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14.72px;
+  color: rgba(255, 255, 255, 0.35);
+}
+
+/* Insights */
+.insights-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.link-arrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 11.2px;
+  font-size: 20.24px;
+  color: var(--light);
+  padding: 11.2px 17.6px;
+  border: 1px solid var(--accent);
+  border-radius: 10px;
+  transition: background 0.2s;
+}
+
+.link-arrow:hover {
+  background: var(--grad);
+}
+
+.artigos {
+  margin-top: 64px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 25.6px;
+}
+
+.artigo {
+  display: flex;
+  flex-direction: column;
+  border-radius: 16.32px;
+  overflow: hidden;
+  background: #191e1f;
+  border: 1px solid rgba(147, 149, 152, 0.17);
+  transition: border-color 0.2s, transform 0.25s;
+}
+
+.artigo:hover {
+  border-color: var(--accent);
+  transform: translateY(-6px);
+}
+
+.artigo-thumb {
+  position: relative;
+  height: 255px;
+  background: linear-gradient(rgba(147, 149, 152, 0.17) 1px, transparent 1px) 0 0 / 101px 82px,
+    linear-gradient(90deg, rgba(147, 149, 152, 0.17) 1px, transparent 1px) 0 0 / 101px 82px,
+    var(--dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.artigo-thumb img {
+  width: 150px;
+  height: 127.5px;
+}
+
+.artigo-cat {
+  position: absolute;
+  left: 25px;
+  top: 25px;
+  background: var(--grad);
+  color: var(--light);
+  font-size: 14.72px;
+  font-weight: 600;
+  padding: 6.4px 11.2px;
+  border-radius: 7.461px;
+}
+
+.artigo-body {
+  padding: 24px 20px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 11.2px;
+}
+
+.artigo-date {
+  font-size: 14.72px;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.artigo h3 {
+  margin: 0;
+  font-size: 27.2px;
+  font-weight: 600;
+  color: #fff;
+  line-height: 1.2;
+}
+
+.artigo p {
+  font-size: 18.4px;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.artigo-more {
+  margin-top: 8px;
+  font-size: 16.56px;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+/* CTA final */
+.cta-panel {
+  background: var(--grad);
+  border-radius: 20px;
+  padding: 80px 64px;
+  display: grid;
+  grid-template-columns: 1fr 760px;
+  gap: 64px;
+  align-items: center;
+}
+
+.cta-text {
+  margin-top: 25.6px;
+  font-size: 25px;
+  color: #fff;
+  max-width: 760px;
+}
+
+.lead-form {
+  background: var(--surface);
+  border-radius: 16.32px;
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 17.6px;
+}
+
+.lead-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 6.4px;
+  font-size: 16.56px;
+  font-weight: 500;
+  color: #fff;
+}
+
+.lead-form input,
+.lead-form textarea {
+  font: inherit;
+  font-weight: 400;
+  font-size: 18.4px;
+  padding: 12.8px 14.4px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 10px;
+  background: var(--surface);
+  resize: vertical;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.lead-form input:focus,
+.lead-form textarea:focus {
+  border-color: var(--accent);
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 17.6px;
+}
+
+.form-submit {
+  margin-top: 6.4px;
+  height: 57.8px;
+  border: 0;
+  border-radius: 10px;
+  background: var(--dark);
+  color: var(--light);
+  font: inherit;
+  font-size: 18.3px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 6.4px 0 22.4px;
+  cursor: pointer;
+}
+
+.form-submit-box {
+  width: 52px;
+  height: 44.2px;
+  border-radius: 10px;
+  background: var(--grad);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s;
+}
+
+.form-submit:hover .form-submit-box {
+  transform: translateX(3px);
+}
+
+.form-done {
+  padding: 48px 0;
+  text-align: center;
+}
+
+.form-done h3 {
+  margin: 0 0 9.6px;
+  font-size: 32.3px;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.form-done p {
+  font-size: 20.24px;
+  color: #fff;
+}
+
+/* Footer */
+.footer {
+  padding: 80px 32px 40px;
+  border-top: 1px solid rgba(147, 149, 152, 0.17);
+}
+
+.footer-top {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr 1fr 1fr;
+  gap: 48px;
+}
+
+.footer-brand img {
+  width: 329px;
+  height: 87.55px;
+}
+
+.footer-brand p {
+  margin-top: 24px;
+  max-width: 560px;
+  font-size: 18.4px;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.footer-col {
+  display: flex;
+  flex-direction: column;
+  gap: 12.8px;
+}
+
+.footer-col h4 {
+  margin: 0 0 6.4px;
+  font-size: 20.24px;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.footer-col a {
+  font-size: 18.4px;
+  color: var(--light);
+  transition: color 0.2s;
+}
+
+.footer-col a:hover {
+  color: var(--accent);
+}
+
+.footer-bottom {
+  margin-top: 80px;
+  padding-top: 32px;
+  border-top: 1px solid rgba(147, 149, 152, 0.17);
+  display: flex;
+  justify-content: space-between;
+  font-size: 16.56px;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.footer-cta {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+/* Recorte do ícone oficial (o PNG do Figma tem margem transparente). */
+.logo-crop {
+  position: absolute;
+  overflow: hidden;
+}
+
+.logo-crop img {
+  position: absolute;
+  left: -24.48%;
+  top: -24.7%;
+  width: 148.96%;
+  height: 149.39%;
+  max-width: none;
+}

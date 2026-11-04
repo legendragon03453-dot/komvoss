@@ -1,0 +1,204 @@
+/* ===================================================================
+   Mobile (≤ 900px): layout em fluxo, ativado pela classe .mobile no root
+   =================================================================== */
+.mobile .frame {
+  width: 100%;
+}
+
+.mobile .sec {
+  padding: 64.8px 18px;
+}
+
+.mobile .eyebrow {
+  font-size: 15px;
+  margin-bottom: 7.2px;
+}
+
+.mobile .sec-title {
+  margin: 0;
+  font-size: clamp(26.7px, 7.57vw, 46.28px);
+  font-weight: 600;
+  line-height: 1.15;
+  color: #fff;
+}
+
+.mobile .sec-title.black {
+  color: #fff;
+}
+
+/* Seções complementares */
+.mobile .artigos {
+  margin-top: 36px;
+  grid-template-columns: 1fr;
+  gap: 12.6px;
+}
+
+.mobile .social-panel {
+  margin: 0;
+  padding: 50.4px 18px;
+}
+
+.mobile .numeros {
+  margin-top: 32.4px;
+  grid-template-columns: 1fr 1fr;
+  row-gap: 7.2px;
+}
+
+.mobile .numero {
+  padding: 21.6px 10.8px 0 0;
+}
+
+.mobile .numero strong {
+  font-size: 35.6px;
+}
+
+.mobile .numero span {
+  font-size: 14px;
+}
+
+.mobile .logos-label {
+  margin-top: 43.2px;
+  font-size: 14px;
+}
+
+.mobile .logos {
+  grid-template-columns: repeat(2, 1fr);
+  gap: 9px;
+}
+
+.mobile .logos li {
+  height: 74px;
+  font-size: 12px;
+}
+
+.mobile .insights-head {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 21.6px;
+}
+
+.mobile .link-arrow {
+  font-size: 15px;
+  padding: 10.8px 14.4px;
+}
+
+.mobile .artigo-thumb {
+  height: 175.75px;
+}
+
+.mobile .artigo-thumb img {
+  width: 96px;
+  height: 88.8px;
+}
+
+.mobile .artigo-cat {
+  left: 16px;
+  top: 16px;
+  font-size: 12px;
+}
+
+.mobile .artigo-body {
+  padding: 18px 16.2px 21.6px;
+}
+
+.mobile .artigo h3 {
+  font-size: 21.12px;
+}
+
+.mobile .artigo p {
+  font-size: 15px;
+}
+
+.mobile .cta-panel {
+  margin: 0;
+  padding: 50.4px 18px 18px;
+  grid-template-columns: 1fr;
+  gap: 32.4px;
+}
+
+.mobile .cta-text {
+  margin-top: 16.2px;
+  font-size: 16.32px;
+}
+
+.mobile .lead-form {
+  padding: 19.8px 16.2px;
+  gap: 14.4px;
+}
+
+.mobile .lead-form label {
+  font-size: 14px;
+}
+
+.mobile .lead-form input,
+.mobile .lead-form textarea {
+  font-size: 15.36px;
+  padding: 11.7px 12.6px;
+}
+
+.mobile .form-row {
+  grid-template-columns: 1fr;
+  gap: 14.4px;
+}
+
+.mobile .form-submit {
+  height: 55.5px;
+  font-size: 15.36px;
+  padding: 0 6px 0 16.2px;
+}
+
+.mobile .form-submit-box {
+  width: 48px;
+  height: 44.4px;
+}
+
+.mobile .form-done h3 {
+  font-size: 24.05px;
+}
+
+.mobile .form-done p {
+  font-size: 15.36px;
+}
+
+.mobile .footer {
+  padding: 50.4px 18px calc(28.8px + env(safe-area-inset-bottom, 0px));
+}
+
+.mobile .footer-top {
+  grid-template-columns: 1fr 1fr;
+  gap: 32.4px 18px;
+}
+
+.mobile .footer-brand {
+  grid-column: 1 / -1;
+}
+
+.mobile .footer-brand img {
+  width: 220px;
+  height: auto;
+}
+
+.mobile .footer-brand p {
+  margin-top: 16.2px;
+  font-size: 15px;
+}
+
+.mobile .footer-col {
+  gap: 10.8px;
+}
+
+.mobile .footer-col h4 {
+  font-size: 15.36px;
+}
+
+.mobile .footer-col a {
+  font-size: 15px;
+}
+
+.mobile .footer-bottom {
+  margin-top: 43.2px;
+  padding-top: 21.6px;
+  flex-direction: column;
+  gap: 12.6px;
+  font-size: 13px;
+}
