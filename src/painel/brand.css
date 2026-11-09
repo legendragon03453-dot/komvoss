@@ -635,7 +635,7 @@ body {
 
 .pages {
   display: grid;
-  grid-template-columns: 190px minmax(320px, 0.85fr) minmax(420px, 1.25fr);
+  grid-template-columns: 210px minmax(340px, 0.9fr) minmax(400px, 1.2fr);
   gap: 18px;
   align-items: start;
 }
@@ -746,6 +746,124 @@ body {
 
 .acc .text-fields {
   padding: 4px 16px 18px;
+}
+
+/* seção com controles (ex. Clientes › Depoimentos): mostrar/ocultar, colunas e itens em caixas */
+.sec-tools {
+  display: grid;
+  gap: 14px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+}
+
+.sec-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 18px;
+}
+
+.sec-toggle {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.sec-toggle input {
+  width: 18px;
+  height: 18px;
+  margin-top: 2px;
+  accent-color: var(--ink);
+}
+
+.sec-toggle span {
+  display: grid;
+  gap: 2px;
+}
+
+.sec-toggle small {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.sec-cols {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--ink-2);
+  font-size: 12.5px;
+  font-weight: 600;
+}
+
+.sec-items {
+  display: grid;
+  gap: 12px;
+}
+
+.sec-item {
+  position: relative;
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+  margin: 0;
+  padding: 12px 14px 14px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #fafbfc;
+}
+
+.sec-item legend {
+  padding: 0 6px;
+  margin-left: -6px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.sec-item-tools {
+  position: absolute;
+  top: -12px;
+  right: 10px;
+  display: flex;
+  gap: 2px;
+  padding: 2px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: #fff;
+}
+
+.sec-item-tools button {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border: 0;
+  border-radius: 7px;
+  background: none;
+  color: var(--ink-2);
+  cursor: pointer;
+}
+
+.sec-item-tools button:hover:not(:disabled) {
+  background: #f0f2f4;
+}
+
+.sec-item-tools button.is-danger:hover {
+  background: #fdecef;
+  color: #b4234a;
+}
+
+.sec-item-tools button:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.sec-add {
+  justify-self: start;
 }
 
 .hint-chip {
@@ -1635,7 +1753,14 @@ textarea.st-inline.kb-quote-edit {
 
 .st-settings {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: 14px;
+}
+
+/* inputs e selects têm largura mínima própria: sem isso a coluna da direita estoura e corta os campos */
+.st-inspector :is(input, select, textarea) {
+  min-width: 0;
+  max-width: 100%;
 }
 
 .st-settings-head {
@@ -1666,7 +1791,7 @@ textarea.st-inline.kb-quote-edit {
 
 .st-row {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 10px;
 }
 
@@ -1720,6 +1845,33 @@ textarea.st-inline.kb-quote-edit {
   border-radius: 999px;
   background: rgba(17, 21, 22, 0.8);
   color: #fff;
+}
+
+/* capa animada (SVG): mostra o desenho inteiro sobre o fundo escuro das capas */
+.st-drop-img.is-svg {
+  background: #121718;
+}
+
+.st-drop-img.is-svg img {
+  object-fit: contain;
+}
+
+.st-svg-links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 14px;
+}
+
+.st-svg-code {
+  display: grid;
+  gap: 8px;
+}
+
+.st-svg-code textarea {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 12px;
+  white-space: pre;
 }
 
 .seo-card {
@@ -1831,3 +1983,4 @@ textarea.st-inline.kb-quote-edit {
     flex-basis: calc(100% - 120px);
   }
 }
+.st-svg-links a.link-btn { text-decoration: none; }

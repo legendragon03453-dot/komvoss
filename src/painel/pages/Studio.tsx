@@ -495,30 +495,80 @@ function F({ label, children, hint }: { label: string; children: ReactNode; hint
   )
 }
 
-function ImagePick({ value, onChange, label = 'Imagem', ratio }: { value: string; onChange: (url: string) => void; label?: string; ratio?: string }) {
+/** Limpa um SVG enviado (tira <script>, on*="..." e links javascript:) e devolve um arquivo .svg pronto para subir. */
+function svgFile(code: string, name = 'capa.svg'): File {
+  let svg = code.trim().replace(/^<\?xml[^>]*>\s*/i, '')
+  if (!/^<svg[\s>]/i.test(svg) || !/<\/svg>\s*$/i.test(svg)) throw new Error('O código precisa começar com <svg …> e terminar com </svg>.')
+  svg = svg
+    .replace(/<script[\s\S]*?<\/script>/gi, '')
+    .replace(/\son[a-z]+\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/gi, '')
+    .replace(/(href\s*=\s*["'])\s*javascript:[^"']*/gi, '$1#')
+  if (!/xmlns=/.test(svg.slice(0, svg.indexOf('>')))) svg = svg.replace(/^<svg/i, '<svg xmlns="http://www.w3.org/2000/svg"')
+  // SVG é XML: um erro de sintaxe (tag sem fechar, "&" solto, "--" dentro de comentário) vira imagem quebrada no site
+  const err = new DOMParser().parseFromString(svg, 'image/svg+xml').querySelector('parsererror')
+  if (err) throw new Error('O SVG tem um erro de código e não abriria no site: ' + ((err.textContent ?? '').match(/(?:error on )?line \d+[\s\S]*?(?=Below is|$)/i)?.[0].trim() ?? 'confira o código.'))
+  return new File([svg], name.replace(/\.[^.]+$/, '') + '.svg', { type: 'image/svg+xml' })
+}
+
+const isSvgFile = (f: File) => f.type === 'image/svg+xml' || /\.svg$/i.test(f.name)
+
+function ImagePick({
+  value,
+  onChange,
+  label = 'Imagem',
+  ratio,
+  svg,
+}: {
+  value: string
+  onChange: (url: string) => void
+  label?: string
+  ratio?: string
+  /** aceita capa animada: arquivo .svg (com o CSS dentro) ou código SVG colado */
+  svg?: boolean
+}) {
   const toast = useToast()
   const ref = useRef<HTMLInputElement>(null)
   const [busy, setBusy] = useState(false)
   const [over, setOver] = useState(false)
-  async function pick(file?: File) {
-    if (!file) return
-    if (!file.type.startsWith('image/')) return toast('Escolha uma imagem (JPG, PNG, WebP).', 'error')
-    if (file.size > 6 * 1024 * 1024) return toast('Imagem acima de 6 MB. Reduza antes de enviar.', 'error')
+  const [code, setCode] = useState<string | null>(null)
+  async function send(file: File) {
     setBusy(true)
     try {
       onChange(await uploadMedia(file, 'blog'))
+      setCode(null)
     } catch (e) {
       toast((e as Error).message, 'error')
     } finally {
       setBusy(false)
     }
   }
+  async function pick(file?: File) {
+    if (!file) return
+    if (svg && isSvgFile(file)) {
+      try {
+        return send(svgFile(await file.text(), file.name))
+      } catch (e) {
+        return toast((e as Error).message, 'error')
+      }
+    }
+    if (!file.type.startsWith('image/') || isSvgFile(file)) return toast(`Escolha uma imagem (JPG, PNG, WebP${svg ? ' ou SVG' : ''}).`, 'error')
+    if (file.size > 6 * 1024 * 1024) return toast('Imagem acima de 6 MB. Reduza antes de enviar.', 'error')
+    send(file)
+  }
+  function useCode() {
+    try {
+      send(svgFile(code ?? ''))
+    } catch (e) {
+      toast((e as Error).message, 'error')
+    }
+  }
+  const isSvg = /^data:image\/svg\+xml|\.svg(\?|#|$)/i.test(value)
   return (
     <div className="field">
       <span>{label}</span>
       <button
         type="button"
-        className={`st-drop-img${over ? ' is-over' : ''}${value ? ' has-img' : ''}`}
+        className={`st-drop-img${over ? ' is-over' : ''}${value ? ' has-img' : ''}${isSvg ? ' is-svg' : ''}`}
         style={ratio ? { aspectRatio: ratio } : undefined}
         onClick={() => ref.current?.click()}
         onDragOver={(e) => {
@@ -535,14 +585,45 @@ function ImagePick({ value, onChange, label = 'Imagem', ratio }: { value: string
         disabled={busy}
       >
         {value ? <img src={value} alt="" /> : <Icon name="image" size={22} />}
-        <span>{busy ? 'Enviando…' : value ? 'Trocar imagem' : 'Solte um arquivo aqui ou clique'}</span>
+        <span>{busy ? 'Enviando…' : value ? 'Trocar imagem' : svg ? 'Solte uma imagem ou um .svg animado' : 'Solte um arquivo aqui ou clique'}</span>
       </button>
+      {svg && code === null && (
+        <div className="st-svg-links">
+          <button type="button" className="link-btn" onClick={() => setCode('')}>
+            Colar código SVG
+          </button>
+          <a className="link-btn" href="/capas/modelo-capa.svg" download="modelo-capa-komvos.svg">
+            Baixar modelo de capa animada
+          </a>
+        </div>
+      )}
+      {svg && code !== null && (
+        <div className="st-svg-code">
+          <textarea
+            rows={7}
+            value={code}
+            onChange={(e) => setCode(e.target.value)}
+            placeholder={'<svg viewBox="0 0 640 360" …>\n  <style> …animações… </style>\n  …\n</svg>'}
+            spellCheck={false}
+            autoFocus
+          />
+          <small className="field-foot">O CSS das animações vai dentro do próprio SVG, num &lt;style&gt;. Formato 16:9.</small>
+          <div className="st-svg-links">
+            <button type="button" className="btn is-primary is-small" onClick={useCode} disabled={busy || !code?.trim()}>
+              {busy ? 'Enviando…' : 'Usar como capa'}
+            </button>
+            <button type="button" className="link-btn is-muted" onClick={() => setCode(null)}>
+              Cancelar
+            </button>
+          </div>
+        </div>
+      )}
       {value && (
         <button type="button" className="link-btn is-muted" onClick={() => onChange('')}>
           Remover imagem
         </button>
       )}
-      <input ref={ref} type="file" accept="image/*" hidden onChange={(e) => pick(e.target.files?.[0])} />
+      <input ref={ref} type="file" accept={svg ? 'image/*,.svg' : 'image/*'} hidden onChange={(e) => (pick(e.target.files?.[0]), (e.target.value = ''))} />
     </div>
   )
 }
@@ -782,7 +863,7 @@ function ArticleSettings({
       <F label="Resumo" hint={`${doc.excerpt.length}/220 · aparece nos cards, no topo do artigo e no Google`}>
         <textarea rows={3} value={doc.excerpt} maxLength={220} onChange={(e) => setMeta({ excerpt: e.target.value }, 'excerpt')} />
       </F>
-      <ImagePick label="Capa (opcional)" value={doc.cover} onChange={(cover) => setMeta({ cover })} ratio="16 / 9" />
+      <ImagePick label="Capa (opcional)" value={doc.cover} onChange={(cover) => setMeta({ cover })} ratio="16 / 9" svg />
 
       <p className="st-kicker">Quem escreveu</p>
       <div className="st-row">

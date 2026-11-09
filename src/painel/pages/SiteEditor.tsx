@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import images from 'virtual:site-images'
 import { MENU, MENU_ARCH_LABEL } from '../../cms/menu'
-import { ROOTS, listTexts } from '../../live/registry'
-import type { TextField } from '../../live/registry'
+import { ROOTS, SECTIONS, getPath, listTexts } from '../../live/registry'
+import type { SectionConfig, SectionValue, TextField } from '../../live/registry'
 import type { ContentRow } from '../../live/content'
 import { DEMO, deleteContent, listContent, saveContent, uploadMedia } from '../db'
 import { Badge, Card, Icon, Loading, Modal, PageHead, Tabs, fmtDate, useConfirm, useData, useToast } from '../ui'
@@ -157,6 +157,29 @@ function Pages({ byKey, reload }: Props) {
   const [img, setImg] = useState<Img | null>(null)
   const [reloadKey, setReloadKey] = useState(0)
   const [open, setOpen] = useState<string | null>('Banner do topo')
+  const [secDraft, setSecDraft] = useState<Record<string, SectionValue>>({})
+
+  // seções com controles (ocultar, colunas, lista de itens): valor publicado e rascunho
+  const secSaved = (path: string): SectionValue => {
+    const cfg = SECTIONS[path]
+    const row = byKey.get(`section:${path}`)?.value as SectionValue | undefined
+    const o = getPath(path) as { hidden?: boolean; cols?: number; items?: Record<string, string | boolean>[] }
+    const items = cfg.items
+      ? (row?.items ??
+        (o.items ?? []).map((it, i) => {
+          // textos editados antes, campo a campo, entram na lista
+          const out: Record<string, string | boolean> = { ...it }
+          for (const f of cfg.items!) {
+            const t = byKey.get(`text:${path}.items.${i}.${f.key}`)?.value.v
+            if (typeof t === 'string') out[f.key] = t
+          }
+          return out
+        }))
+      : undefined
+    return { hidden: row?.hidden ?? Boolean(o.hidden), ...(cfg.cols ? { cols: row?.cols ?? o.cols ?? 3 } : {}), ...(items ? { items } : {}) }
+  }
+  const secValue = (path: string) => secDraft[path] ?? secSaved(path)
+  const secChanged = Object.keys(secDraft).filter((p) => JSON.stringify(secDraft[p]) !== JSON.stringify(secSaved(p)))
 
   const edited = (f: TextField) => byKey.get(`text:${f.path}`)
   const valueOf = (f: TextField) => draft[f.path] ?? (edited(f)?.value.v as string | undefined) ?? f.value
@@ -177,7 +200,9 @@ function Pages({ byKey, reload }: Props) {
     const f = all.find((x) => x.path === path)!
     return v !== ((byKey.get(`text:${path}`)?.value.v as string | undefined) ?? f.value)
   })
-  const editedCount = (r: string) => all.filter((f) => f.root === r && byKey.has(`text:${f.path}`)).length
+  const editedCount = (r: string) =>
+    all.filter((f) => f.root === r && byKey.has(`text:${f.path}`)).length + Object.keys(SECTIONS).filter((p) => SECTIONS[p].root === r && byKey.has(`section:${p}`)).length
+  const total = changed.length + secChanged.length
   const pageImages = images.filter((i) => (ROOT_FILES[root] ?? []).some((p) => i.uses.some((u) => u.startsWith(p))) && !(i.folder === 'v2' && i.name.endsWith('.svg')) && (root === 'clientes' || i.folder !== 'clientes'))
 
   // rascunho para a pré-visualização
@@ -189,22 +214,31 @@ function Pages({ byKey, reload }: Props) {
       if (v === f.value) removed.push(`text:${path}`)
       else rows.push({ key: `text:${path}`, value: { v } })
     }
+    for (const p of Object.keys(secDraft)) rows.push({ key: `section:${p}`, value: secDraft[p] })
     return { rows, removed }
-  }, [draft, all])
+  }, [draft, all, secDraft])
 
   useEffect(() => setOpen(sections[0]?.[0] ?? null), [root]) // eslint-disable-line react-hooks/exhaustive-deps
 
   async function save() {
     const empty = changed.filter(([, v]) => !v.trim())
     if (empty.length) return toast('Há textos vazios. Escreva algo ou use "Voltar ao original".', 'error')
+    const emptyItem = secChanged.find((p) => secDraft[p].items?.some((it) => !String(it.quote ?? it.name ?? '').trim()))
+    if (emptyItem) return toast(`Há ${SECTIONS[emptyItem].itemLabel?.toLowerCase() ?? 'item'} sem texto. Preencha ou remova a caixa.`, 'error')
     setSaving(true)
     try {
       const back = changed.filter(([path, v]) => v === all.find((x) => x.path === path)!.value).map(([path]) => `text:${path}`)
-      await deleteContent(back)
-      await saveContent(changed.filter(([path]) => !back.includes(`text:${path}`)).map(([path, v]) => ({ key: `text:${path}`, value: { v } })))
+      // a lista salva em grupo substitui as edições antigas, campo a campo, dos mesmos itens
+      const stale = [...byKey.keys()].filter((k) => secChanged.some((p) => SECTIONS[p].items && k.startsWith(`text:${p}.items.`)))
+      await deleteContent([...back, ...stale])
+      await saveContent([
+        ...changed.filter(([path]) => !back.includes(`text:${path}`)).map(([path, v]) => ({ key: `text:${path}`, value: { v } })),
+        ...secChanged.map((p) => ({ key: `section:${p}`, value: secDraft[p] as Record<string, unknown> })),
+      ])
       setDraft({})
+      setSecDraft({})
       reload()
-      toast(`${changed.length} ${changed.length === 1 ? 'alteração publicada' : 'alterações publicadas'}. ${PUBLISH_NOTE}`)
+      toast(`${total} ${total === 1 ? 'alteração publicada' : 'alterações publicadas'}. ${PUBLISH_NOTE}`)
     } catch (e) {
       toast((e as Error).message, 'error')
     } finally {
@@ -237,7 +271,28 @@ function Pages({ byKey, reload }: Props) {
 
   async function discard() {
     const ok = await confirm({ title: 'Descartar as alterações?', consequences: ['Tudo o que você mudou e ainda não publicou volta ao que está no ar.'], confirm: 'Descartar', danger: true })
-    if (ok) setDraft({})
+    if (ok) {
+      setDraft({})
+      setSecDraft({})
+    }
+  }
+
+  async function restoreSection(path: string) {
+    const ok = await confirm({
+      title: `Voltar “${SECTIONS[path].name}” ao original?`,
+      consequences: ['A seção volta a aparecer no site, com os itens e as colunas originais.', 'As mudanças publicadas nesta seção saem do site.'],
+      confirm: 'Voltar ao original',
+    })
+    if (!ok) return
+    try {
+      await deleteContent([`section:${path}`, ...[...byKey.keys()].filter((k) => k.startsWith(`text:${path}.items.`))])
+      setSecDraft(({ [path]: _, ...rest }) => rest)
+      reload()
+      setReloadKey((k) => k + 1)
+      toast('Seção original de volta.')
+    } catch (e) {
+      toast((e as Error).message, 'error')
+    }
   }
 
   return (
@@ -294,7 +349,9 @@ function Pages({ byKey, reload }: Props) {
         {!sections.length && <p className="empty">Nenhum texto encontrado.</p>}
         {sections.map(([name, list]) => {
           const isOpen = Boolean(term) || open === name
-          const dirty = list.some((f) => draft[f.path] !== undefined)
+          const secPath = term ? undefined : Object.keys(SECTIONS).find((p) => SECTIONS[p].root === root && SECTIONS[p].name === name)
+          const sec = secPath ? secValue(secPath) : undefined
+          const dirty = list.some((f) => draft[f.path] !== undefined) || (secPath ? secChanged.includes(secPath) : false)
           return (
             <section key={name} className={`acc${isOpen ? ' is-open' : ''}`}>
               <button type="button" className="acc-head" onClick={() => setOpen(isOpen && !term ? null : name)} aria-expanded={isOpen}>
@@ -303,10 +360,11 @@ function Pages({ byKey, reload }: Props) {
                 </span>
                 <strong>{name}</strong>
                 <small>
-                  {list.length} {list.length === 1 ? 'campo' : 'campos'}
+                  {sec?.items ? `${sec.items.length} ${sec.items.length === 1 ? 'item' : 'itens'}` : `${list.length} ${list.length === 1 ? 'campo' : 'campos'}`}
                 </small>
+                {sec?.hidden && <Badge tone="dark">Oculta</Badge>}
                 {dirty && <Badge tone="amber">Não publicado</Badge>}
-                {list.some((f) => edited(f)) && <Badge tone="pink">Editado</Badge>}
+                {(list.some((f) => edited(f)) || (secPath && byKey.has(`section:${secPath}`))) && <Badge tone="pink">Editado</Badge>}
                 <span className="acc-caret" aria-hidden="true" />
               </button>
               {isOpen && (
@@ -340,6 +398,16 @@ function Pages({ byKey, reload }: Props) {
                       </label>
                     )
                   })}
+                  {secPath && sec && (
+                    <SectionTools
+                      cfg={SECTIONS[secPath]}
+                      value={sec}
+                      published={byKey.has(`section:${secPath}`)}
+                      onChange={(v) => setSecDraft((d) => ({ ...d, [secPath]: v }))}
+                      onFocus={(text) => setFocus({ text, n: Date.now() })}
+                      onRestore={() => restoreSection(secPath)}
+                    />
+                  )}
                 </div>
               )}
             </section>
@@ -351,11 +419,11 @@ function Pages({ byKey, reload }: Props) {
         <Preview url={term ? '/' : ROOTS[root].url} rows={previewRows.rows} removed={previewRows.removed} focus={focus} reloadKey={reloadKey} />
       </div>
 
-      {changed.length > 0 && (
+      {total > 0 && (
         <div className="savebar">
           <span className="live-dot" />
           <span>
-            {changed.length} {changed.length === 1 ? 'alteração para publicar' : 'alterações para publicar'}
+            {total} {total === 1 ? 'alteração para publicar' : 'alterações para publicar'}
           </span>
           <button type="button" className="btn" onClick={discard}>
             Descartar
@@ -375,6 +443,108 @@ function Pages({ byKey, reload }: Props) {
             setReloadKey((k) => k + 1)
           }}
         />
+      )}
+    </div>
+  )
+}
+
+/* ---------- seção com controles: mostrar/ocultar, colunas e lista de itens em caixas ---------- */
+
+function SectionTools({
+  cfg,
+  value,
+  published,
+  onChange,
+  onFocus,
+  onRestore,
+}: {
+  cfg: SectionConfig
+  value: SectionValue
+  published: boolean
+  onChange: (v: SectionValue) => void
+  onFocus: (text: string) => void
+  onRestore: () => void
+}) {
+  const items = value.items ?? []
+  const setItems = (next: Record<string, string | boolean>[]) => onChange({ ...value, items: next })
+  const setItem = (i: number, patch: Record<string, string | boolean>) => setItems(items.map((it, j) => (j === i ? { ...it, ...patch } : it)))
+  const move = (i: number, d: number) => {
+    const next = [...items]
+    ;[next[i], next[i + d]] = [next[i + d], next[i]]
+    setItems(next)
+  }
+  const label = cfg.itemLabel ?? 'Item'
+  return (
+    <div className="sec-tools">
+      <div className="sec-bar">
+        <label className="sec-toggle">
+          <input type="checkbox" checked={!value.hidden} onChange={(e) => onChange({ ...value, hidden: !e.target.checked })} />
+          <span>
+            <strong>{value.hidden ? 'Seção oculta no site' : 'Seção visível no site'}</strong>
+            <small>{value.hidden ? 'Ninguém vê esta parte até você mostrar de novo.' : 'Desmarque para esconder sem apagar nada.'}</small>
+          </span>
+        </label>
+        {cfg.cols && (
+          <div className="sec-cols">
+            <span>Colunas</span>
+            <div className="seg" role="group" aria-label="Colunas">
+              {[1, 2, 3].map((n) => (
+                <button key={n} type="button" className={value.cols === n ? 'is-on' : ''} aria-pressed={value.cols === n} onClick={() => onChange({ ...value, cols: n })}>
+                  {n}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {cfg.items && (
+        <>
+          <div className="sec-items">
+            {items.map((it, i) => (
+              <fieldset key={i} className="sec-item">
+                <legend>
+                  {label} {i + 1}
+                </legend>
+                <div className="sec-item-tools">
+                  <button type="button" onClick={() => move(i, -1)} disabled={i === 0} title="Subir" aria-label="Subir">
+                    <Icon name="up" size={14} />
+                  </button>
+                  <button type="button" onClick={() => move(i, 1)} disabled={i === items.length - 1} title="Descer" aria-label="Descer">
+                    <Icon name="down" size={14} />
+                  </button>
+                  <button type="button" className="is-danger" onClick={() => setItems(items.filter((_, j) => j !== i))} title={`Remover ${label.toLowerCase()}`} aria-label={`Remover ${label.toLowerCase()}`}>
+                    <Icon name="trash" size={14} />
+                  </button>
+                </div>
+                {cfg.items!.map((f) =>
+                  f.check ? (
+                    <label key={f.key} className="check">
+                      <input type="checkbox" checked={Boolean(it[f.key])} onChange={(e) => setItem(i, { [f.key]: e.target.checked })} /> {f.label}
+                    </label>
+                  ) : (
+                    <label key={f.key} className="field">
+                      <span>{f.label}</span>
+                      {f.long ? (
+                        <textarea rows={3} value={String(it[f.key] ?? '')} onFocus={() => onFocus(String(it[f.key] ?? ''))} onChange={(e) => setItem(i, { [f.key]: e.target.value })} />
+                      ) : (
+                        <input value={String(it[f.key] ?? '')} onFocus={() => onFocus(String(it[f.key] ?? ''))} onChange={(e) => setItem(i, { [f.key]: e.target.value })} />
+                      )}
+                    </label>
+                  ),
+                )}
+              </fieldset>
+            ))}
+          </div>
+          <button type="button" className="btn sec-add" onClick={() => setItems([...items, { ...(cfg.blank ?? {}) }])}>
+            <Icon name="plus" size={16} /> Adicionar {label.toLowerCase()}
+          </button>
+        </>
+      )}
+      {published && (
+        <button type="button" className="link-btn is-muted" onClick={onRestore}>
+          Voltar esta seção ao original
+        </button>
       )}
     </div>
   )

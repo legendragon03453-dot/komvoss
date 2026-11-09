@@ -1037,6 +1037,30 @@ a.spot:hover,
   height: 560px;
 }
 
+/* colunas escolhidas no painel: com menos colunas, os cards não ficam esticados demais */
+.cms-quotes.is-cols-1 {
+  grid-template-columns: minmax(0, 1fr);
+  max-width: 640px;
+  margin-inline: auto;
+}
+
+.cms-quotes.is-cols-2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  max-width: 980px;
+  margin-inline: auto;
+}
+
+/* poucos depoimentos: sem carrossel, altura do conteúdo */
+.cms-quotes.is-still {
+  height: auto;
+  align-items: start;
+}
+
+.cms-quotes-col {
+  display: grid;
+  gap: 16px;
+}
+
 .cms-quotes .mq {
   height: 100%;
 }
@@ -1314,6 +1338,8 @@ a.spot:hover,
 }
 
 .ins-card .ins-cover {
+  /* todas as capas no mesmo 16:9 (foto, SVG enviado ou ilustração), para os cards alinharem */
+  overflow: hidden;
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
@@ -2065,4 +2091,8 @@ a.spot:hover,
   width: 100%;
   min-width: 0;
   text-overflow: ellipsis;
+}
+
+.mobile .cms-quotes.is-still {
+  height: auto;
 }

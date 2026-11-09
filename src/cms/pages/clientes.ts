@@ -8,9 +8,11 @@ export const clientes: {
   numbers: Head
   /** os logos ficam em src/cms/parceiros.ts (CLIENT_LOGOS) */
   logos: Head
-  /** `destaque: true` deixa o depoimento em card branco (o time escolhe quais) */
-  testimonials: Head & { items: { quote: string; name: string; role: string; destaque?: boolean }[] }
+  /** `destaque: true` deixa o depoimento em card branco (o time escolhe quais).
+   *  `cols` (1 a 3) e `hidden` também podem ser mudados pelo painel (Gerenciar site › Clientes › Depoimentos). */
+  testimonials: Head & { items: { quote: string; name: string; role: string; destaque?: boolean }[]; cols?: number; hidden?: boolean }
   cases: Head & {
+    hidden?: boolean
     items: { company: string; sector: string; solution: string; challenge: string; result: string; outcome: string }[]
   }
 } = {
@@ -36,6 +38,7 @@ export const clientes: {
   testimonials: {
     eyebrow: 'Depoimentos',
     title: { text: 'O que dizem nossos clientes', highlight: 'nossos clientes' },
+    cols: 3,
     items: [
       { quote: '[Depoimento do cliente sobre o resultado alcançado com o Grupo Komvos.]', name: '[Nome]', role: '[Cargo, Empresa]', destaque: true },
       { quote: '[Depoimento do cliente sobre a experiência com o ecossistema Komvos.]', name: '[Nome]', role: '[Cargo, Empresa]' },

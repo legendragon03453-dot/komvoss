@@ -14,6 +14,7 @@ import type { Author, Block } from './blocks'
  *   "image:<arquivo>"  → { url: "https://…" }            (troca a imagem em todo o site)
  *   "menu:<id>"        → { label?, hidden?, deleted? }
  *   "article:<slug>"   → { hidden?, featured?, title?, excerpt?, body?, cat?, date?, read?, cover? }
+ *   "section:<caminho>" → { hidden?, cols?, items? }   (ex. "section:clientes.testimonials"; ver SECTIONS em registry.ts)
  * Tabela posts: artigos criados pelo painel (entram no blog junto com os do CMS).
  *
  * Para o visitante não esperar o banco, a última versão fica guardada no navegador e é aplicada antes
@@ -44,6 +45,7 @@ const CACHE_KEY = 'komvos-content'
 
 // estado original do CMS, para desfazer edições removidas
 const originalTexts = new Map<string, unknown>()
+const originalSections = new Map<string, Record<string, unknown>>()
 const originalMenu: MenuItem[] = MENU.map((m) => ({ ...m }))
 const originalArticles: Article[] = ARTICLES.map((a) => ({ ...a }))
 
@@ -65,9 +67,15 @@ export function postToArticle(p: PostRow): Article {
 
 /** Aplica um conjunto de edições ao CMS (pode ser chamado de novo: desfaz o anterior antes). */
 export function applyContent({ rows, posts }: Snapshot) {
-  // textos
+  // desfaz a aplicação anterior: seções primeiro (devolvem as listas originais), depois os textos
+  for (const [path, orig] of originalSections) {
+    const o = getPath(path) as Record<string, unknown> | undefined
+    if (o) for (const [k, v] of Object.entries(orig)) v === undefined ? delete o[k] : (o[k] = v)
+  }
+  originalSections.clear()
   for (const [path, v] of originalTexts) setPath(path, v)
   originalTexts.clear()
+  const sections: [string, Record<string, unknown>][] = []
   const images: Record<string, string> = {}
   const menu = new Map<string, Record<string, unknown>>()
   const articles = new Map<string, Record<string, unknown>>()
@@ -81,6 +89,22 @@ export function applyContent({ rows, posts }: Snapshot) {
     } else if (kind === 'image' && typeof value?.url === 'string') images[id] = value.url
     else if (kind === 'menu') menu.set(id, value)
     else if (kind === 'article') articles.set(id, value)
+    else if (kind === 'section') sections.push([id, value])
+  }
+
+  // seções: ocultar, colunas e a lista de itens (vem depois dos textos e prevalece sobre eles)
+  for (const [path, v] of sections) {
+    const o = getPath(path) as Record<string, unknown> | undefined
+    if (!o || typeof o !== 'object') continue
+    const orig: Record<string, unknown> = {}
+    const put = (k: string, val: unknown) => {
+      if (!(k in orig)) orig[k] = o[k]
+      o[k] = val
+    }
+    if (typeof v.hidden === 'boolean') put('hidden', v.hidden)
+    if (typeof v.cols === 'number') put('cols', v.cols)
+    if (Array.isArray(v.items)) put('items', v.items.map((it) => ({ ...(it as object) })))
+    originalSections.set(path, orig)
   }
 
   // menu: renomear, ocultar, excluir

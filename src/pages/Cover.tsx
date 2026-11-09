@@ -11,8 +11,17 @@ const COVER: Record<Category, string> = {
   Cloud: 'cloud-tecnologia',
 }
 
-/** Com `src` (capa enviada pelo painel), mostra a foto; senão, a ilustração da categoria. */
+const isSvg = (src: string) => /^data:image\/svg\+xml|\.svg(\?|#|$)/i.test(src)
+
+/** Com `src` (capa enviada pelo painel), mostra a foto ou a capa animada (.svg com CSS dentro);
+ *  senão, a ilustração da categoria. */
 export function Cover({ cat, src }: { cat: Category; src?: string }) {
+  if (src && isSvg(src))
+    return (
+      <div className="ins-cover is-svg">
+        <img src={src} alt="" loading="lazy" decoding="async" />
+      </div>
+    )
   if (src)
     return (
       <div className="ins-cover is-photo">

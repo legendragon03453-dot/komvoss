@@ -39,6 +39,47 @@ export const ROOTS: Record<string, { label: string; url: string; obj: object }> 
   },
 }
 
+/**
+ * Seções com controles além dos textos: ocultar do site e, quando tem `items`, uma lista editável
+ * (adicionar/remover/reordenar) e o número de colunas. Gravadas como uma linha "section:<caminho>"
+ * (ver content.ts); os textos dos itens saem da lista de campos soltos e são editados em grupo.
+ */
+export type SectionItemField = { key: string; label: string; long?: boolean; check?: boolean }
+export type SectionConfig = {
+  root: string
+  /** nome do grupo no painel (o mesmo da sanfona de textos) */
+  name: string
+  /** nome de um item, ex. "Depoimento" */
+  itemLabel?: string
+  items?: SectionItemField[]
+  /** item novo, ao clicar em adicionar */
+  blank?: Record<string, string | boolean>
+  cols?: boolean
+}
+export const SECTIONS: Record<string, SectionConfig> = {
+  'clientes.testimonials': {
+    root: 'clientes',
+    name: 'Depoimentos',
+    itemLabel: 'Depoimento',
+    items: [
+      { key: 'quote', label: 'Depoimento', long: true },
+      { key: 'name', label: 'Nome' },
+      { key: 'role', label: 'Função (cargo, empresa)' },
+      { key: 'destaque', label: 'Card em destaque (branco)', check: true },
+    ],
+    blank: { quote: '', name: '', role: '' },
+    cols: true,
+  },
+  'clientes.cases': { root: 'clientes', name: 'Casos de uso' },
+}
+
+export type SectionValue = { hidden?: boolean; cols?: number; items?: Record<string, string | boolean>[] }
+
+// textos de itens que são editados em grupo (não aparecem como campos soltos)
+const GROUPED = Object.entries(SECTIONS)
+  .filter(([, c]) => c.items)
+  .map(([p]) => p + '.items.')
+
 // chaves que não são texto de leitura (endereços, arquivos, identificadores, tamanhos)
 const SKIP = new Set(['to', 'slug', 'src', 'id', 'href', 'accept', 'autoComplete', 'type', 'icon', 'art', 'color', 'w', 'h', 'num', 'video', 'list'])
 
@@ -145,6 +186,7 @@ export function listTexts(): TextField[] {
     if (typeof v === 'string') {
       const key = path[path.length - 1]
       if (SKIP.has(key) || (key === 'name' && path.includes('fields')) || !v.trim()) return
+      if (GROUPED.some((g) => [root, ...path].join('.').startsWith(g))) return
       out.push({
         path: [root, ...path].join('.'),
         root,
