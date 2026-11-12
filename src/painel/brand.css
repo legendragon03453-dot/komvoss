@@ -744,6 +744,52 @@ body {
   transform: rotate(-135deg);
 }
 
+/* cabeçalho da sanfona + botão "Ocultar seção" ao lado (fora do botão que abre/fecha) */
+.acc-top {
+  display: flex;
+  align-items: center;
+}
+
+.acc-top .acc-head {
+  flex: 1;
+  min-width: 0;
+}
+
+.acc-top .acc-head strong,
+.acc-top .acc-head small {
+  white-space: nowrap;
+}
+
+.acc-hide {
+  flex: none;
+  margin-right: 12px;
+  white-space: nowrap;
+}
+
+.acc-hide.is-on {
+  border-color: #111516;
+  background: #111516;
+  color: #fff;
+}
+
+.acc.is-off .acc-head strong {
+  color: var(--muted);
+  text-decoration: line-through;
+  text-decoration-thickness: 1px;
+}
+
+.sec-off-note {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 10px 0 4px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: #f4f5f6;
+  color: var(--ink-2);
+  font-size: 13px;
+}
+
 .acc .text-fields {
   padding: 4px 16px 18px;
 }

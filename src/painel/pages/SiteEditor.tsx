@@ -277,6 +277,39 @@ function Pages({ byKey, reload }: Props) {
     }
   }
 
+  // ocultar/mostrar a seção inteira: publica na hora (como o "Ocultar" do menu), sem passar pelo rascunho
+  async function toggleSection(path: string) {
+    const cfg = SECTIONS[path]
+    const hide = !secSaved(path).hidden
+    const ok = await confirm({
+      title: hide ? `Ocultar “${cfg.name}” do site?` : `Mostrar “${cfg.name}” de novo?`,
+      consequences: hide
+        ? [
+            <>
+              A seção <strong>{cfg.name}</strong> sai da página <strong>{ROOTS[cfg.root].url}</strong> para todos os visitantes.
+            </>,
+            'Nada é apagado: textos, itens e colunas ficam guardados e você pode mostrar de novo quando quiser.',
+            PUBLISH_NOTE,
+          ]
+        : [<>A seção <strong>{cfg.name}</strong> volta a aparecer no site como estava antes de ser ocultada.</>, PUBLISH_NOTE],
+      confirm: hide ? 'Ocultar seção' : 'Mostrar seção',
+    })
+    if (!ok) return
+    try {
+      const { hidden: _, ...rest } = (byKey.get(`section:${path}`)?.value ?? {}) as SectionValue
+      const next: SectionValue = hide ? { ...rest, hidden: true } : rest
+      if (Object.keys(next).length) await saveContent([{ key: `section:${path}`, value: next as Record<string, unknown> }])
+      else await deleteContent([`section:${path}`])
+      // um rascunho aberto desta seção segue o novo estado (senão "desfaria" a mudança ao publicar)
+      setSecDraft((d) => (d[path] ? { ...d, [path]: { ...d[path], hidden: hide } } : d))
+      reload()
+      setReloadKey((k) => k + 1)
+      toast(`${hide ? 'Seção oculta.' : 'Seção visível de novo.'} ${PUBLISH_NOTE}`)
+    } catch (e) {
+      toast((e as Error).message, 'error')
+    }
+  }
+
   async function restoreSection(path: string) {
     const ok = await confirm({
       title: `Voltar “${SECTIONS[path].name}” ao original?`,
@@ -353,7 +386,8 @@ function Pages({ byKey, reload }: Props) {
           const sec = secPath ? secValue(secPath) : undefined
           const dirty = list.some((f) => draft[f.path] !== undefined) || (secPath ? secChanged.includes(secPath) : false)
           return (
-            <section key={name} className={`acc${isOpen ? ' is-open' : ''}`}>
+            <section key={name} className={`acc${isOpen ? ' is-open' : ''}${sec?.hidden ? ' is-off' : ''}`}>
+              <div className="acc-top">
               <button type="button" className="acc-head" onClick={() => setOpen(isOpen && !term ? null : name)} aria-expanded={isOpen}>
                 <span className="acc-icon">
                   <Icon name={name.includes('Banner') ? 'image' : name.includes('Google') ? 'search' : 'text'} size={16} />
@@ -364,11 +398,27 @@ function Pages({ byKey, reload }: Props) {
                 </small>
                 {sec?.hidden && <Badge tone="dark">Oculta</Badge>}
                 {dirty && <Badge tone="amber">Não publicado</Badge>}
-                {(list.some((f) => edited(f)) || (secPath && byKey.has(`section:${secPath}`))) && <Badge tone="pink">Editado</Badge>}
+                {!sec?.hidden && (list.some((f) => edited(f)) || (secPath && byKey.has(`section:${secPath}`))) && <Badge tone="pink">Editado</Badge>}
                 <span className="acc-caret" aria-hidden="true" />
               </button>
+              {secPath && (
+                <button
+                  type="button"
+                  className={`btn is-small acc-hide${sec?.hidden ? ' is-on' : ''}`}
+                  onClick={() => toggleSection(secPath)}
+                  title={sec?.hidden ? 'Mostrar esta seção no site' : 'Ocultar esta seção do site (nada é apagado)'}
+                >
+                  <Icon name={sec?.hidden ? 'eye' : 'eyeOff'} size={15} /> {sec?.hidden ? 'Mostrar' : 'Ocultar'}
+                </button>
+              )}
+              </div>
               {isOpen && (
                 <div className="text-fields">
+                  {sec?.hidden && (
+                    <p className="sec-off-note">
+                      <Icon name="eyeOff" size={15} /> Esta seção está <strong>oculta no site</strong>. Você pode continuar editando; ela só volta a aparecer quando clicar em “Mostrar seção”.
+                    </p>
+                  )}
                   {list.map((f) => {
                     const e = edited(f)
                     const v = valueOf(f)
@@ -398,7 +448,7 @@ function Pages({ byKey, reload }: Props) {
                       </label>
                     )
                   })}
-                  {secPath && sec && (
+                  {secPath && sec && (SECTIONS[secPath].items || SECTIONS[secPath].cols || byKey.has(`section:${secPath}`)) && (
                     <SectionTools
                       cfg={SECTIONS[secPath]}
                       value={sec}
@@ -477,13 +527,6 @@ function SectionTools({
   return (
     <div className="sec-tools">
       <div className="sec-bar">
-        <label className="sec-toggle">
-          <input type="checkbox" checked={!value.hidden} onChange={(e) => onChange({ ...value, hidden: !e.target.checked })} />
-          <span>
-            <strong>{value.hidden ? 'Seção oculta no site' : 'Seção visível no site'}</strong>
-            <small>{value.hidden ? 'Ninguém vê esta parte até você mostrar de novo.' : 'Desmarque para esconder sem apagar nada.'}</small>
-          </span>
-        </label>
         {cfg.cols && (
           <div className="sec-cols">
             <span>Colunas</span>

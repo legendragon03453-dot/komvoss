@@ -1,8 +1,9 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import type { RefObject } from 'react'
 import { Link } from 'react-router-dom'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { scrollToElement } from '../motion'
+import { onContentChange } from '../live/content'
 
 type Chapter = { name: string; el: HTMLElement }
 
@@ -20,6 +21,10 @@ function chapterName(el: HTMLElement) {
 export function ChapterBar({ root, pathname, hidden }: { root: RefObject<HTMLElement | null>; pathname: string; hidden: boolean }) {
   const [chapters, setChapters] = useState<Chapter[]>([])
   const [active, setActive] = useState(0)
+  // conteúdo do painel mudou (ex. seção ocultada/mostrada): recontar os capítulos e recalcular a rolagem
+  const [version, setVersion] = useState(0)
+  const lastPath = useRef(pathname)
+  useEffect(() => onContentChange(() => requestAnimationFrame(() => setVersion((v) => v + 1))), [])
 
   useEffect(() => {
     const main = root.current?.querySelector('main')
@@ -27,7 +32,12 @@ export function ChapterBar({ root, pathname, hidden }: { root: RefObject<HTMLEle
     // seções de primeiro nível, em qualquer profundidade de wrappers (tema, pin-spacer do ScrollTrigger…)
     const els = [...main.querySelectorAll<HTMLElement>('section')].filter((el) => !el.parentElement?.closest('section'))
     setChapters(els.map((el) => ({ name: chapterName(el), el })))
-    setActive(0)
+    if (lastPath.current !== pathname) {
+      lastPath.current = pathname
+      setActive(0)
+    } else {
+      setActive((a) => Math.min(a, Math.max(0, els.length - 1)))
+    }
     const triggers = els.map((el, i) =>
       ScrollTrigger.create({
         trigger: el,
@@ -36,8 +46,10 @@ export function ChapterBar({ root, pathname, hidden }: { root: RefObject<HTMLEle
         onToggle: (self) => self.isActive && setActive(i),
       }),
     )
+    // a altura da página mudou: as animações de rolagem precisam recalcular as posições
+    if (version) ScrollTrigger.refresh()
     return () => triggers.forEach((t) => t.kill())
-  }, [root, pathname])
+  }, [root, pathname, version])
 
   if (!chapters.length) return null
   const current = chapters[active]
