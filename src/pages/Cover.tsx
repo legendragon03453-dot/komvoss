@@ -15,17 +15,17 @@ const isSvg = (src: string) => /^data:image\/svg\+xml|\.svg(\?|#|$)/i.test(src)
 
 /** Com `src` (capa enviada pelo painel), mostra a foto ou a capa animada (.svg com CSS dentro);
  *  senão, a ilustração da categoria. */
-export function Cover({ cat, src }: { cat: Category; src?: string }) {
+export function Cover({ cat, src, alt = '' }: { cat: Category; src?: string; alt?: string }) {
   if (src && isSvg(src))
     return (
       <div className="ins-cover is-svg">
-        <img src={src} alt="" loading="lazy" decoding="async" />
+        <img src={src} alt={alt} loading="lazy" decoding="async" />
       </div>
     )
   if (src)
     return (
       <div className="ins-cover is-photo">
-        <img src={src} alt="" loading="lazy" decoding="async" />
+        <img src={src} alt={alt} loading="lazy" decoding="async" />
       </div>
     )
   const Art = SOLUTION_ART[COVER[cat]] ?? SOLUTION_ART['gestao-empresarial']

@@ -1,10 +1,21 @@
 import { useEffect } from 'react'
 import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
-import { absoluteUrl } from '../seo/site'
+import { OG_IMAGE, absoluteUrl } from '../seo/site'
 
 /** Título e meta description da página (SEO). */
-export function usePageMeta(title: string, description: string) {
+export function usePageMeta(title: string, description: string, extra: PageMetaExtra = {}) {
+  const { keywords = '', image = '', imageAlt = '', noindex = false } = extra
+  useEffect(() => {
+    // extras dos artigos (aba SEO do painel); páginas sem extras voltam ao padrão
+    setMeta('name', 'keywords', keywords, !keywords)
+    setMeta('name', 'robots', noindex ? 'noindex, follow' : 'index, follow, max-image-preview:large')
+    const img = image || OG_IMAGE
+    const abs = /^https?:/i.test(img) ? img : absoluteUrl(img)
+    setMeta('property', 'og:image', abs)
+    setMeta('name', 'twitter:image', abs)
+    setMeta('property', 'og:image:alt', imageAlt || 'Grupo Komvos – Tecnologia que transforma')
+  }, [keywords, image, imageAlt, noindex])
   useEffect(() => {
     document.title = title
     const url = absoluteUrl(window.location.pathname.replace(/\/$/, '') || '/')
@@ -24,8 +35,11 @@ export function usePageMeta(title: string, description: string) {
   }, [title, description])
 }
 
-function setMeta(attr: 'name' | 'property', key: string, content: string) {
+export type PageMetaExtra = { keywords?: string; image?: string; imageAlt?: string; noindex?: boolean }
+
+function setMeta(attr: 'name' | 'property', key: string, content: string, remove = false) {
   let meta = document.querySelector<HTMLMetaElement>(`meta[${attr}="${key}"]`)
+  if (remove) return void meta?.remove()
   if (!meta) {
     meta = document.createElement('meta')
     meta.setAttribute(attr, key)

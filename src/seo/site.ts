@@ -30,6 +30,6 @@ export const solutionSeo = (s: Solution) => ({
 })
 
 export const articleSeo = (a: Article) => ({
-  title: `${a.title} | Komvos Insights`,
-  description: a.excerpt,
+  title: a.seo?.title?.trim() || `${a.title} | Komvos Insights`,
+  description: a.seo?.description?.trim() || a.excerpt,
 })

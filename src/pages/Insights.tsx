@@ -18,7 +18,7 @@ import { prefersReducedMotion } from '../motion'
 function InsightCard({ a }: { a: Article }) {
   return (
     <Link to={`/insights/${a.slug}`} className="spot ins-card" onPointerMove={spotlight} data-anim="up">
-      <Cover cat={a.cat} src={a.cover} />
+      <Cover cat={a.cat} src={a.cover} alt={a.seo?.coverAlt} />
       <div className="ins-card-body">
         <span className="ins-meta">
           <span className="cms-tag">{a.cat}</span>
@@ -63,7 +63,7 @@ export function InsightsPage() {
       <section className="pg-sec pg-sec-tight" data-chapter={c.featuredLabel}>
         <div className="pg-wrap">
           <Link to={`/insights/${featured.slug}`} className="spot ins-featured" onPointerMove={spotlight} data-anim="up">
-            <Cover cat={featured.cat} src={featured.cover} />
+            <Cover cat={featured.cat} src={featured.cover} alt={featured.seo?.coverAlt} />
             <div className="ins-featured-body">
               <span className="ins-meta">
                 <span className="cms-tag is-solid">{c.featuredLabel}</span>
@@ -108,7 +108,12 @@ export function InsightsPage() {
 export function ArtigoPage() {
   const { slug } = useParams()
   const a = ARTICLES.find((x) => x.slug === slug)
-  usePageMeta(a ? articleSeo(a).title : 'Página não encontrada | Grupo Komvos', a ? articleSeo(a).description : 'Página não encontrada.')
+  usePageMeta(a ? articleSeo(a).title : 'Página não encontrada | Grupo Komvos', a ? articleSeo(a).description : 'Página não encontrada.', {
+    keywords: a ? [a.seo?.keyword, a.seo?.keywords].filter(Boolean).join(', ') : '',
+    image: a ? a.seo?.ogImage || (a.cover && !/\.svg(\?|#|$)|^data:/i.test(a.cover) ? a.cover : '') : '',
+    imageAlt: a?.seo?.coverAlt || a?.title || '',
+    noindex: !a || Boolean(a.seo?.noindex),
+  })
 
   // barra de progresso de leitura
   const barRef = useRef<HTMLSpanElement>(null)
@@ -137,7 +142,7 @@ export function ArtigoPage() {
         background={<GlassFold color1="#2a3033" color2="#111516" color3="#8a9196" speed={0.18} scale={0.8} noise={0.1} />}
         aside={
           <div className="ins-hero-cover">
-            <Cover cat={a.cat} src={a.cover} />
+            <Cover cat={a.cat} src={a.cover} alt={a.seo?.coverAlt} />
           </div>
         }
       />
@@ -166,7 +171,7 @@ export function ArtigoPage() {
           {/* lateral fixa: dados do artigo e chamada para um especialista */}
           <aside className="ins-aside">
             <div className="ins-aside-card">
-              <Cover cat={a.cat} src={a.cover} />
+              <Cover cat={a.cat} src={a.cover} alt={a.seo?.coverAlt} />
               <dl className="ins-aside-meta">
                 <div>
                   <dt>Categoria</dt>

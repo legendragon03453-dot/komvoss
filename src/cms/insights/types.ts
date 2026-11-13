@@ -27,4 +27,24 @@ export type Article = {
   blocks?: import('../../live/blocks').Block[]
   /** quem escreveu (aparece no topo do artigo) */
   author?: import('../../live/blocks').Author
+  /** SEO ajustado no painel (aba SEO do editor) */
+  seo?: ArticleSeo
+}
+
+/** Campos de SEO de um artigo. Vazios = o site usa o padrão (título + resumo). */
+export type ArticleSeo = {
+  /** palavra-chave principal (foco) */
+  keyword?: string
+  /** palavras-chave secundárias, separadas por vírgula */
+  keywords?: string
+  /** título que aparece no Google (meta title) */
+  title?: string
+  /** descrição que aparece no Google (meta description) */
+  description?: string
+  /** texto alternativo da capa */
+  coverAlt?: string
+  /** imagem ao compartilhar (WhatsApp, LinkedIn…); vazio = a capa */
+  ogImage?: string
+  /** pedir para o Google não indexar */
+  noindex?: boolean
 }

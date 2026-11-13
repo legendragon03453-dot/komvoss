@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import type { DragEvent, ReactNode } from 'react'
 import { CATEGORIES } from '../../cms/insights'
+import type { ArticleSeo } from '../../cms/insights'
 import { BlockView, blocksText, newBlock, youtubeId } from '../../live/blocks'
 import type { Align, Author, Block, BlockType } from '../../live/blocks'
 import '../../live/blocks.css'
@@ -21,6 +22,7 @@ export type StudioDoc = {
   excerpt: string
   cover: string
   author: Author | null
+  seo: ArticleSeo
   blocks: Block[]
 }
 
@@ -66,7 +68,7 @@ export function Studio({ doc: initial, lockedSlug, status, taken, onClose, onSav
   const confirm = useConfirm()
   const [doc, setDoc] = useState<StudioDoc>(initial)
   const [sel, setSel] = useState<string | null>(null)
-  const [tab, setTab] = useState<'bloco' | 'artigo'>('artigo')
+  const [tab, setTab] = useState<'bloco' | 'artigo' | 'seo'>('artigo')
   const [device, setDevice] = useState<'desktop' | 'mobile'>('desktop')
   const [drop, setDrop] = useState<number | null>(null)
   const [busy, setBusy] = useState(false)
@@ -428,6 +430,9 @@ export function Studio({ doc: initial, lockedSlug, status, taken, onClose, onSav
             <button type="button" role="tab" aria-selected={tab === 'artigo'} className={tab === 'artigo' ? 'is-on' : ''} onClick={() => setTab('artigo')}>
               Artigo
             </button>
+            <button type="button" role="tab" aria-selected={tab === 'seo'} className={tab === 'seo' ? 'is-on' : ''} onClick={() => setTab('seo')}>
+              SEO
+            </button>
           </div>
           {tab === 'bloco' ? (
             selected ? (
@@ -438,8 +443,18 @@ export function Studio({ doc: initial, lockedSlug, status, taken, onClose, onSav
                 <p>Clique num bloco do artigo para ajustar aqui.</p>
               </div>
             )
+          ) : tab === 'seo' ? (
+            <SeoSettings
+              doc={doc}
+              setMeta={setMeta}
+              finalSlug={finalSlug}
+              lockedSlug={lockedSlug}
+              slugTaken={slugTaken}
+              onSlug={(v) => (setSlugTouched(true), setMeta({ slug: v }, 'slug'))}
+              onPick={(id) => (setSel(id), setTab('bloco'), requestAnimationFrame(() => document.querySelector(`[data-block="${id}"]`)?.scrollIntoView({ block: 'center', behavior: 'smooth' })))}
+            />
           ) : (
-            <ArticleSettings doc={doc} setMeta={setMeta} finalSlug={finalSlug} lockedSlug={lockedSlug} slugTaken={slugTaken} onSlug={(v) => (setSlugTouched(true), setMeta({ slug: v }, 'slug'))} />
+            <ArticleSettings doc={doc} setMeta={setMeta} finalSlug={finalSlug} lockedSlug={lockedSlug} slugTaken={slugTaken} onSlug={(v) => (setSlugTouched(true), setMeta({ slug: v }, 'slug'))} onSeo={() => setTab('seo')} />
           )}
         </aside>
       </div>
@@ -551,8 +566,9 @@ function ImagePick({
         return toast((e as Error).message, 'error')
       }
     }
-    if (!file.type.startsWith('image/') || isSvgFile(file)) return toast(`Escolha uma imagem (JPG, PNG, WebP${svg ? ' ou SVG' : ''}).`, 'error')
-    if (file.size > 6 * 1024 * 1024) return toast('Imagem acima de 6 MB. Reduza antes de enviar.', 'error')
+    if (!file.type.startsWith('image/') || isSvgFile(file)) return toast(`Escolha uma imagem (JPG, PNG, WebP, GIF${svg ? ' ou SVG' : ''}).`, 'error')
+    const gif = file.type === 'image/gif'
+    if (file.size > (gif ? 12 : 6) * 1024 * 1024) return toast(gif ? 'GIF acima de 12 MB. Reduza (menos quadros ou menor) antes de enviar.' : 'Imagem acima de 6 MB. Reduza antes de enviar.', 'error')
     send(file)
   }
   function useCode() {
@@ -585,7 +601,7 @@ function ImagePick({
         disabled={busy}
       >
         {value ? <img src={value} alt="" /> : <Icon name="image" size={22} />}
-        <span>{busy ? 'Enviando…' : value ? 'Trocar imagem' : svg ? 'Solte uma imagem ou um .svg animado' : 'Solte um arquivo aqui ou clique'}</span>
+        <span>{busy ? 'Enviando…' : value ? 'Trocar imagem' : svg ? 'Solte uma imagem, GIF ou .svg animado' : 'Solte uma imagem ou GIF aqui'}</span>
       </button>
       {svg && code === null && (
         <div className="st-svg-links">
@@ -823,6 +839,7 @@ function ArticleSettings({
   lockedSlug,
   slugTaken,
   onSlug,
+  onSeo,
 }: {
   doc: StudioDoc
   setMeta: (p: Partial<StudioDoc>, key?: string) => void
@@ -830,10 +847,10 @@ function ArticleSettings({
   lockedSlug?: boolean
   slugTaken: boolean
   onSlug: (v: string) => void
+  onSeo: () => void
 }) {
   const a = doc.author ?? { name: '', role: '', avatar: '', url: '' }
   const setAuthor = (p: Partial<Author>) => setMeta({ author: { ...a, ...p } }, `author:${Object.keys(p).join()}`)
-  const seoTitle = `${doc.title || 'Título do artigo'} | Komvos Insights`
   return (
     <div className="st-settings">
       <F label="Título">
@@ -877,11 +894,181 @@ function ArticleSettings({
       <ImagePick label="Foto" value={a.avatar ?? ''} onChange={(avatar) => setAuthor({ avatar })} ratio="1 / 1" />
 
       <p className="st-kicker">Como aparece no Google</p>
-      <div className="seo-card">
-        <small>komvoss.vercel.app › insights › {finalSlug || '…'}</small>
-        <strong>{seoTitle.length > 62 ? seoTitle.slice(0, 60) + '…' : seoTitle}</strong>
-        <span>{doc.excerpt || 'O resumo do artigo aparece aqui.'}</span>
+      <GooglePreview doc={doc} finalSlug={finalSlug} />
+      <button type="button" className="btn is-block" onClick={onSeo}>
+        <Icon name="search" size={15} /> Ajustar SEO (palavra-chave, descrição, alt…)
+      </button>
+    </div>
+  )
+}
+
+/* ---------- SEO ---------- */
+
+const SITE_HOST = 'komvoss.vercel.app'
+const seoTitleOf = (doc: StudioDoc) => doc.seo.title?.trim() || `${doc.title || 'Título do artigo'} | Komvos Insights`
+const seoDescOf = (doc: StudioDoc) => doc.seo.description?.trim() || doc.excerpt
+/** minúsculas e sem acento, para comparar palavra-chave */
+const norm = (s: string) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase()
+
+function GooglePreview({ doc, finalSlug }: { doc: StudioDoc; finalSlug: string }) {
+  const t = seoTitleOf(doc)
+  const d = seoDescOf(doc)
+  return (
+    <div className="seo-card">
+      <small>
+        {SITE_HOST} › insights › {finalSlug || '…'}
+      </small>
+      <strong>{t.length > 62 ? t.slice(0, 60) + '…' : t}</strong>
+      <span>{d ? (d.length > 160 ? d.slice(0, 157) + '…' : d) : 'O resumo do artigo aparece aqui.'}</span>
+    </div>
+  )
+}
+
+function Counter({ n, min, max }: { n: number; min: number; max: number }) {
+  const tone = n === 0 ? '' : n < min ? ' is-warn' : n > max ? ' is-bad' : ' is-ok'
+  return (
+    <span className={`seo-count${tone}`}>
+      {n}/{max}
+    </span>
+  )
+}
+
+function SeoSettings({
+  doc,
+  setMeta,
+  finalSlug,
+  lockedSlug,
+  slugTaken,
+  onSlug,
+  onPick,
+}: {
+  doc: StudioDoc
+  setMeta: (p: Partial<StudioDoc>, key?: string) => void
+  finalSlug: string
+  lockedSlug?: boolean
+  slugTaken: boolean
+  onSlug: (v: string) => void
+  onPick: (blockId: string) => void
+}) {
+  const s = doc.seo
+  const set = (p: Partial<ArticleSeo>) => setMeta({ seo: { ...s, ...p } }, `seo:${Object.keys(p).join()}`)
+  const title = seoTitleOf(doc)
+  const desc = seoDescOf(doc)
+  const kw = norm(s.keyword?.trim() ?? '')
+
+  const checks = useMemo(() => {
+    const text = blocksText(doc.blocks)
+    const words = text.split(/\s+/).filter(Boolean).length
+    const has = (v: string) => Boolean(kw) && norm(v).includes(kw)
+    const firstPara = (doc.blocks.find((b) => b.type === 'paragraph') as { text?: string } | undefined)?.text ?? ''
+    const headings = doc.blocks.filter((b) => b.type === 'heading').map((b) => (b as { text: string }).text)
+    const hits = kw ? norm(text).split(kw).length - 1 : 0
+    const density = words ? (hits * kw.split(/\s+/).length * 100) / words : 0
+    const noAlt = doc.blocks.filter((b) => b.type === 'image' && b.src && !b.alt.trim())
+    const internal = doc.blocks.some((b) => (b.type === 'button' && b.url.startsWith('/')) || ('text' in b && /\]\(\/[^)]*\)/.test(String(b.text))))
+    const list: { ok: boolean; warn?: boolean; label: ReactNode; fix?: () => void }[] = [
+      { ok: Boolean(kw), label: 'Palavra-chave principal definida' },
+      { ok: has(title), label: 'Palavra-chave no título do Google' },
+      { ok: Boolean(kw) && finalSlug.includes(slugify(s.keyword ?? '')), label: 'Palavra-chave no endereço (slug)' },
+      { ok: has(desc), label: 'Palavra-chave na descrição' },
+      { ok: has(doc.excerpt + ' ' + firstPara), label: 'Palavra-chave no começo do texto (resumo ou 1º parágrafo)' },
+      { ok: headings.some(has), label: 'Palavra-chave em algum título/subtítulo do artigo' },
+      { ok: density >= 0.5 && density <= 2.5, warn: density > 2.5, label: `Densidade da palavra-chave: ${density.toFixed(1).replace('.', ',')}% (ideal 0,5–2,5%)` },
+      { ok: words >= 600, warn: words >= 300 && words < 600, label: `Tamanho do texto: ${words} palavras (ideal 600+)` },
+      { ok: title.length >= 30 && title.length <= 60, label: `Título do Google com ${title.length} caracteres (ideal 30–60)` },
+      { ok: desc.length >= 120 && desc.length <= 160, label: `Descrição com ${desc.length} caracteres (ideal 120–160)` },
+      { ok: !doc.cover || Boolean(s.coverAlt?.trim()), label: 'Capa com texto alternativo (alt)' },
+      {
+        ok: !noAlt.length,
+        label: noAlt.length ? `${noAlt.length} imagem(ns) do artigo sem texto alternativo — clique para corrigir` : 'Todas as imagens do artigo têm texto alternativo',
+        fix: noAlt.length ? () => onPick(noAlt[0].id) : undefined,
+      },
+      { ok: internal, warn: !internal, label: 'Link para outra página do site (ex.: botão para /contato)' },
+    ]
+    return list
+  }, [doc, kw, title, desc, finalSlug, s.keyword, s.coverAlt, onPick])
+
+  const score = Math.round((checks.reduce((n, c) => n + (c.ok ? 1 : c.warn ? 0.5 : 0), 0) / checks.length) * 100)
+  const tone = score >= 80 ? 'ok' : score >= 50 ? 'warn' : 'bad'
+
+  return (
+    <div className="st-settings">
+      <div className={`seo-score is-${tone}`}>
+        <strong>{score}</strong>
+        <div>
+          <b>{tone === 'ok' ? 'SEO bom' : tone === 'warn' ? 'SEO pode melhorar' : 'SEO fraco'}</b>
+          <small>Nota de 0 a 100 pelos itens da lista abaixo.</small>
+        </div>
       </div>
+
+      <F label="Palavra-chave principal" hint="O termo que a pessoa digitaria no Google para achar este artigo.">
+        <input value={s.keyword ?? ''} onChange={(e) => set({ keyword: e.target.value })} placeholder="Ex.: escala 6x1" />
+      </F>
+      <F label="Palavras-chave secundárias" hint="Separadas por vírgula (sinônimos e variações).">
+        <input value={s.keywords ?? ''} onChange={(e) => set({ keywords: e.target.value })} placeholder="Ex.: fim da escala 6x1, jornada de trabalho, RH" />
+      </F>
+
+      <p className="st-kicker">Resultado no Google</p>
+      <GooglePreview doc={doc} finalSlug={finalSlug} />
+      <div className="field">
+        <span>
+          Título SEO <Counter n={title.length} min={30} max={60} />
+        </span>
+        <input value={s.title ?? ''} onChange={(e) => set({ title: e.target.value })} placeholder={`${doc.title || 'Título do artigo'} | Komvos Insights`} maxLength={90} />
+        <small className="field-foot">Vazio = título do artigo + “| Komvos Insights”.</small>
+      </div>
+      <div className="field">
+        <span>
+          Meta descrição <Counter n={desc.length} min={120} max={160} />
+        </span>
+        <textarea rows={3} value={s.description ?? ''} onChange={(e) => set({ description: e.target.value })} placeholder={doc.excerpt || 'Resumo do artigo'} maxLength={200} />
+        <small className="field-foot">Vazio = usa o resumo do artigo.</small>
+      </div>
+      <div className="field">
+        <span>Endereço (slug)</span>
+        <div className="slug">
+          <small>/insights/</small>
+          <input value={finalSlug} disabled={lockedSlug} onChange={(e) => onSlug(e.target.value)} aria-invalid={slugTaken} />
+        </div>
+        {slugTaken && <small className="field-foot is-error">Esse endereço já existe.</small>}
+        {lockedSlug ? (
+          <small className="field-foot">Artigos do site mantêm o endereço (Google e links compartilhados).</small>
+        ) : (
+          <small className="field-foot">Curto, sem acentos, com a palavra-chave. Ex.: fim-escala-6x1-rh</small>
+        )}
+      </div>
+
+      <p className="st-kicker">Imagens</p>
+      <F label="Texto alternativo da capa (alt)" hint={doc.cover ? 'Descreva a capa para o Google e leitores de tela.' : 'Sem capa enviada: o site usa a ilustração da categoria.'}>
+        <input value={s.coverAlt ?? ''} onChange={(e) => set({ coverAlt: e.target.value })} placeholder="Ex.: painel de folha de pagamento do sistema HCM" disabled={!doc.cover} />
+      </F>
+      <ImagePick label="Imagem ao compartilhar (opcional)" value={s.ogImage ?? ''} onChange={(ogImage) => set({ ogImage })} ratio="1200 / 630" />
+      <small className="field-foot">Aparece no WhatsApp, LinkedIn etc. Vazio = a capa. Tamanho ideal 1200×630 (JPG/PNG, não GIF).</small>
+
+      <p className="st-kicker">Indexação</p>
+      <label className="seo-toggle">
+        <input type="checkbox" checked={Boolean(s.noindex)} onChange={(e) => set({ noindex: e.target.checked })} />
+        <span>
+          <b>Esconder do Google (noindex)</b>
+          <small>O artigo continua no site, mas o Google não mostra nas buscas.</small>
+        </span>
+      </label>
+
+      <p className="st-kicker">Checklist de SEO</p>
+      <ul className="seo-checks">
+        {checks.map((c, i) => (
+          <li key={i} className={c.ok ? 'is-ok' : c.warn ? 'is-warn' : 'is-bad'}>
+            <span aria-hidden="true">{c.ok ? '✓' : c.warn ? '!' : '✕'}</span>
+            {c.fix ? (
+              <button type="button" className="link-btn" onClick={c.fix}>
+                {c.label}
+              </button>
+            ) : (
+              c.label
+            )}
+          </li>
+        ))}
+      </ul>
     </div>
   )
 }

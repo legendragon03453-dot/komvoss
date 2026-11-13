@@ -93,7 +93,7 @@ export function ArticleCard({ a }: { a: (typeof ARTICLES)[number] }) {
   return (
     <Link className="artigo" data-anim="up" to={`/insights/${a.slug}`}>
       <div className="artigo-thumb">
-        <Cover cat={a.cat} src={a.cover} />
+        <Cover cat={a.cat} src={a.cover} alt={a.seo?.coverAlt} />
         <span className="artigo-cat">{a.cat}</span>
       </div>
       <div className="artigo-body">

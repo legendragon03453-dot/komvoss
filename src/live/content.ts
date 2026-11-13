@@ -130,6 +130,11 @@ export function applyContent({ rows, posts }: Snapshot) {
     })
     .filter((a): a is Article => a !== null)
   const all = [...created, ...fromCms.filter((a) => !created.some((c) => c.slug === a.slug))]
+  // SEO da aba "SEO" do editor (vale para artigos do site e do painel, pela chave article:<slug>)
+  for (const a of all) {
+    const seo = articles.get(a.slug)?.seo
+    if (seo && typeof seo === 'object') a.seo = seo as Article['seo']
+  }
   // o destaque vai para o início (é o primeiro da lista que a página Insights destaca)
   const fi = all.findIndex((a) => a.featured)
   if (fi > 0) all.unshift(...all.splice(fi, 1))

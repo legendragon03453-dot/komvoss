@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import { ARTICLES, CATEGORIES } from '../../cms/insights'
+import type { ArticleSeo } from '../../cms/insights'
 import { paragraphsToBlocks } from '../../live/blocks'
 import type { Author, Block } from '../../live/blocks'
 import { DEMO, clearPostFeatured, deleteContent, deletePost, listContent, listPosts, savePost, saveContent } from '../db'
@@ -27,6 +28,7 @@ type Item = {
   blocks?: Block[]
   author?: Author | null
   cover?: string
+  seo?: ArticleSeo
   status: 'draft' | 'published'
   hidden: boolean
   featured: boolean
@@ -38,7 +40,13 @@ type Item = {
 const MONTHS = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez']
 const today = () => `${MONTHS[new Date().getMonth()]} ${new Date().getFullYear()}`
 
-const NOTE = DEMO ? 'No modo demonstração, aparece só no site aberto neste navegador.' : 'Já está no site.'
+/** Tira campos vazios do SEO; sem nada preenchido, não guarda nada. */
+const cleanSeo = (s?: ArticleSeo): ArticleSeo | undefined => {
+  const out = Object.fromEntries(Object.entries(s ?? {}).map(([k, v]) => [k, typeof v === 'string' ? v.trim() : v]).filter(([, v]) => v !== '' && v !== false && v != null))
+  return Object.keys(out).length ? (out as ArticleSeo) : undefined
+}
+
+const NOTE =DEMO ? 'No modo demonstração, aparece só no site aberto neste navegador.' : 'Já está no site.'
 
 // cor da capa provisória (sem foto) por categoria: as três cores do grupo
 const CAT_TONE: Record<string, string> = {
@@ -77,6 +85,7 @@ export function Blog() {
       blocks: p.blocks ?? undefined,
       author: p.author ?? null,
       cover: p.cover ?? undefined,
+      seo: (ov.get(p.slug)?.seo as ArticleSeo) || undefined,
       status: p.status,
       hidden: p.hidden,
       featured: p.featured,
@@ -97,6 +106,7 @@ export function Blog() {
         blocks: (o.blocks as Block[]) || undefined,
         author: (o.author as Author) || null,
         cover: (o.cover as string) || undefined,
+        seo: (o.seo as ArticleSeo) || undefined,
         status: 'published',
         hidden: Boolean(o.hidden),
         featured: Boolean(o.featured),
@@ -182,7 +192,11 @@ export function Blog() {
       danger: true,
       typeToConfirm: 'excluir',
     })
-    if (ok) run(() => deletePost(i.id!), 'Artigo excluído.')
+    if (ok)
+      run(async () => {
+        await deletePost(i.id!)
+        await deleteContent([`article:${i.slug}`])
+      }, 'Artigo excluído.')
   }
 
   async function restore(i: Item) {
@@ -206,6 +220,7 @@ export function Blog() {
         excerpt: '',
         cover: '',
         author: null,
+        seo: {},
         blocks: [
           { id: 'b1', type: 'paragraph', text: 'Comece a escrever aqui, ou arraste blocos da esquerda para montar o artigo.', align: 'left' },
         ],
@@ -218,6 +233,7 @@ export function Blog() {
       excerpt: i.excerpt,
       cover: i.cover ?? '',
       author: i.author ?? null,
+      seo: i.seo ?? {},
       blocks: i.blocks?.length ? i.blocks : paragraphsToBlocks(i.body),
     }
   }
@@ -239,6 +255,7 @@ export function Blog() {
         body: undefined,
         author: author ?? undefined,
         cover: d.cover || undefined,
+        seo: cleanSeo(d.seo),
         hidden: cur.hidden,
         featured: cur.featured,
       })
@@ -257,6 +274,12 @@ export function Blog() {
         cover: d.cover || null,
         status,
       } as Partial<Post> & { slug: string })
+      // SEO dos artigos do painel fica em site_content (article:<slug>), sem mudar a tabela posts
+      if (i && i.slug !== d.slug) {
+        const old = override(i.slug)
+        if (Object.keys(old).length) await deleteContent([`article:${i.slug}`])
+      }
+      await setSiteOverride(d.slug, { seo: cleanSeo(d.seo) })
     }
     reload()
     toast(i?.kind === 'site' ? `Artigo salvo. ${NOTE}` : status === 'published' ? `Artigo publicado. ${NOTE}` : 'Rascunho salvo.')
