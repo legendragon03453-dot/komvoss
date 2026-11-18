@@ -54,6 +54,7 @@ export function InsightStylesModal({ onClose }: { onClose: () => void }) {
         if (Object.keys(o).length) clean[k] = o
       }
       if (draft.link?.color || draft.link?.underline === false) clean.link = { ...(draft.link.color ? { color: draft.link.color } : {}), ...(draft.link.underline === false ? { underline: false } : {}) }
+      if (draft.marker?.color) clean.marker = { color: draft.marker.color }
       await saveContent([{ key: KEY, value: clean as Record<string, unknown> }])
       setSaved(clean)
       applyInsightStyles(clean)
@@ -131,6 +132,13 @@ export function InsightStylesModal({ onClose }: { onClose: () => void }) {
               <span />
               <ColorField value={draft.link?.color} onChange={(color) => setDraft((d) => ({ ...d, link: { ...d.link, color } }))} label="Cor dos links" />
             </div>
+            <div className="ins-styles-row">
+              <strong>Marcadores de lista</strong>
+              <small className="muted">Números e bolinhas. Vazio = mesma cor do texto.</small>
+              <span />
+              <span />
+              <ColorField value={draft.marker?.color} onChange={(color) => setDraft((d) => ({ ...d, marker: { color } }))} label="Cor dos marcadores de lista" />
+            </div>
           </div>
 
           <div className="ins-styles-preview kb-doc">
@@ -143,6 +151,12 @@ export function InsightStylesModal({ onClose }: { onClose: () => void }) {
               <p>
                 Parágrafo de exemplo com <strong>negrito</strong>, <em>itálico</em> e um <a href="#exemplo">link de exemplo</a> para ver as cores juntas.
               </p>
+              <ul>
+                <li>Item de lista com marcador</li>
+              </ul>
+              <ol>
+                <li>Item de lista numerada</li>
+              </ol>
             </div>
           </div>
         </div>

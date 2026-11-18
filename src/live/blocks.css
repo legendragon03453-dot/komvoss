@@ -455,8 +455,9 @@ h5.kb-h {
   padding-left: 22px;
 }
 
+/* número/bolinha seguem a cor do item (padrão do texto, a cor do editor ou "Estilos do blog") */
 .kb-rich li::marker {
-  color: #00afef;
+  color: inherit;
 }
 
 .kb-rich blockquote {

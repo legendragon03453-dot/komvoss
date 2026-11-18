@@ -123,6 +123,31 @@ export function RichEditor({ html, onChange, autoFocus = true }: { html: string;
       })
     })
 
+  /**
+   * O número/bolinha da lista segue a cor do item: se todo o texto do item tem a mesma cor
+   * (aplicada pela barra), o <li> recebe essa cor; com cores misturadas ou sem cor, volta ao padrão.
+   */
+  const syncListColors = () =>
+    ref.current!.querySelectorAll<HTMLLIElement>('li').forEach((li) => {
+      li.style.color = ''
+      const base = getComputedStyle(li).color
+      const colors = new Set<string>()
+      const walker = document.createTreeWalker(li, NodeFilter.SHOW_TEXT)
+      for (let n = walker.nextNode(); n; n = walker.nextNode()) {
+        if (!n.textContent?.trim() || n.parentElement?.closest('ul, ol') !== li.parentElement) continue
+        colors.add(getComputedStyle(n.parentElement!).color)
+      }
+      const [only] = colors
+      if (colors.size === 1 && only !== base) li.style.color = only
+      if (!li.getAttribute('style')) li.removeAttribute('style')
+    })
+
+  const applyColor = (c: string) =>
+    run(() => {
+      exec('foreColor', c)
+      syncListColors()
+    })
+
   const applyLink = () => {
     const url = linkUrl.trim()
     setLinkOpen(false)
@@ -315,7 +340,7 @@ export function RichEditor({ html, onChange, autoFocus = true }: { html: string;
           <s>S</s>
         </Btn>
         <span className="rte-color" title="Cor do texto">
-          <Btn title="Aplicar cor" onClick={() => run(() => exec('foreColor', color))}>
+          <Btn title="Aplicar cor" onClick={() => applyColor(color)}>
             <span className="rte-a" style={{ borderColor: color }}>
               A
             </span>
@@ -323,7 +348,7 @@ export function RichEditor({ html, onChange, autoFocus = true }: { html: string;
           <input type="color" value={color} onMouseDown={saveSel} onChange={(e) => setColor(e.target.value)} aria-label="Escolher cor (depois clique no A)" />
           <span className="rte-swatches">
             {SWATCHES.map((c) => (
-              <button key={c} type="button" style={{ background: c }} title={c} onMouseDown={(e) => e.preventDefault()} onClick={() => (setColor(c), run(() => exec('foreColor', c)))} />
+              <button key={c} type="button" style={{ background: c }} title={c} onMouseDown={(e) => e.preventDefault()} onClick={() => (setColor(c), applyColor(c))} />
             ))}
           </span>
         </span>
@@ -377,7 +402,7 @@ export function RichEditor({ html, onChange, autoFocus = true }: { html: string;
         <Btn title="Linha divisória" onClick={() => run(() => exec('insertHorizontalRule'))}>
           <Icon name="divider" size={15} />
         </Btn>
-        <Btn title="Limpar formatação do trecho" onClick={() => run(() => (exec('removeFormat'), exec('unlink')))}>
+        <Btn title="Limpar formatação do trecho" onClick={() => run(() => (exec('removeFormat'), exec('unlink'), syncListColors()))}>
           <span className="rte-clear">T̸</span>
         </Btn>
       </div>

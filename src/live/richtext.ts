@@ -28,6 +28,8 @@ function cleanStyle(el: HTMLElement, tag: string, mode: Mode) {
   const out: string[] = []
   const align = st.textAlign
   if (ALIGNABLE.has(tag) && ['left', 'center', 'right', 'justify'].includes(align)) out.push(`text-align:${align}`)
+  // cor do item de lista (o número/bolinha acompanha a cor do texto do item)
+  if (mode === 'save' && tag === 'li' && st.color && COLOR.test(st.color.replace(/\s/g, ''))) out.push(`color:${st.color}`)
   if (mode === 'save' && tag === 'span') {
     if (st.color && COLOR.test(st.color.replace(/\s/g, ''))) out.push(`color:${st.color}`)
     if (st.backgroundColor && COLOR.test(st.backgroundColor.replace(/\s/g, '')) && !/transparent/.test(st.backgroundColor)) out.push(`background-color:${st.backgroundColor}`)

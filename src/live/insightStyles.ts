@@ -14,6 +14,8 @@ export type InsightStyles = {
   h4?: TextStyle
   h5?: TextStyle
   link?: { color?: string; underline?: boolean }
+  /** cor dos números/bolinhas das listas (vazio = mesma cor do texto do item) */
+  marker?: { color?: string }
 }
 
 export const STYLE_KEYS = ['p', 'h1', 'h2', 'h3', 'h4', 'h5'] as const
@@ -85,6 +87,8 @@ export function stylesCss(s: InsightStyles | null | undefined): string {
     if (link.underline === false) d.push('text-decoration:none')
     if (d.length) rules.push(`.kb-doc :is(.kb-p, .kb-rich, .kb-list, .kb-quote) a{${d.join(';')}}`)
   }
+  // item que recebeu cor própria no editor mantém o marcador na cor dele
+  if (okColor(s.marker?.color)) rules.push(`.kb-doc :is(.kb-rich, .kb-list) li:not([style*="color"])::marker{color:${s.marker!.color}}`)
   return rules.join('\n')
 }
 
