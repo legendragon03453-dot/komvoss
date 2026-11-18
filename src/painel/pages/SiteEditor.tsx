@@ -782,6 +782,8 @@ function ImageModal({ img, row, onClose, onSaved }: { img: Img; row?: ContentRow
 
   async function pick(file?: File) {
     if (!file) return
+    if (file.type.startsWith('video/'))
+      return toast('Aqui só entram imagens. Vídeo de capa: feche esta janela e abra "Banner do topo" → "Vídeo de capa (no lugar da foto)".', 'error')
     if (!file.type.startsWith('image/')) return toast('Escolha um arquivo de imagem (JPG, PNG, WebP ou SVG).', 'error')
     if (file.size > 5 * 1024 * 1024) return toast('Imagem acima de 5 MB. Reduza antes de enviar (o site fica lento com imagens pesadas).', 'error')
     setBusy(true)
@@ -872,6 +874,11 @@ function ImageModal({ img, row, onClose, onSaved }: { img: Img; row?: ContentRow
         <p className="form-msg is-warn">
           <Icon name="alert" size={16} /> Proporção diferente da original: a imagem pode aparecer cortada. O ideal é{' '}
           {size && `${size.w}×${size.h}px`} ou outra medida com a mesma proporção.
+        </p>
+      )}
+      {img.uses.some((u) => /Trabalhe\.tsx$/.test(u)) && (
+        <p className="form-msg">
+          <Icon name="video" size={16} /> Quer um <strong>vídeo</strong> no lugar desta foto? Feche esta janela e use <strong>Banner do topo → Vídeo de capa</strong>.
         </p>
       )}
       <input ref={fileRef} type="file" accept="image/*" hidden onChange={(e) => pick(e.target.files?.[0])} />

@@ -18,7 +18,7 @@ export function TrabalheConoscoPage() {
           <div className="hero-photo">
             {c.hero.video ? (
               // vídeo de capa (enviado pelo painel); a foto vira o quadro inicial enquanto o vídeo carrega
-              <video key={c.hero.video} src={c.hero.video} poster="/assets/trabalhe-time.webp" autoPlay muted loop playsInline preload="metadata" />
+              <video key={c.hero.video} src={c.hero.video} poster={c.hero.video === '/assets/trabalhe-capa.mp4' ? '/assets/trabalhe-capa.webp' : '/assets/trabalhe-time.webp'} autoPlay muted loop playsInline preload="metadata" />
             ) : (
               <img src="/assets/trabalhe-time.webp" alt="" width={1600} height={906} />
             )}

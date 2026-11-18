@@ -24,7 +24,8 @@ export const trabalhe: {
     title: { text: 'Venha fazer parte do ecossistema.', highlight: 'do ecossistema.' },
     lead: 'No Grupo Komvos você trabalha ao lado de especialistas em gestão, pessoas, tecnologia e IA, ajudando empresas a operar de um jeito mais simples.',
     actions: [{ label: 'Confira nossas Vagas', to: JOBS_URL }],
-    video: '',
+    // vídeo "KOMEÇA" enviado pelo cliente (comprimido para 720p, sem som); o painel pode trocar ou remover
+    video: '/assets/trabalhe-capa.mp4',
   },
   culture: {
     eyebrow: 'Nossa cultura',
