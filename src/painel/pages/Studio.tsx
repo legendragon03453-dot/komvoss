@@ -3,10 +3,15 @@ import type { DragEvent, ReactNode } from 'react'
 import { CATEGORIES } from '../../cms/insights'
 import type { ArticleSeo } from '../../cms/insights'
 import { BlockView, blocksText, newBlock, youtubeId } from '../../live/blocks'
-import type { Align, Author, Block, BlockType } from '../../live/blocks'
+import type { Align, Author, Block, BlockType, HeadingLevel } from '../../live/blocks'
 import '../../live/blocks.css'
-import { uploadMedia } from '../db'
+import { listContent, uploadMedia } from '../db'
 import { Icon, useConfirm, useToast } from '../ui'
+import { RichEditor } from '../RichEditor'
+import { InsightStylesModal } from '../InsightStylesModal'
+import { htmlText } from '../../live/richtext'
+import { applyInsightStyles } from '../../live/insightStyles'
+import type { InsightStyles } from '../../live/insightStyles'
 
 /*
  * Estúdio de artigos (estilo Elementor): arraste blocos da paleta para o artigo, reordene arrastando,
@@ -37,7 +42,8 @@ type Props = {
 }
 
 const PALETTE: { type: BlockType; label: string; hint: string; icon: string }[] = [
-  { type: 'heading', label: 'Título', hint: 'Seção do artigo', icon: 'heading' },
+  { type: 'rich', label: 'Texto', hint: 'Editor completo: cole o artigo inteiro', icon: 'rich' },
+  { type: 'heading', label: 'Título', hint: 'H1 a H5, solto', icon: 'heading' },
   { type: 'paragraph', label: 'Parágrafo', hint: 'Texto corrido', icon: 'paragraph' },
   { type: 'image', label: 'Imagem', hint: 'Foto ou anexo', icon: 'image' },
   { type: 'button', label: 'Botão', hint: 'Chamada para ação', icon: 'button' },
@@ -72,6 +78,9 @@ export function Studio({ doc: initial, lockedSlug, status, taken, onClose, onSav
   const [device, setDevice] = useState<'desktop' | 'mobile'>('desktop')
   const [drop, setDrop] = useState<number | null>(null)
   const [busy, setBusy] = useState(false)
+  const [stylesOpen, setStylesOpen] = useState(false)
+  // muda a cada desfazer/refazer: o editor de texto rico recarrega o conteúdo
+  const [rev, setRev] = useState(0)
   const [slugTouched, setSlugTouched] = useState(Boolean(initial.slug))
   const canvasRef = useRef<HTMLDivElement>(null)
 
@@ -100,6 +109,7 @@ export function Studio({ doc: initial, lockedSlug, status, taken, onClose, onSav
     future.current.push(doc)
     lastKey.current = null
     setDoc(prev)
+    setRev((r) => r + 1)
   }
   const redo = () => {
     const next = future.current.pop()
@@ -107,6 +117,7 @@ export function Studio({ doc: initial, lockedSlug, status, taken, onClose, onSav
     past.current.push(doc)
     lastKey.current = null
     setDoc(next)
+    setRev((r) => r + 1)
   }
 
   const setBlock = (id: string, patch: Partial<Block>, coalesce = false) =>
@@ -145,6 +156,19 @@ export function Studio({ doc: initial, lockedSlug, status, taken, onClose, onSav
       blocks.splice(i + 1, 0, clone(d.blocks[i]))
       return { ...d, blocks }
     })
+
+  // estilos do blog já salvos valem também aqui no editor
+  useEffect(() => {
+    listContent()
+      .then((rows) => applyInsightStyles((rows.find((r) => r.key === 'style:insights')?.value ?? null) as InsightStyles | null))
+      .catch(() => {})
+  }, [])
+
+  useEffect(() => {
+    const open = () => setStylesOpen(true)
+    document.addEventListener('kv-open-styles', open)
+    return () => document.removeEventListener('kv-open-styles', open)
+  }, [])
 
   /* ---------- atalhos ---------- */
   useEffect(() => {
@@ -291,6 +315,9 @@ export function Studio({ doc: initial, lockedSlug, status, taken, onClose, onSav
             </span>
           </button>
         </div>
+        <button type="button" className="btn is-ghost-dark" onClick={() => setStylesOpen(true)} title="Fonte, tamanho e cor padrão de Parágrafo, H1…H5 e links (todos os artigos)">
+          <Icon name="palette" size={16} /> Estilos do blog
+        </button>
         {status !== 'site' && (
           <button type="button" className="btn is-ghost-dark" onClick={() => save('draft')} disabled={busy}>
             {status === 'published' ? 'Voltar a rascunho' : 'Salvar rascunho'}
@@ -329,7 +356,7 @@ export function Studio({ doc: initial, lockedSlug, status, taken, onClose, onSav
           <div className="st-tip">
             <Icon name="sparkle" size={16} />
             <span>
-              No texto: <code>**negrito**</code>, <code>*itálico*</code> e <code>[link](https://…)</code>.
+              Use o bloco <strong>Texto</strong> para escrever ou colar o artigo inteiro (Word, Google Docs): títulos, listas, links e tabelas são reconhecidos.
             </span>
           </div>
         </aside>
@@ -411,7 +438,11 @@ export function Studio({ doc: initial, lockedSlug, status, taken, onClose, onSav
                     {sel === b.id && (b.type === 'heading' || b.type === 'paragraph' || b.type === 'quote') ? (
                       <InlineEdit b={b} onChange={(text) => setBlock(b.id, { text }, true)} />
                     ) : (
-                      <BlockView b={b} editing />
+                      sel === b.id && b.type === 'rich' ? (
+                        <RichEditor key={`${b.id}:${rev}`} html={b.html} onChange={(html) => setBlock(b.id, { html }, true)} />
+                      ) : (
+                        <BlockView b={b} editing />
+                      )
                     )}
                   </div>
                 </div>
@@ -458,6 +489,7 @@ export function Studio({ doc: initial, lockedSlug, status, taken, onClose, onSav
           )}
         </aside>
       </div>
+      {stylesOpen && <InsightStylesModal onClose={() => setStylesOpen(false)} />}
     </div>
   )
 }
@@ -481,7 +513,7 @@ function InlineEdit({ b, onChange }: { b: Extract<Block, { type: 'heading' | 'pa
     ref.current?.focus()
   }, [])
   useLayoutEffect(() => autosize(ref.current), [b])
-  const cls = b.type === 'heading' ? `kb-h is-${b.align}${b.level === 3 ? ' is-h3' : ''}` : b.type === 'paragraph' ? `kb-p is-${b.align}` : 'kb-quote-edit'
+  const cls = b.type === 'heading' ? `kb-h is-${b.align} is-h${b.level}` : b.type === 'paragraph' ? `kb-p is-${b.align}` : 'kb-quote-edit'
   return <textarea ref={ref} className={`st-inline ${cls}`} value={b.text} onChange={(e) => onChange(e.target.value)} rows={1} aria-label={LABEL[b.type]} />
 }
 
@@ -648,6 +680,29 @@ function BlockSettings({ b, set, onRemove }: { b: Block; set: (p: Partial<Block>
   const head = PALETTE.find((p) => p.type === b.type)!
   let body: ReactNode = null
   switch (b.type) {
+    case 'rich':
+      body = (
+        <div className="st-rich-help">
+          <p>
+            <strong>Escreva direto no artigo.</strong> A barra em cima do texto tem estilo (Parágrafo, H1…H5), fonte, tamanho, cor, negrito, itálico, alinhamento, listas,
+            link e tabela.
+          </p>
+          <p>
+            <strong>Colar o artigo inteiro:</strong> copie do Word ou do Google Docs e cole (Ctrl+V). Títulos, parágrafos, listas, negrito, links e tabelas vêm junto; cor e fonte
+            do documento de origem saem, para valer o padrão do blog.
+          </p>
+          <p>
+            <strong>Texto puro</strong> (bloco de notas, WhatsApp): cada linha vira um parágrafo, linhas com “-” ou “1.” viram lista e linhas curtas sem ponto final viram subtítulo.
+          </p>
+          <p>
+            Atalhos: <kbd>Ctrl</kbd>+<kbd>B</kbd> negrito, <kbd>Ctrl</kbd>+<kbd>I</kbd> itálico, <kbd>Ctrl</kbd>+<kbd>K</kbd> link, <kbd>Tab</kbd> próxima célula da tabela.
+          </p>
+          <button type="button" className="btn is-small" onClick={() => document.dispatchEvent(new CustomEvent('kv-open-styles'))}>
+            <Icon name="palette" size={15} /> Estilos do blog (fonte, tamanho e cor padrão)
+          </button>
+        </div>
+      )
+      break
     case 'heading':
       body = (
         <>
@@ -657,9 +712,9 @@ function BlockSettings({ b, set, onRemove }: { b: Block; set: (p: Partial<Block>
           <div className="field">
             <span>Tamanho</span>
             <div className="seg is-block">
-              {([2, 3] as const).map((l) => (
+              {([1, 2, 3, 4, 5] as HeadingLevel[]).map((l) => (
                 <button key={l} type="button" className={b.level === l ? 'is-on' : ''} onClick={() => set({ level: l })}>
-                  {l === 2 ? 'Título grande' : 'Subtítulo'}
+                  H{l}
                 </button>
               ))}
             </div>
@@ -960,12 +1015,19 @@ function SeoSettings({
     const text = blocksText(doc.blocks)
     const words = text.split(/\s+/).filter(Boolean).length
     const has = (v: string) => Boolean(kw) && norm(v).includes(kw)
-    const firstPara = (doc.blocks.find((b) => b.type === 'paragraph') as { text?: string } | undefined)?.text ?? ''
-    const headings = doc.blocks.filter((b) => b.type === 'heading').map((b) => (b as { text: string }).text)
+    const firstBlock = doc.blocks.find((b) => b.type === 'paragraph' || b.type === 'rich')
+    const firstPara =
+      firstBlock?.type === 'rich' ? htmlText(firstBlock.html.match(/<p[^>]*>([\s\S]*?)<\/p>/i)?.[1] ?? '') : ((firstBlock as { text?: string } | undefined)?.text ?? '')
+    const headings = [
+      ...doc.blocks.filter((b) => b.type === 'heading').map((b) => (b as { text: string }).text),
+      ...doc.blocks.flatMap((b) => (b.type === 'rich' ? [...b.html.matchAll(/<h[1-5][^>]*>([\s\S]*?)<\/h[1-5]>/gi)].map((m) => htmlText(m[1])) : [])),
+    ]
     const hits = kw ? norm(text).split(kw).length - 1 : 0
     const density = words ? (hits * kw.split(/\s+/).length * 100) / words : 0
     const noAlt = doc.blocks.filter((b) => b.type === 'image' && b.src && !b.alt.trim())
-    const internal = doc.blocks.some((b) => (b.type === 'button' && b.url.startsWith('/')) || ('text' in b && /\]\(\/[^)]*\)/.test(String(b.text))))
+    const internal = doc.blocks.some(
+      (b) => (b.type === 'button' && b.url.startsWith('/')) || ('text' in b && /\]\(\/[^)]*\)/.test(String(b.text))) || (b.type === 'rich' && /href="\/(?!\/)/.test(b.html)),
+    )
     const list: { ok: boolean; warn?: boolean; label: ReactNode; fix?: () => void }[] = [
       { ok: Boolean(kw), label: 'Palavra-chave principal definida' },
       { ok: has(title), label: 'Palavra-chave no título do Google' },

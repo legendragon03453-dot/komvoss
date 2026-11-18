@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import { htmlText, sanitizeHtml } from './richtext'
 
 /**
  * Blocos do editor visual de artigos (painel → Blog). O mesmo componente desenha o artigo no site
@@ -8,9 +9,11 @@ import type { ReactNode } from 'react'
  */
 
 export type Align = 'left' | 'center' | 'right'
+export type HeadingLevel = 1 | 2 | 3 | 4 | 5
 
 export type Block =
-  | { id: string; type: 'heading'; text: string; level: 2 | 3; align: Align }
+  | { id: string; type: 'rich'; html: string }
+  | { id: string; type: 'heading'; text: string; level: HeadingLevel; align: Align }
   | { id: string; type: 'paragraph'; text: string; align: Align }
   | { id: string; type: 'image'; src: string; alt: string; caption: string; size: 'normal' | 'wide' | 'full' }
   | { id: string; type: 'button'; label: string; url: string; align: Align; style: 'primary' | 'ghost' }
@@ -31,6 +34,8 @@ const uid = () => Math.random().toString(36).slice(2, 10)
 export function newBlock(type: BlockType): Block {
   const id = uid()
   switch (type) {
+    case 'rich':
+      return { id, type, html: '<h2>Subtítulo da seção</h2><p>Escreva ou <strong>cole o artigo inteiro aqui</strong>: títulos, parágrafos, listas, links e tabelas são reconhecidos automaticamente.</p>' }
     case 'heading':
       return { id, type, text: 'Novo título', level: 2, align: 'left' }
     case 'paragraph':
@@ -60,7 +65,7 @@ export const paragraphsToBlocks = (body: string[]): Block[] => body.map((text) =
 /** Texto corrido de todos os blocos (tempo de leitura, busca). */
 export function blocksText(blocks: Block[]) {
   return blocks
-    .map((b) => ('text' in b ? b.text : b.type === 'list' ? b.items.join(' ') : ''))
+    .map((b) => ('text' in b ? b.text : b.type === 'list' ? b.items.join(' ') : b.type === 'rich' ? htmlText(b.html) : ''))
     .join(' ')
 }
 
@@ -126,8 +131,10 @@ export function AuthorCard({ a }: { a: Author }) {
 /** Um bloco já desenhado (sem edição). */
 export function BlockView({ b, editing = false }: { b: Block; editing?: boolean }) {
   switch (b.type) {
+    case 'rich':
+      return <div className="kb-rich" dangerouslySetInnerHTML={{ __html: sanitizeHtml(b.html) }} />
     case 'heading': {
-      const H = b.level === 3 ? 'h3' : 'h2'
+      const H = `h${Math.min(5, Math.max(1, b.level || 2))}` as 'h2'
       return (
         <H className={`kb-h is-${b.align}`}>
           <Inline text={b.text} />

@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import images from 'virtual:site-images'
 import { MENU, MENU_ARCH_LABEL } from '../../cms/menu'
-import { ROOTS, SECTIONS, getPath, listTexts } from '../../live/registry'
-import type { SectionConfig, SectionValue, TextField } from '../../live/registry'
+import { ROOTS, SECTIONS, getPath, listPrefix, listTexts } from '../../live/registry'
+import type { SectionConfig, SectionItem, SectionValue, TextField } from '../../live/registry'
 import type { ContentRow } from '../../live/content'
 import { DEMO, deleteContent, listContent, saveContent, uploadMedia } from '../db'
 import { Badge, Card, Icon, Loading, Modal, PageHead, Tabs, fmtDate, useConfirm, useData, useToast } from '../ui'
@@ -163,20 +163,27 @@ function Pages({ byKey, reload }: Props) {
   const secSaved = (path: string): SectionValue => {
     const cfg = SECTIONS[path]
     const row = byKey.get(`section:${path}`)?.value as SectionValue | undefined
-    const o = getPath(path) as { hidden?: boolean; cols?: number; items?: Record<string, string | boolean>[] }
+    const o = getPath(path) as Record<string, unknown> & { hidden?: boolean; cols?: number; video?: string }
+    const list = (o[cfg.listKey ?? 'items'] ?? []) as Record<string, unknown>[]
     const items = cfg.items
       ? (row?.items ??
-        (o.items ?? []).map((it, i) => {
+        list.map((it, i) => {
           // textos editados antes, campo a campo, entram na lista
-          const out: Record<string, string | boolean> = { ...it }
+          const out: Record<string, string | boolean> = {}
+          for (const [k, v] of Object.entries(it)) out[k] = Array.isArray(v) ? v.join('\n') : (v as string | boolean)
           for (const f of cfg.items!) {
-            const t = byKey.get(`text:${path}.items.${i}.${f.key}`)?.value.v
+            const t = byKey.get(`text:${listPrefix(path)}${i}.${f.key}`)?.value.v
             if (typeof t === 'string') out[f.key] = t
           }
           return out
         }))
       : undefined
-    return { hidden: row?.hidden ?? Boolean(o.hidden), ...(cfg.cols ? { cols: row?.cols ?? o.cols ?? 3 } : {}), ...(items ? { items } : {}) }
+    return {
+      hidden: row?.hidden ?? Boolean(o.hidden),
+      ...(cfg.cols ? { cols: row?.cols ?? o.cols ?? 3 } : {}),
+      ...(items ? { items } : {}),
+      ...(cfg.video ? { video: row?.video ?? o.video ?? '' } : {}),
+    }
   }
   const secValue = (path: string) => secDraft[path] ?? secSaved(path)
   const secChanged = Object.keys(secDraft).filter((p) => JSON.stringify(secDraft[p]) !== JSON.stringify(secSaved(p)))
@@ -223,13 +230,14 @@ function Pages({ byKey, reload }: Props) {
   async function save() {
     const empty = changed.filter(([, v]) => !v.trim())
     if (empty.length) return toast('Há textos vazios. Escreva algo ou use "Voltar ao original".', 'error')
-    const emptyItem = secChanged.find((p) => secDraft[p].items?.some((it) => !String(it.quote ?? it.name ?? '').trim()))
+    const mainOf = (p: string) => SECTIONS[p].mainKey ?? SECTIONS[p].items?.find((f) => !f.check && !f.choices && !f.image)?.key ?? 'name'
+    const emptyItem = secChanged.find((p) => secDraft[p].items?.some((it) => !String(it[mainOf(p)] ?? '').trim()))
     if (emptyItem) return toast(`Há ${SECTIONS[emptyItem].itemLabel?.toLowerCase() ?? 'item'} sem texto. Preencha ou remova a caixa.`, 'error')
     setSaving(true)
     try {
       const back = changed.filter(([path, v]) => v === all.find((x) => x.path === path)!.value).map(([path]) => `text:${path}`)
       // a lista salva em grupo substitui as edições antigas, campo a campo, dos mesmos itens
-      const stale = [...byKey.keys()].filter((k) => secChanged.some((p) => SECTIONS[p].items && k.startsWith(`text:${p}.items.`)))
+      const stale = [...byKey.keys()].filter((k) => secChanged.some((p) => SECTIONS[p].items && k.startsWith(`text:${listPrefix(p)}`)))
       await deleteContent([...back, ...stale])
       await saveContent([
         ...changed.filter(([path]) => !back.includes(`text:${path}`)).map(([path, v]) => ({ key: `text:${path}`, value: { v } })),
@@ -318,7 +326,7 @@ function Pages({ byKey, reload }: Props) {
     })
     if (!ok) return
     try {
-      await deleteContent([`section:${path}`, ...[...byKey.keys()].filter((k) => k.startsWith(`text:${path}.items.`))])
+      await deleteContent([`section:${path}`, ...[...byKey.keys()].filter((k) => k.startsWith(`text:${listPrefix(path)}`))])
       setSecDraft(({ [path]: _, ...rest }) => rest)
       reload()
       setReloadKey((k) => k + 1)
@@ -382,9 +390,13 @@ function Pages({ byKey, reload }: Props) {
         {!sections.length && <p className="empty">Nenhum texto encontrado.</p>}
         {sections.map(([name, list]) => {
           const isOpen = Boolean(term) || open === name
-          const secPath = term ? undefined : Object.keys(SECTIONS).find((p) => SECTIONS[p].root === root && SECTIONS[p].name === name)
+          // um grupo pode ter mais de uma caixa de controles (ex.: um formulário por tipo de parceria)
+          const secPaths = term ? [] : Object.keys(SECTIONS).filter((p) => SECTIONS[p].root === root && SECTIONS[p].name === name)
+          // o botão Ocultar vale para a seção que permite ocultar
+          const secPath = secPaths.find((p) => !SECTIONS[p].noHide)
           const sec = secPath ? secValue(secPath) : undefined
-          const dirty = list.some((f) => draft[f.path] !== undefined) || (secPath ? secChanged.includes(secPath) : false)
+          const listSec = secPaths.length === 1 ? secValue(secPaths[0]) : undefined
+          const dirty = list.some((f) => draft[f.path] !== undefined) || secPaths.some((p) => secChanged.includes(p))
           return (
             <section key={name} className={`acc${isOpen ? ' is-open' : ''}${sec?.hidden ? ' is-off' : ''}`}>
               <div className="acc-top">
@@ -394,11 +406,11 @@ function Pages({ byKey, reload }: Props) {
                 </span>
                 <strong>{name}</strong>
                 <small>
-                  {sec?.items ? `${sec.items.length} ${sec.items.length === 1 ? 'item' : 'itens'}` : `${list.length} ${list.length === 1 ? 'campo' : 'campos'}`}
+                  {listSec?.items ? `${listSec.items.length} ${listSec.items.length === 1 ? 'item' : 'itens'}` : `${list.length} ${list.length === 1 ? 'campo' : 'campos'}`}
                 </small>
                 {sec?.hidden && <Badge tone="dark">Oculta</Badge>}
                 {dirty && <Badge tone="amber">Não publicado</Badge>}
-                {!sec?.hidden && (list.some((f) => edited(f)) || (secPath && byKey.has(`section:${secPath}`))) && <Badge tone="pink">Editado</Badge>}
+                {!sec?.hidden && (list.some((f) => edited(f)) || secPaths.some((p) => byKey.has(`section:${p}`))) && <Badge tone="pink">Editado</Badge>}
                 <span className="acc-caret" aria-hidden="true" />
               </button>
               {secPath && (
@@ -448,16 +460,19 @@ function Pages({ byKey, reload }: Props) {
                       </label>
                     )
                   })}
-                  {secPath && sec && (SECTIONS[secPath].items || SECTIONS[secPath].cols || byKey.has(`section:${secPath}`)) && (
+                  {secPaths
+                    .filter((p) => SECTIONS[p].items || SECTIONS[p].cols || SECTIONS[p].video || byKey.has(`section:${p}`))
+                    .map((p) => (
                     <SectionTools
-                      cfg={SECTIONS[secPath]}
-                      value={sec}
-                      published={byKey.has(`section:${secPath}`)}
-                      onChange={(v) => setSecDraft((d) => ({ ...d, [secPath]: v }))}
+                      key={p}
+                      cfg={SECTIONS[p]}
+                      value={secValue(p)}
+                      published={byKey.has(`section:${p}`)}
+                      onChange={(v) => setSecDraft((d) => ({ ...d, [p]: v }))}
                       onFocus={(text) => setFocus({ text, n: Date.now() })}
-                      onRestore={() => restoreSection(secPath)}
+                      onRestore={() => restoreSection(p)}
                     />
-                  )}
+                  ))}
                 </div>
               )}
             </section>
@@ -515,17 +530,41 @@ function SectionTools({
   onFocus: (text: string) => void
   onRestore: () => void
 }) {
+  const toast = useToast()
+  const [uploading, setUploading] = useState<string | null>(null)
   const items = value.items ?? []
-  const setItems = (next: Record<string, string | boolean>[]) => onChange({ ...value, items: next })
-  const setItem = (i: number, patch: Record<string, string | boolean>) => setItems(items.map((it, j) => (j === i ? { ...it, ...patch } : it)))
+  const setItems = (next: SectionItem[]) => onChange({ ...value, items: next })
+  const setItem = (i: number, patch: SectionItem) => setItems(items.map((it, j) => (j === i ? { ...it, ...patch } : it)))
   const move = (i: number, d: number) => {
     const next = [...items]
     ;[next[i], next[i + d]] = [next[i + d], next[i]]
     setItems(next)
   }
   const label = cfg.itemLabel ?? 'Item'
+
+  async function send(file: File | undefined, kind: 'image' | 'video', done: (url: string) => void, slot: string) {
+    if (!file) return
+    if (!file.type.startsWith(`${kind}/`)) return toast(kind === 'image' ? 'Escolha uma imagem (JPG, PNG ou WebP).' : 'Escolha um vídeo (MP4 ou WebM).', 'error')
+    const max = kind === 'image' ? 5 : 45
+    if (file.size > max * 1024 * 1024) return toast(`Arquivo acima de ${max} MB. Reduza antes de enviar (o site fica lento com arquivos pesados).`, 'error')
+    setUploading(slot)
+    try {
+      done(await uploadMedia(file, kind === 'image' ? 'site' : 'videos'))
+    } catch (e) {
+      toast((e as Error).message, 'error')
+    } finally {
+      setUploading(null)
+    }
+  }
+
+  const itemTitle = (it: SectionItem, i: number) => {
+    const main = String(it[cfg.mainKey ?? ''] ?? '').trim()
+    return main ? `${label} ${i + 1} · ${main.length > 48 ? main.slice(0, 48) + '…' : main}` : `${label} ${i + 1}`
+  }
+
   return (
     <div className="sec-tools">
+      {cfg.title && <p className="sec-tools-title">{cfg.title}</p>}
       <div className="sec-bar">
         {cfg.cols && (
           <div className="sec-cols">
@@ -541,14 +580,35 @@ function SectionTools({
         )}
       </div>
 
+      {cfg.video && (
+        <div className="field sec-media">
+          <span>Vídeo de capa (no lugar da foto)</span>
+          {value.video ? (
+            <video src={value.video} muted loop autoPlay playsInline className="sec-media-preview" />
+          ) : (
+            <small className="field-foot">Sem vídeo: o topo mostra a foto. Envie um MP4 curto (até 45 MB, sem som — ele toca mudo e em loop).</small>
+          )}
+          <div className="sec-media-row">
+            <label className="btn is-small">
+              <Icon name="image" size={15} /> {uploading === 'video' ? 'Enviando…' : value.video ? 'Trocar vídeo' : 'Enviar vídeo'}
+              <input type="file" accept="video/mp4,video/webm" hidden disabled={uploading !== null} onChange={(e) => send(e.target.files?.[0], 'video', (url) => onChange({ ...value, video: url }), 'video')} />
+            </label>
+            <input placeholder="…ou cole o link de um arquivo .mp4" value={value.video ?? ''} onChange={(e) => onChange({ ...value, video: e.target.value.trim() })} />
+            {value.video && (
+              <button type="button" className="btn is-small" onClick={() => onChange({ ...value, video: '' })}>
+                Remover vídeo
+              </button>
+            )}
+          </div>
+        </div>
+      )}
+
       {cfg.items && (
         <>
           <div className="sec-items">
             {items.map((it, i) => (
               <fieldset key={i} className="sec-item">
-                <legend>
-                  {label} {i + 1}
-                </legend>
+                <legend>{itemTitle(it, i)}</legend>
                 <div className="sec-item-tools">
                   <button type="button" onClick={() => move(i, -1)} disabled={i === 0} title="Subir" aria-label="Subir">
                     <Icon name="up" size={14} />
@@ -560,22 +620,60 @@ function SectionTools({
                     <Icon name="trash" size={14} />
                   </button>
                 </div>
-                {cfg.items!.map((f) =>
-                  f.check ? (
-                    <label key={f.key} className="check">
-                      <input type="checkbox" checked={Boolean(it[f.key])} onChange={(e) => setItem(i, { [f.key]: e.target.checked })} /> {f.label}
-                    </label>
-                  ) : (
+                {cfg.items!.filter((f) => !f.showIf || f.showIf(it)).map((f) => {
+                  const v = String(it[f.key] ?? '')
+                  if (f.check)
+                    return (
+                      <label key={f.key} className="check">
+                        <input type="checkbox" checked={it[f.key] === true || it[f.key] === 'true'} onChange={(e) => setItem(i, { [f.key]: e.target.checked })} /> {f.label}
+                      </label>
+                    )
+                  if (f.choices)
+                    return (
+                      <label key={f.key} className="field">
+                        <span>{f.label}</span>
+                        <select value={v || f.choices[0].value} onChange={(e) => setItem(i, { [f.key]: e.target.value })}>
+                          {f.choices.map((c) => (
+                            <option key={c.value} value={c.value}>
+                              {c.label}
+                            </option>
+                          ))}
+                        </select>
+                      </label>
+                    )
+                  if (f.image) {
+                    const slot = `${i}:${f.key}`
+                    return (
+                      <div key={f.key} className="field sec-media">
+                        <span>{f.label}</span>
+                        <div className="sec-media-row">
+                          {v && <img src={v} alt="" className="sec-media-thumb" />}
+                          <label className="btn is-small">
+                            <Icon name="image" size={15} /> {uploading === slot ? 'Enviando…' : v ? 'Trocar' : 'Enviar imagem'}
+                            <input type="file" accept="image/*" hidden disabled={uploading !== null} onChange={(e) => send(e.target.files?.[0], 'image', (url) => setItem(i, { [f.key]: url }), slot)} />
+                          </label>
+                          {v && (
+                            <button type="button" className="btn is-small" onClick={() => setItem(i, { [f.key]: '' })}>
+                              Remover
+                            </button>
+                          )}
+                        </div>
+                        {f.hint && <small className="field-foot">{f.hint}</small>}
+                      </div>
+                    )
+                  }
+                  return (
                     <label key={f.key} className="field">
                       <span>{f.label}</span>
-                      {f.long ? (
-                        <textarea rows={3} value={String(it[f.key] ?? '')} onFocus={() => onFocus(String(it[f.key] ?? ''))} onChange={(e) => setItem(i, { [f.key]: e.target.value })} />
+                      {f.long || f.lines ? (
+                        <textarea rows={f.lines ? Math.max(3, v.split('\n').length + 1) : 3} value={v} onFocus={() => onFocus(v)} onChange={(e) => setItem(i, { [f.key]: e.target.value })} />
                       ) : (
-                        <input value={String(it[f.key] ?? '')} onFocus={() => onFocus(String(it[f.key] ?? ''))} onChange={(e) => setItem(i, { [f.key]: e.target.value })} />
+                        <input value={v} onFocus={() => onFocus(v)} onChange={(e) => setItem(i, { [f.key]: e.target.value })} />
                       )}
+                      {f.hint && <small className="field-foot">{f.hint}</small>}
                     </label>
-                  ),
-                )}
+                  )
+                })}
               </fieldset>
             ))}
           </div>

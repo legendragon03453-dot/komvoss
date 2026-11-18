@@ -52,6 +52,9 @@ const P: Record<string, string> = {
   save: 'M5 3h11l3 3v15H5zM8 3v6h7V3M8 21v-7h8v7',
   copyBlock: 'M9 9h11v11H9zM5 15H4V4h11v1',
   sparkle: 'M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8zM19 3v4M17 5h4',
+  table: 'M3 5h18v14H3zM3 10h18M3 15h18M9 5v14M15 5v14',
+  rich: 'M4 5h16M4 9h10M4 13h16M4 17h7M15 15l2 4 2-4M15.6 17.8h2.8',
+  palette: 'M12 3a9 9 0 1 0 0 18c1 0 1.5-.8 1.5-1.5 0-1.2-1-1.5-1-2.5s.8-1.5 2-1.5H17a4 4 0 0 0 4-4c0-4.7-4-8.5-9-8.5zM7.5 11.5h.01M10 7.5h.01M15 7.5h.01',
 }
 export function Icon({ name, size = 18 }: { name: keyof typeof P | string; size?: number }) {
   return (

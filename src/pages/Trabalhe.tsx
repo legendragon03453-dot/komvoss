@@ -3,9 +3,8 @@ import { sobre } from '../cms/pages/sobre'
 import { ReelFeature } from '../Reels'
 import { COMPANIES } from './data'
 import { CompanyLogo } from './Solucoes'
-import { usePageMeta } from './ui'
+import { PrimaryLink, usePageMeta } from './ui'
 import { CmsHero, H, T, pad, spotlight } from './kit'
-import { CmsForm } from './CmsForm'
 
 export function TrabalheConoscoPage() {
   usePageMeta(c.seo.title, c.seo.description)
@@ -17,7 +16,12 @@ export function TrabalheConoscoPage() {
         crumbs={[{ label: 'Trabalhe conosco' }]}
         background={
           <div className="hero-photo">
-            <img src="/assets/trabalhe-time.webp" alt="" width={1600} height={906} />
+            {c.hero.video ? (
+              // vídeo de capa (enviado pelo painel); a foto vira o quadro inicial enquanto o vídeo carrega
+              <video key={c.hero.video} src={c.hero.video} poster="/assets/trabalhe-time.webp" autoPlay muted loop playsInline preload="metadata" />
+            ) : (
+              <img src="/assets/trabalhe-time.webp" alt="" width={1600} height={906} />
+            )}
           </div>
         }
       />
@@ -59,10 +63,13 @@ export function TrabalheConoscoPage() {
         </div>
       </section>
 
-      <section className="pg-sec" id="candidatura" data-chapter={c.form.eyebrow}>
-        <div className="pg-wrap cms-form-wrap">
-          <H head={c.form} />
-          <CmsForm form={c.form} source="trabalhe conosco" />
+      {/* candidaturas: no Portal de Talentos (antes era um formulário aqui) */}
+      <section className="pg-sec jobs-cta" id="vagas" data-chapter={c.jobs.eyebrow}>
+        <div className="pg-wrap">
+          <H head={c.jobs} center />
+          <div className="pg-actions jobs-cta-actions" data-anim="up">
+            <PrimaryLink to={c.jobs.href}>{c.jobs.button}</PrimaryLink>
+          </div>
         </div>
       </section>
     </>

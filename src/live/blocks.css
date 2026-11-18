@@ -370,3 +370,135 @@ h3.kb-h {
     display: none;
   }
 }
+
+/* ---------- títulos H1, H4 e H5 (bloco Título) ---------- */
+h1.kb-h {
+  font-size: clamp(32px, 3.2vw, 48px);
+}
+
+h4.kb-h {
+  font-size: clamp(18px, 1.5vw, 22px);
+  font-weight: 600;
+}
+
+h5.kb-h {
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+/* ---------- bloco Texto (editor completo) ---------- */
+.kb-rich {
+  display: grid;
+  gap: 18px;
+  min-width: 0;
+  font-size: 17px;
+  font-weight: 300;
+  line-height: 1.75;
+  color: var(--kb-muted);
+}
+
+.kb-rich > * {
+  margin: 0;
+}
+
+.kb-rich :is(h1, h2, h3, h4, h5) {
+  margin: 14px 0 0;
+  color: var(--kb-ink);
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+.kb-rich h1 {
+  font-size: clamp(32px, 3.2vw, 48px);
+  font-weight: 400;
+}
+
+.kb-rich h2 {
+  font-size: clamp(26px, 2.6vw, 38px);
+  font-weight: 400;
+}
+
+.kb-rich h3 {
+  font-size: clamp(21px, 1.9vw, 27px);
+  font-weight: 500;
+}
+
+.kb-rich h4 {
+  font-size: clamp(18px, 1.5vw, 22px);
+  font-weight: 600;
+}
+
+.kb-rich h5 {
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.kb-rich :is(strong, b) {
+  font-weight: 600;
+  color: var(--kb-ink);
+}
+
+.kb-rich a {
+  color: var(--kb-ink);
+  text-decoration: underline;
+  text-decoration-color: rgba(0, 175, 239, 0.7);
+  text-underline-offset: 3px;
+}
+
+.kb-rich :is(ul, ol) {
+  display: grid;
+  gap: 8px;
+  padding-left: 22px;
+}
+
+.kb-rich li::marker {
+  color: #00afef;
+}
+
+.kb-rich blockquote {
+  padding: 6px 0 6px 26px;
+  border-left: 3px solid transparent;
+  border-image: linear-gradient(to bottom, #00aa9e, #af005f, #00afef) 1;
+  font-size: clamp(20px, 1.9vw, 26px);
+  line-height: 1.45;
+  color: var(--kb-ink);
+}
+
+.kb-rich hr {
+  width: 100%;
+  border: 0;
+  border-top: 1px solid var(--kb-line);
+}
+
+/* tabelas: rolam de lado no celular em vez de estourar a página */
+.kb-rich table {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  border-collapse: collapse;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.kb-rich :is(th, td) {
+  min-width: 120px;
+  padding: 12px 14px;
+  border: 1px solid var(--kb-line);
+  text-align: left;
+  vertical-align: top;
+}
+
+.kb-rich th {
+  background: rgba(255, 255, 255, 0.06);
+  font-weight: 600;
+  color: var(--kb-ink);
+}
+
+.kb-rich tbody tr:nth-child(even) td {
+  background: rgba(255, 255, 255, 0.025);
+}

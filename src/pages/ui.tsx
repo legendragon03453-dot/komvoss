@@ -153,19 +153,35 @@ export function SectionHead({
 }
 
 /** Botão principal na linguagem do Figma: fundo verde-água com caixa escura e seta. */
+const isExternal = (to: string) => /^https?:\/\//i.test(to)
+
 export function PrimaryLink({ to, children }: { to: string; children: ReactNode }) {
-  return (
-    <Link className="pg-btn" to={to}>
+  const inner = (
+    <>
       <span>{children}</span>
       <span className="pg-btn-box">
         <img src="/assets/v2/arrow-light.svg" alt="" width={27.2797} height={18.2624} />
       </span>
+    </>
+  )
+  // links para fora do site (ex.: portal de vagas) abrem em outra aba
+  return isExternal(to) ? (
+    <a className="pg-btn" href={to} target="_blank" rel="noopener noreferrer">
+      {inner}
+    </a>
+  ) : (
+    <Link className="pg-btn" to={to}>
+      {inner}
     </Link>
   )
 }
 
 export function GhostLink({ to, children }: { to: string; children: ReactNode }) {
-  return (
+  return isExternal(to) ? (
+    <a className="pg-btn-ghost" href={to} target="_blank" rel="noopener noreferrer">
+      {children}
+    </a>
+  ) : (
     <Link className="pg-btn-ghost" to={to}>
       {children}
     </Link>

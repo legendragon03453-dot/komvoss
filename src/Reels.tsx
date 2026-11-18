@@ -7,23 +7,49 @@ import { home } from './cms/pages/home'
 
 const IG_PROFILE = 'https://www.instagram.com/komvostech/'
 
-// Reels do @komvostech (e das empresas do ecossistema). As capas (public/assets/reels) foram baixadas do Instagram, porque os links de lá expiram.
-const REELS = [
-  { id: 'DeM3jlqkyy9', title: 'Quando a operação cresce', tag: 'Gestão' },
-  { id: 'DdKNuuqEfiU', title: 'Synkrh: o RH que responde no WhatsApp', tag: 'IA' },
-  { id: 'DeIEohOFFXv', title: 'Terceirizar a folha de verdade', tag: 'BPO' },
-  { id: 'DdFBGt9CfBq', title: 'Do chamado à solução', tag: 'Tecnologia' },
-  { id: 'DeH4qXmlUg4', title: 'Organizar o que cresceu junto', tag: 'Gestão' },
-  { id: 'DdXCps5jdKV', title: 'Programa Finders', tag: 'Parcerias' },
-  { id: 'DbBpZ8yCluV', title: 'Processos, tecnologia e pessoas', tag: 'Integração' },
-  { id: 'DaQIRkUEjMv', title: 'Rota Inova e a bioenergia', tag: 'Inovação' },
-  { id: 'DZ52Nvtvqgc', title: 'Nossa nova sede', tag: 'Institucional' },
-  { id: 'Db3WOHpOfjP', title: 'De 2006 a 2026', tag: 'Nosso time' },
-  { id: 'Db9EdEVFLGe', title: '20 anos de reconhecimento', tag: 'Prêmios' },
-  { id: 'Dd6xyt9mu7x', title: 'Indicações que geram valor', tag: 'Parcerias' },
-]
+/** Publicação do Instagram: reel (/reel/ID) ou post (/p/ID). */
+export type Reel = { id: string; title: string; tag: string; kind?: 'reel' | 'p'; cover?: string }
 
-export type Reel = { id: string; title: string; tag: string }
+// capas baixadas do Instagram (os links de lá expiram); publicações novas trazem a capa enviada pelo painel
+const LOCAL_COVERS = new Set(['DeM3jlqkyy9', 'DdKNuuqEfiU', 'DeIEohOFFXv', 'DdFBGt9CfBq', 'DeH4qXmlUg4', 'DdXCps5jdKV', 'DbBpZ8yCluV', 'DaQIRkUEjMv', 'DZ52Nvtvqgc', 'Db3WOHpOfjP', 'Db9EdEVFLGe', 'Dd6xyt9mu7x'])
+
+/** Lê o link do Instagram (aceita também só o código da publicação). */
+export function parseInstagram(url: string): { id: string; kind: 'reel' | 'p' } | null {
+  const m = url.match(/instagram\.com\/(?:[\w.]+\/)?(reels?|p|tv)\/([\w-]+)/i)
+  if (m) return { id: m[2], kind: m[1].toLowerCase() === 'p' ? 'p' : 'reel' }
+  const id = url.trim()
+  return /^[\w-]{6,}$/.test(id) ? { id, kind: 'reel' } : null
+}
+
+const coverOf = (r: Reel) => r.cover || (LOCAL_COVERS.has(r.id) ? `${A}/reels/${r.id}.webp` : '')
+const postUrl = (r: Reel) => `https://www.instagram.com/${r.kind ?? 'reel'}/${r.id}/`
+
+/** Publicações da Home (editáveis pelo painel). */
+function homeReels(): Reel[] {
+  return (home.reels.items ?? [])
+    .map((it) => {
+      const p = parseInstagram(String(it.url ?? ''))
+      return p ? { ...p, title: String(it.title ?? ''), tag: String(it.tag ?? ''), cover: String(it.cover ?? '') } : null
+    })
+    .filter((r): r is NonNullable<typeof r> => r !== null)
+}
+
+/** Capa do card; sem capa, um fundo com o ícone do Instagram. */
+function ReelCover({ r }: { r: Reel }) {
+  const src = coverOf(r)
+  return src ? (
+    <img src={src} alt="" width={540} height={960} loading="lazy" draggable={false} />
+  ) : (
+    <span className="car-nocover" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
+        <rect x="3" y="3" width="18" height="18" rx="5" />
+        <circle cx="12" cy="12" r="4" />
+        <circle cx="17.5" cy="6.5" r="0.8" fill="currentColor" />
+      </svg>
+    </span>
+  )
+}
+
 
 const pad = (n: number) => String(n).padStart(2, '0')
 
@@ -66,12 +92,12 @@ function ReelModal({ reel, onClose }: { reel: Reel; onClose: () => void }) {
         </div>
         <iframe
           className="reel-modal-frame"
-          src={`https://www.instagram.com/reel/${reel.id}/embed/`}
+          src={`${postUrl(reel)}embed/`}
           title={`Reel: ${reel.title}`}
           allow="autoplay; encrypted-media; picture-in-picture; clipboard-write"
           allowFullScreen
         />
-        <a className="reel-modal-link" href={`https://www.instagram.com/reel/${reel.id}/`} target="_blank" rel="noopener noreferrer">
+        <a className="reel-modal-link" href={postUrl(reel)} target="_blank" rel="noopener noreferrer">
           Assistir no Instagram <span aria-hidden="true">↗</span>
         </a>
       </div>
@@ -81,6 +107,7 @@ function ReelModal({ reel, onClose }: { reel: Reel; onClose: () => void }) {
 }
 
 export function Reels() {
+  const REELS = homeReels()
   const trackRef = useRef<HTMLDivElement>(null)
   const drag = useRef({ active: false, moved: false, startX: 0, startScroll: 0, scale: 1 })
   const [atStart, setAtStart] = useState(true)
@@ -103,7 +130,7 @@ export function Reels() {
       const step = item.offsetWidth + parseFloat(getComputedStyle(el).columnGap || '0')
       setCurrent(Math.min(REELS.length - 1, Math.round(el.scrollLeft / step)))
     }
-  }, [])
+  }, [REELS.length])
 
   useEffect(() => {
     update()
@@ -152,6 +179,8 @@ export function Reels() {
     setTimeout(() => (d.moved = false), 0)
   }
 
+  if (home.reels.hidden || !REELS.length) return null
+
   return (
     <section className="frame sec reels" id="reels">
       <article className="servico servico--reels" id="servico-reels">
@@ -190,7 +219,7 @@ export function Reels() {
           >
             {REELS.map((r, i) => (
               <div key={r.id} className="car-item" data-anim="up">
-                <img src={`${A}/reels/${r.id}.webp`} alt="" width={540} height={960} loading="lazy" draggable={false} />
+                <ReelCover r={r} />
                 <span className="car-idx" aria-hidden="true">
                   {pad(i + 1)}
                 </span>
@@ -254,12 +283,12 @@ export function ReelFeature({
           <p className="pg-sublead" data-anim="up">
             {text}
           </p>
-          <a className="rf-link" href={`https://www.instagram.com/reel/${reel.id}/`} target="_blank" rel="noopener noreferrer" data-anim="up">
+          <a className="rf-link" href={postUrl(reel)} target="_blank" rel="noopener noreferrer" data-anim="up">
             Ver no Instagram <span aria-hidden="true">↗</span>
           </a>
         </div>
         <div className="rf-card" data-anim="up">
-          <img src={`${A}/reels/${reel.id}.webp`} alt="" width={540} height={960} loading="lazy" />
+          <ReelCover r={reel} />
           <button className="car-play" type="button" aria-label={`Reproduzir vídeo: ${reel.title}`} onClick={() => setOpen(true)}>
             <span className="car-play-ico">
               <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">

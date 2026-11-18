@@ -5,7 +5,8 @@ import { Cover } from './pages/Cover'
 import { CLIENT_LOGOS, PARTNERS } from './cms/parceiros'
 import { Marquee } from './components/ui/marquee'
 import { home } from './cms/pages/home'
-import { useLeadSubmit } from './pages/CmsForm'
+import { CmsForm } from './pages/CmsForm'
+import { contato } from './cms/pages/contato'
 
 /* ---------- Prova Social ---------- */
 
@@ -133,55 +134,9 @@ export function Insights() {
 
 /* ---------- Formulário de lead + CTA Final ---------- */
 
+/** Formulário de contato (Home e /contato). Os campos vêm de contato.form e são editáveis pelo painel. */
 export function LeadForm() {
-  const { sent, sending, error, handleSubmit } = useLeadSubmit('contato')
-
-  return (
-    <form className="lead-form" data-anim="right" onSubmit={handleSubmit}>
-      {sent ? (
-        <div className="form-done">
-          <h3>Recebemos seu contato!</h3>
-          <p>Em breve um especialista do Grupo Komvos vai falar com você.</p>
-        </div>
-      ) : (
-        <>
-          <label>
-            Nome completo
-            <input name="nome" required autoComplete="name" />
-          </label>
-          <label>
-            E-mail corporativo
-            <input name="email" type="email" required autoComplete="email" />
-          </label>
-          <div className="form-row">
-            <label>
-              Cargo
-              <input name="cargo" required autoComplete="organization-title" />
-            </label>
-            <label>
-              Empresa
-              <input name="empresa" required autoComplete="organization" />
-            </label>
-          </div>
-          <label>
-            Desafio atual
-            <textarea name="desafio" rows={3} />
-          </label>
-          {error && (
-            <p className="form-error" role="alert">
-              {error}
-            </p>
-          )}
-          <button type="submit" className="form-submit" disabled={sending} aria-busy={sending}>
-            <span>{sending ? 'Enviando…' : home.cta.submit}</span>
-            <span className="form-submit-box">
-              <img src="/assets/v2/arrow-light.svg" alt="" width={27.2797} height={18.2624} />
-            </span>
-          </button>
-        </>
-      )}
-    </form>
-  )
+  return <CmsForm form={contato.form} source="contato" anim="right" plain />
 }
 
 export function CtaFinal() {

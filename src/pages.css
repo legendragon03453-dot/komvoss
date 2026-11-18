@@ -661,3 +661,17 @@
 .pg-wordmark {
   color: #fff;
 }
+
+/* Trabalhe conosco: chamada para o Portal de Talentos (no lugar do formulário) */
+.jobs-cta .jobs-cta-actions {
+  justify-content: center;
+  margin-top: 32px;
+}
+
+/* vídeo de capa no lugar da foto do topo */
+.hero-photo video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 40%;
+}

@@ -1188,3 +1188,58 @@ button.hd-link {
 .is-offscreen *::after {
   animation-play-state: paused !important;
 }
+
+/* ---------- campos de escolha (seleção única, múltipla escolha, aceite) ---------- */
+.lead-form .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+.lead-form .form-group-label {
+  font-size: 16.56px;
+  font-weight: 500;
+  color: #111516;
+}
+
+.lead-form .form-choices {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.lead-form label.form-choice {
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border: 1px solid rgba(17, 21, 22, 0.14);
+  border-radius: 10px;
+  background: #fff;
+  font-size: 15px;
+  font-weight: 400;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+.lead-form label.form-choice:has(input:checked) {
+  border-color: #111516;
+}
+
+.lead-form label.form-choice.is-consent {
+  align-items: flex-start;
+  border: 0;
+  padding: 0;
+  background: none;
+}
+
+.lead-form .form-choice input {
+  width: 18px;
+  height: 18px;
+  margin: 2px 0 0;
+  padding: 0;
+  flex: none;
+  accent-color: #111516;
+  cursor: pointer;
+}

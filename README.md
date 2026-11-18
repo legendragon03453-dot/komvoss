@@ -28,6 +28,14 @@ Site do **Grupo Komvos** (ecossistema de soluções empresariais: gestão, RH, c
 
 Login via Supabase Auth. Seções: visão geral, **leads**, **estatísticas** de acesso (país/estado/cidade), **editor do site**, **blog**, **studio** e **usuários**. Sem Supabase configurado, o painel abre em modo demonstração.
 
+## Edição pelo painel (novidades)
+
+- **Formulários** (Editar site → Entre em contato / Seja um parceiro → Formulário): adicionar, remover e reordenar campos; tipos texto, e-mail, telefone, link, número, data, lista suspensa, seleção única, múltipla escolha, aceite e arquivo; obrigatório e meia largura.
+- **Instagram da Home** (Editar site → Home → Vídeos): adicionar, remover e reordenar publicações (reel ou post) com capa.
+- **Trabalhe conosco**: botão para o Portal de Talentos no lugar do formulário; vídeo de capa opcional (Banner do topo).
+- **Insights**: bloco “Texto” com editor completo (Parágrafo/H1…H5, fonte, tamanho, cor, listas, links, tabelas; colar do Word/Google Docs) e “Estilos do blog” (padrão de fonte, tamanho e cor por estilo + cor dos links).
+- Toda conversão nos formulários vai também por e-mail (`/api/lead-mail`).
+
 ## Estrutura
 
 ```
@@ -41,6 +49,7 @@ src/
 api/
   geo.js           localização aproximada do visitante (headers da Vercel)
   admin-users.js   gestão de usuários do painel (usa a chave secreta, só no servidor)
+  lead-mail.js     e-mail de cada lead dos formulários para o marketing
 supabase/schema.sql   tabelas, RLS e policies
 seo-plugin.ts         gera um HTML por rota + sitemap.xml + robots.txt no build
 site-images-plugin.ts imagens do site no build
@@ -69,6 +78,8 @@ npm run preview
 | `VITE_SUPABASE_ANON_KEY` | front | chave pública (anon) |
 | `SUPABASE_URL` | servidor | URL do Supabase para `/api/admin-users` |
 | `SUPABASE_SECRET_KEY` | servidor | chave secreta — **nunca** expor no front |
+| `LEAD_MAIL_TO` | servidor | (opcional) destino dos e-mails de lead; padrão marketing@grupokomvos.com.br |
+| `RESEND_API_KEY`, `LEAD_MAIL_FROM` | servidor | (opcional) envio pelo Resend; sem eles, `/api/lead-mail` usa o FormSubmit (ativar uma vez pelo e-mail de confirmação) |
 
 ## Banco
 

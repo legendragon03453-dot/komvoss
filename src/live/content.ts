@@ -3,8 +3,10 @@ import type { Article } from '../cms/insights'
 import { MENU } from '../cms/menu'
 import type { MenuItem } from '../cms/menu'
 import { LIVE, demoRead, rest } from './config'
-import { getPath, setPath } from './registry'
+import { SECTIONS, getPath, setPath } from './registry'
 import { setImageMap } from './images'
+import { applyInsightStyles } from './insightStyles'
+import type { InsightStyles } from './insightStyles'
 import type { Author, Block } from './blocks'
 
 /*
@@ -14,7 +16,8 @@ import type { Author, Block } from './blocks'
  *   "image:<arquivo>"  → { url: "https://…" }            (troca a imagem em todo o site)
  *   "menu:<id>"        → { label?, hidden?, deleted? }
  *   "article:<slug>"   → { hidden?, featured?, title?, excerpt?, body?, cat?, date?, read?, cover? }
- *   "section:<caminho>" → { hidden?, cols?, items? }   (ex. "section:clientes.testimonials"; ver SECTIONS em registry.ts)
+ *   "style:insights"   → estilos padrão dos artigos (ver insightStyles.ts)
+ *   "section:<caminho>" → { hidden?, cols?, items?, video? }   (ex. "section:clientes.testimonials"; ver SECTIONS em registry.ts)
  * Tabela posts: artigos criados pelo painel (entram no blog junto com os do CMS).
  *
  * Para o visitante não esperar o banco, a última versão fica guardada no navegador e é aplicada antes
@@ -79,6 +82,7 @@ export function applyContent({ rows, posts }: Snapshot) {
   const images: Record<string, string> = {}
   const menu = new Map<string, Record<string, unknown>>()
   const articles = new Map<string, Record<string, unknown>>()
+  let insightStyles: InsightStyles | null = null
   for (const { key, value } of rows) {
     const i = key.indexOf(':')
     const kind = key.slice(0, i)
@@ -90,6 +94,7 @@ export function applyContent({ rows, posts }: Snapshot) {
     else if (kind === 'menu') menu.set(id, value)
     else if (kind === 'article') articles.set(id, value)
     else if (kind === 'section') sections.push([id, value])
+    else if (kind === 'style' && id === 'insights') insightStyles = value as InsightStyles
   }
 
   // seções: ocultar, colunas e a lista de itens (vem depois dos textos e prevalece sobre eles)
@@ -103,7 +108,8 @@ export function applyContent({ rows, posts }: Snapshot) {
     }
     if (typeof v.hidden === 'boolean') put('hidden', v.hidden)
     if (typeof v.cols === 'number') put('cols', v.cols)
-    if (Array.isArray(v.items)) put('items', v.items.map((it) => ({ ...(it as object) })))
+    if (Array.isArray(v.items)) put(SECTIONS[path]?.listKey ?? 'items', v.items.map((it) => ({ ...(it as object) })))
+    if (typeof v.video === 'string') put('video', v.video)
     originalSections.set(path, orig)
   }
 
@@ -141,6 +147,7 @@ export function applyContent({ rows, posts }: Snapshot) {
   ARTICLES.splice(0, ARTICLES.length, ...all)
 
   setImageMap(images)
+  applyInsightStyles(insightStyles)
 }
 
 const stamp = (s: Snapshot) => JSON.stringify(s)

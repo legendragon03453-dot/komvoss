@@ -1,3 +1,4 @@
+import type { FormContent } from '../../pages/CmsForm'
 import type { Head, Hero, Item, Seo } from './types'
 
 /** Página /contato (os contatos e endereços ficam em src/cms/site.ts) */
@@ -7,6 +8,8 @@ export const contato: {
   info: { title: string; officesTitle: string; labels: { email: string; phone: string; whatsapp: string } }
   next: Head & { items: Item[] }
   shortcuts: Head
+  /** formulário de contato (página /contato e fim da Home); campos editáveis pelo painel */
+  form: FormContent
 } = {
   seo: {
     title: 'Entre em contato | Falar com um especialista – Grupo Komvos',
@@ -35,5 +38,17 @@ export const contato: {
   shortcuts: {
     eyebrow: 'Prefere começar por uma frente?',
     title: { text: 'Conheça as soluções', highlight: 'soluções' },
+  },
+  form: {
+    fields: [
+      { name: 'nome', label: 'Nome completo', required: true, autoComplete: 'name' },
+      { name: 'email', label: 'E-mail corporativo', type: 'email', required: true, autoComplete: 'email' },
+      { name: 'cargo', label: 'Cargo', required: true, half: true, autoComplete: 'organization-title' },
+      { name: 'empresa', label: 'Empresa', required: true, half: true, autoComplete: 'organization' },
+      { name: 'desafio', label: 'Desafio atual', type: 'textarea' },
+    ],
+    submit: 'Falar com um especialista',
+    doneTitle: 'Recebemos seu contato!',
+    doneText: 'Em breve um especialista do Grupo Komvos vai falar com você.',
   },
 }

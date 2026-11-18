@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import { ARTICLES, CATEGORIES } from '../../cms/insights'
 import type { ArticleSeo } from '../../cms/insights'
 import { paragraphsToBlocks } from '../../live/blocks'
+import { htmlText } from '../../live/richtext'
 import type { Author, Block } from '../../live/blocks'
 import { DEMO, clearPostFeatured, deleteContent, deletePost, listContent, listPosts, savePost, saveContent } from '../db'
 import type { Post } from '../db'
@@ -222,7 +223,11 @@ export function Blog() {
         author: null,
         seo: {},
         blocks: [
-          { id: 'b1', type: 'paragraph', text: 'Comece a escrever aqui, ou arraste blocos da esquerda para montar o artigo.', align: 'left' },
+          {
+            id: 'b1',
+            type: 'rich',
+            html: '<p>Comece a escrever aqui ou <strong>cole o artigo inteiro</strong> (do Word ou do Google Docs): títulos, parágrafos, listas, links e tabelas são reconhecidos automaticamente.</p>',
+          },
         ],
       }
     return {
@@ -240,7 +245,7 @@ export function Blog() {
 
   async function saveDoc(i: Item | null, d: StudioDoc, status: 'draft' | 'published') {
     const author = d.author?.name?.trim() ? d.author : null
-    const body = d.blocks.filter((b) => b.type === 'paragraph').map((b) => (b as { text: string }).text)
+    const body = d.blocks.flatMap((b) => (b.type === 'paragraph' ? [b.text] : b.type === 'rich' ? [htmlText(b.html)] : []))
     if (i?.kind === 'site') {
       const original = ARTICLES.find((a) => a.slug === i.slug)!
       const same = (a: unknown, b: unknown) => JSON.stringify(a) === JSON.stringify(b)

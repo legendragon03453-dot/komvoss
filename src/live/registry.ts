@@ -12,6 +12,7 @@ import { SOLUTIONS } from '../cms/solucoes'
 import { COMPANIES } from '../cms/empresas'
 import { CONTACT, MIND_LAYERS, NUMEROS, STEPS } from '../cms/site'
 import { PARTNERS } from '../cms/parceiros'
+import { FIELD_TYPES } from '../pages/CmsForm'
 
 /**
  * Conteúdo editável pelo painel: cada raiz é um objeto do CMS (src/cms). Um texto é identificado pelo
@@ -44,19 +45,84 @@ export const ROOTS: Record<string, { label: string; url: string; obj: object }> 
  * (adicionar/remover/reordenar) e o número de colunas. Gravadas como uma linha "section:<caminho>"
  * (ver content.ts); os textos dos itens saem da lista de campos soltos e são editados em grupo.
  */
-export type SectionItemField = { key: string; label: string; long?: boolean; check?: boolean }
+export type SectionItem = Record<string, string | boolean>
+export type SectionItemField = {
+  key: string
+  label: string
+  long?: boolean
+  check?: boolean
+  /** lista de escolha (select) */
+  choices?: { value: string; label: string }[]
+  /** uma opção por linha */
+  lines?: boolean
+  /** envio de imagem (guarda o endereço) */
+  image?: boolean
+  hint?: string
+  /** só aparece quando… (ex.: opções só para campos de escolha) */
+  showIf?: (item: SectionItem) => boolean
+}
 export type SectionConfig = {
   root: string
   /** nome do grupo no painel (o mesmo da sanfona de textos) */
   name: string
+  /** título da caixa de controles quando o grupo tem mais de uma (ex.: um formulário por tipo de parceria) */
+  title?: string
   /** nome de um item, ex. "Depoimento" */
   itemLabel?: string
   items?: SectionItemField[]
+  /** onde fica a lista no CMS (padrão "items"; formulários usam "fields") */
+  listKey?: string
+  /** campo que dá nome ao item e não pode ficar vazio (padrão: o primeiro campo de texto) */
+  mainKey?: string
   /** item novo, ao clicar em adicionar */
-  blank?: Record<string, string | boolean>
+  blank?: SectionItem
   cols?: boolean
+  /** sem o botão Ocultar */
+  noHide?: boolean
+  /** envio de vídeo de capa (guardado em "video") */
+  video?: boolean
 }
+
+const OPTION_TYPES = ['select', 'radio', 'checkbox']
+/** Campos de um formulário editáveis pelo painel (adicionar, remover, reordenar, tipo, opções). */
+const FORM_FIELDS: SectionItemField[] = [
+  { key: 'label', label: 'Pergunta / rótulo do campo' },
+  { key: 'type', label: 'Tipo de campo', choices: FIELD_TYPES },
+  { key: 'options', label: 'Opções (uma por linha)', lines: true, showIf: (it) => OPTION_TYPES.includes(String(it.type)) },
+  { key: 'placeholder', label: 'Texto de ajuda dentro do campo (opcional)', showIf: (it) => !['radio', 'checkbox', 'consent', 'file'].includes(String(it.type)) },
+  { key: 'required', label: 'Obrigatório', check: true },
+  { key: 'half', label: 'Meia largura (fica lado a lado com o próximo campo de meia largura)', check: true },
+]
+const formSection = (root: string, title: string): SectionConfig => ({
+  root,
+  name: 'Formulário',
+  title,
+  itemLabel: 'Campo',
+  items: FORM_FIELDS,
+  listKey: 'fields',
+  mainKey: 'label',
+  blank: { label: '', type: 'text', required: false, half: false },
+  noHide: true,
+})
+
 export const SECTIONS: Record<string, SectionConfig> = {
+  'home.reels': {
+    root: 'home',
+    name: 'Vídeos',
+    title: 'Publicações do Instagram',
+    itemLabel: 'Publicação',
+    items: [
+      { key: 'url', label: 'Link da publicação no Instagram', hint: 'Ex.: https://www.instagram.com/reel/ABC123/ ou https://www.instagram.com/p/ABC123/' },
+      { key: 'title', label: 'Título' },
+      { key: 'tag', label: 'Etiqueta (ex.: Gestão, IA, Institucional)' },
+      { key: 'cover', label: 'Capa (imagem vertical 9:16)', image: true, hint: 'Publicações novas precisam de capa: envie um print do vídeo ou a imagem do post.' },
+    ],
+    mainKey: 'title',
+    blank: { url: '', title: '', tag: '', cover: '' },
+  },
+  'trabalhe.hero': { root: 'trabalhe', name: 'Banner do topo', video: true, noHide: true },
+  'contato.form': formSection('contato', 'Campos do formulário de contato (Home e Entre em contato)'),
+  ...Object.fromEntries(parceiro.form.types.map((t, i) => [`parceiro.form.types.${i}.form`, formSection('parceiro', `Campos do formulário: ${t.label}`)])),
   'clientes.testimonials': {
     root: 'clientes',
     name: 'Depoimentos',
@@ -73,15 +139,18 @@ export const SECTIONS: Record<string, SectionConfig> = {
   'clientes.cases': { root: 'clientes', name: 'Casos de uso' },
 }
 
-export type SectionValue = { hidden?: boolean; cols?: number; items?: Record<string, string | boolean>[] }
+export type SectionValue = { hidden?: boolean; cols?: number; items?: SectionItem[]; video?: string }
+
+/** Prefixo dos textos de um item da lista ("contato.form.fields.") */
+export const listPrefix = (path: string) => `${path}.${SECTIONS[path]?.listKey ?? 'items'}.`
 
 // textos de itens que são editados em grupo (não aparecem como campos soltos)
 const GROUPED = Object.entries(SECTIONS)
   .filter(([, c]) => c.items)
-  .map(([p]) => p + '.items.')
+  .map(([p]) => listPrefix(p))
 
 // chaves que não são texto de leitura (endereços, arquivos, identificadores, tamanhos)
-const SKIP = new Set(['to', 'slug', 'src', 'id', 'href', 'accept', 'autoComplete', 'type', 'icon', 'art', 'color', 'w', 'h', 'num', 'video', 'list'])
+const SKIP = new Set(['to', 'slug', 'src', 'id', 'href', 'accept', 'autoComplete', 'type', 'icon', 'art', 'color', 'w', 'h', 'num', 'video', 'list', 'url', 'cover'])
 
 export type TextField = { path: string; root: string; section: string; label: string; value: string; long: boolean }
 
@@ -170,6 +239,9 @@ const NAMES: Record<string, string> = {
   greek: 'Grego',
   symbolCaption: 'Legenda do símbolo',
   chooseLabel: 'Pergunta de escolha',
+  jobs: 'Vagas (Portal de Talentos)',
+  button: 'Texto do botão',
+  placeholder: 'Texto de ajuda',
 }
 
 const human = (k: string) => (/^\d+$/.test(k) ? `#${Number(k) + 1}` : (NAMES[k] ?? k.replace(/([A-Z])/g, ' $1').toLowerCase()))
