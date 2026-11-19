@@ -196,6 +196,9 @@ export function Footer() {
           <p className="footer-contact">
             <a href={CONTACT_LINKS.email}>{CONTACT.email}</a>
             <a href={CONTACT_LINKS.phone}>{CONTACT.phone}</a>
+            <a href={CONTACT_LINKS.whatsapp} target="_blank" rel="noopener noreferrer">
+              WhatsApp ↗
+            </a>
             <a href={CONTACT.linkedin} target="_blank" rel="noopener noreferrer">
               LinkedIn ↗
             </a>

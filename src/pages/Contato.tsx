@@ -37,7 +37,11 @@ export function ContatoPage() {
               {CONTACT.whatsapp && (
                 <div>
                   <dt>{c.info.labels.whatsapp}</dt>
-                  <dd>{CONTACT.whatsapp}</dd>
+                  <dd>
+                    <a href={CONTACT_LINKS.whatsapp} target="_blank" rel="noopener noreferrer">
+                      {CONTACT.whatsapp}
+                    </a>
+                  </dd>
                 </div>
               )}
               <div>

@@ -327,3 +327,21 @@
   display: flex;
   gap: 16px;
 }
+
+/* ícones do topo: Instagram + WhatsApp (social.svg) e LinkedIn ao lado, mesmo espaçamento */
+.v2-socials {
+  display: inline-flex;
+  align-items: center;
+  gap: 31px;
+}
+.v2-social-in {
+  display: inline-flex;
+  padding: 8px 0;
+}
+.v2-social-in img {
+  width: 25px;
+  height: auto;
+}
+.mobile .v2-socials {
+  display: none;
+}

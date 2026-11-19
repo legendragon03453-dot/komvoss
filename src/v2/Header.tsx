@@ -6,7 +6,7 @@ import { lockScroll } from '../motion'
 import { CONTACT, CONTACT_LINKS, SOLUTIONS } from '../pages/data'
 import { SOLUTION_ART } from '../pages/SolutionsBento'
 import { MENU, MENU_ARCH_LABEL } from '../cms/menu'
-import { INSTAGRAM_URL, OutlineButton, V2, WHATSAPP_URL } from './ui'
+import { INSTAGRAM_URL, OutlineButton, V2 } from './ui'
 
 /** Links fixos na barra do topo (telas largas); "Entre em contato" já é o botão da direita. */
 type BarItem = { id: string; label: string; to?: string; children?: { label: string; to: string; num: string }[] }
@@ -69,7 +69,7 @@ export function SiteHeader() {
   }
   const reopenDrop = (e: MouseEvent<HTMLElement>) => e.currentTarget.classList.remove('is-closed')
 
-  const whatsapp = WHATSAPP_URL || '/contato'
+  const whatsapp = CONTACT_LINKS.whatsapp
   const bar = buildBar()
   const menu = MENU.filter((m) => !m.hidden)
 
@@ -137,14 +137,21 @@ export function SiteHeader() {
         </Link>
 
         <div className="v2-header-right">
-          <div className="v2-social">
-            <img src={`${V2}/social.svg`} alt="" width={63.2146} height={19.3877} />
-            <a href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer" aria-label="Instagram do Grupo Komvos" />
-            {WHATSAPP_URL ? (
+          <div className="v2-socials">
+            <div className="v2-social">
+              <img src={`${V2}/social.svg`} alt="" width={63.2146} height={19.3877} />
+              <a href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer" aria-label="Instagram do Grupo Komvos" />
               <a href={whatsapp} target="_blank" rel="noopener noreferrer" aria-label="WhatsApp do Grupo Komvos" />
-            ) : (
-              <Link to="/contato" aria-label="Fale com o Grupo Komvos" />
-            )}
+            </div>
+            <a
+              className="v2-social-in"
+              href={CONTACT.linkedin}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="LinkedIn do Grupo Komvos"
+            >
+              <img src={`${V2}/linkedin.svg`} alt="" width={19.3877} height={19.3877} />
+            </a>
           </div>
           <OutlineButton to="/contato" small>
             Entre em contato
@@ -185,6 +192,9 @@ export function SiteHeader() {
                 <p className="mn-kicker">Contato</p>
                 <a href={CONTACT_LINKS.email}>{CONTACT.email}</a>
                 <a href={CONTACT_LINKS.phone}>{CONTACT.phone}</a>
+                <a href={whatsapp} target="_blank" rel="noopener noreferrer">
+                  WhatsApp ↗
+                </a>
               </div>
               <div>
                 <p className="mn-kicker">Redes</p>

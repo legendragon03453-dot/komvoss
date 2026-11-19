@@ -21,13 +21,16 @@ export const CONTACT = {
   email: 'marketing@grupokomvos.com.br',
   phone: '(16) 3515-1609',
   /** número de WhatsApp; vazio = a linha não aparece */
-  whatsapp: '',
+  whatsapp: '(16) 98249-1005',
   linkedin: 'https://www.linkedin.com/company/komvostech/',
   instagram: 'https://www.instagram.com/komvostech/',
   sedes: [
     { name: 'Sede Grupo Komvos', address: 'Av. Eduardo Gomes de Souza, 800 – City Ribeirão', city: 'Ribeirão Preto / SP' },
   ],
 }
+
+const WHATSAPP_DEFAULT = '(16) 98249-1005'
+const WHATSAPP_TEXT = 'Vim através do site e gostaria de mais informações sobre o Grupo Komvos'
 
 /** Links prontos de e-mail e telefone (gerados a partir de CONTACT). */
 export const CONTACT_LINKS = {
@@ -37,6 +40,11 @@ export const CONTACT_LINKS = {
   },
   get phone() {
     return `tel:+55${CONTACT.phone.replace(/\D/g, '')}`
+  },
+  /** abre o WhatsApp direto, já com a mensagem pronta */
+  get whatsapp() {
+    const digits = (CONTACT.whatsapp || WHATSAPP_DEFAULT).replace(/\D/g, '')
+    return `https://wa.me/55${digits}?text=${encodeURIComponent(WHATSAPP_TEXT)}`
   },
 }
 

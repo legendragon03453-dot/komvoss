@@ -3,8 +3,6 @@ import { Link } from 'react-router-dom'
 
 export const V2 = '/assets/v2'
 export const INSTAGRAM_URL = 'https://www.instagram.com/komvostech/'
-// TODO: número oficial de WhatsApp do Grupo Komvos. Enquanto não houver, o ícone leva ao formulário de contato.
-export const WHATSAPP_URL = ''
 
 /** Botão do Figma v2: contorno branco, texto em caixa alta e quadrado em gradiente com seta. */
 export function OutlineButton({ to, children, small = false }: { to: string; children: ReactNode; small?: boolean }) {
