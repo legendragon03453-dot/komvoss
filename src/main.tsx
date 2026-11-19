@@ -23,7 +23,7 @@ import './cards.css'
 import './tweaks.css'
 import './deck.css'
 import './colors.css'
-import { onContentChange, refreshContent } from './live/content'
+import { applyDefaultScripts, onContentChange, refreshContent } from './live/content'
 import './live/blocks.css'
 
 /** Busca as edições mais recentes do painel e, se algo mudou desde a última visita, atualiza a página. */
@@ -31,7 +31,7 @@ function Root() {
   const [, rerender] = useReducer((n: number) => n + 1, 0)
   useEffect(() => {
     const off = onContentChange(rerender)
-    refreshContent().catch(() => {})
+    refreshContent().catch(() => applyDefaultScripts())
     return off
   }, [])
   return (

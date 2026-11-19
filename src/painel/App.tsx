@@ -12,6 +12,7 @@ import { Stats } from './pages/Stats'
 import { SiteEditor } from './pages/SiteEditor'
 import { Blog } from './pages/Blog'
 import { Users } from './pages/Users'
+import { Scripts } from './pages/Scripts'
 
 /*
  * Painel do site Grupo Komvos (/painel). Navegação por "#/seção" para funcionar em qualquer hospedagem.
@@ -23,6 +24,7 @@ const NAV = [
   { id: 'blog', label: 'Blog e artigos', icon: 'blog' },
   { id: 'leads', label: 'Captura de leads', icon: 'leads' },
   { id: 'estatisticas', label: 'Estatísticas', icon: 'stats' },
+  { id: 'monitoramento', label: 'Códigos de monitoramento', icon: 'globe', admin: true },
   { id: 'usuarios', label: 'Usuários', icon: 'users', admin: true },
 ] as const
 type Section = (typeof NAV)[number]['id']
@@ -366,6 +368,7 @@ function Shell({ me }: { me: Me }) {
           {section === 'estatisticas' && <Stats tab={sub} go={go} />}
           {section === 'editar-site' && <SiteEditor tab={sub} go={go} />}
           {section === 'blog' && <Blog />}
+          {section === 'monitoramento' && isAdmin && <Scripts />}
           {section === 'usuarios' && isAdmin && <Users />}
         </main>
       </div>

@@ -8,6 +8,7 @@ import { setImageMap } from './images'
 import { applyInsightStyles } from './insightStyles'
 import type { InsightStyles } from './insightStyles'
 import type { Author, Block } from './blocks'
+import { SCRIPTS_KEY, applyScripts, scriptsFrom } from './scripts'
 
 /*
  * Edições feitas no painel, aplicadas por cima do conteúdo do CMS quando o site carrega.
@@ -17,6 +18,7 @@ import type { Author, Block } from './blocks'
  *   "menu:<id>"        → { label?, hidden?, deleted? }
  *   "article:<slug>"   → { hidden?, featured?, title?, excerpt?, body?, cat?, date?, read?, cover? }
  *   "style:insights"   → estilos padrão dos artigos (ver insightStyles.ts)
+ *   "scripts:tracking" → { items: [{ id, name, code, enabled, place? }] }  (códigos de monitoramento, ver scripts.ts)
  *   "section:<caminho>" → { hidden?, cols?, items?, video? }   (ex. "section:clientes.testimonials"; ver SECTIONS em registry.ts)
  * Tabela posts: artigos criados pelo painel (entram no blog junto com os do CMS).
  *
@@ -181,10 +183,21 @@ export function applyCached() {
       applyContent(snap)
       current = stamp(snap)
       base = snap
+      applySnapshotScripts(snap)
     }
   } catch {
     /* sem cache: segue com o conteúdo do CMS */
   }
+}
+
+/** Códigos de monitoramento da versão do conteúdo (ou os padrão, se o painel ainda não gravou nenhum). */
+function applySnapshotScripts(snap: Snapshot | null) {
+  applyScripts(scriptsFrom(snap?.rows.find((r) => r.key === SCRIPTS_KEY)?.value))
+}
+
+/** Sem banco (falha de rede na primeira visita): pelo menos os códigos padrão entram. */
+export function applyDefaultScripts() {
+  applySnapshotScripts(null)
 }
 
 function demoSnapshot(): Snapshot {
@@ -208,6 +221,7 @@ export async function refreshContent(): Promise<boolean> {
     }
   } else snap = demoSnapshot()
   base = snap
+  applySnapshotScripts(snap)
   const s = stamp(snap)
   if (s === current) return false
   applyContent(snap)
